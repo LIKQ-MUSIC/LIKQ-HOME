@@ -1,4 +1,14 @@
-const RenderedDefaultString = ({ element, children }) => {
+import React from 'react'
+
+interface RenderedDefaultStringProps {
+  element: string | React.ReactNode
+  children: React.ReactNode | ((element: string) => React.ReactNode)
+}
+
+const RenderedDefaultString = ({
+  element,
+  children
+}: RenderedDefaultStringProps) => {
   if (typeof element === 'string') {
     if (typeof children === 'function') {
       return children(element)
