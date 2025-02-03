@@ -1,6 +1,6 @@
 import React from 'react'
 
 export interface ParagraphProps {
-  classNames?: string
+  className?: string
   children: React.ReactNode
 }
