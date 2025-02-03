@@ -4,7 +4,7 @@ import Button from '@/ui/Button'
 import { buttonSizesClass, variantClasses } from '@/ui/Button/constants'
 import { ButtonSize, ButtonVariant } from '@/ui/Button/types'
 import Microphone from '@/ui/Icons/Microphone'
-import Card from '../../Components/Card'
+import Card from '@/components/Card'
 
 const levels: TitleProps['level'][] = [1, 2, 3, 4, 5]
 

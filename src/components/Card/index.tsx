@@ -1,5 +1,5 @@
 import React from 'react'
-import { CardProps } from '@/Components/Card/types'
+import { CardProps } from '@/components/Card/types'
 import { Title, Paragraph } from '@/ui/Typography'
 import RenderedDefaultString from '@/ui/RenderDefaultString'
 
