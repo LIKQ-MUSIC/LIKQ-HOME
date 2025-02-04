@@ -95,6 +95,7 @@ This repository contains the front-end code developed with **Next.js** and **Tai
 ### Contributors
 
 - [Phuree Kanusont](#https://yora.slippingsloth.com/) – Developer & Maintainer
+- [Natpimol Metheecharoenwat](#) - UX/UI Designer
 
 Feel free to add your name here if you contribute to this project.
 
@@ -110,8 +111,8 @@ This project is licensed under the [MIT License](LICENSE).
 ## Contact
 
 **LIKQ MUSIC**  
-Phone: COMING SOON
-Email: COMING SOON
+Phone: +66924090388
+Email: lovepeachstudio@gmail.com
 
 <p align="center">
   Made with 💙 by the LIKQ MUSIC Team
