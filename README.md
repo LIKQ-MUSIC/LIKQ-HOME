@@ -94,7 +94,7 @@ This repository contains the front-end code developed with **Next.js** and **Tai
 ---
 ### Contributors
 
-- [Phuree Kanusont](#https://yora.slippingsloth.com/) – Developer & Maintainer
+- [Phuree Kanusont](https://yora.slippingsloth.com/) – Developer & Maintainer
 - [Natpimol Metheecharoenwat](#) - UX/UI Designer
 
 Feel free to add your name here if you contribute to this project.
