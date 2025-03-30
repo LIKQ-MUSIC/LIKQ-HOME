@@ -8,154 +8,73 @@ import Youtube from '@/ui/Icons/YouTube';
 import Mailbox from '@/ui/Icons/Mailbox';
 import Logo from '@/ui/Icons/Logo';
 import Hamburger from '@/ui/Icons/Hamburger';
+import YoutubeButton from '@/ui/YoutubeButton';
+import MailButton from '@/ui/MailButton';
+import LogoButton from '@/ui/LogoButton';
 
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // const toggleMenu = () => {
+  //   setIsMenuOpen(!isMenuOpen);
+  // };
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setMenuOpen(!menuOpen);
   };
 
   return (
-    <nav className="bg-red-500  fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 pt-[68px]">
-        <div className="relative flex h-16 items-center justify-between"> 
-          {/* Mobile menu button */}
-          {/* <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            <button
-              type="button"
-              onClick={toggleMenu}
-              className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              aria-controls="mobile-menu"
-              aria-expanded={isMenuOpen}
-            >
-              <span className="absolute -inset-0.5"></span>
-              <span className="sr-only">Open main menu</span>
-              {isMenuOpen ? (
-                <X className="block h-6 w-6" />
-              ) : (
-                <Menu className="block h-6 w-6" />
-              )}
-            </button>
-          </div> */}
-
-          {/* Desktop Navigation */}
-          {/* <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start"> */}
-            {/* Logo */}
-            <div className="flex items-center">
-              {/* <Image 
-                className="h-8 w-auto" 
-                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" 
-                alt="Your Company" 
-                width={32} 
-                height={32}
-              /> */}
-              <Logo  />
-            </div>
-
-            {/* Desktop Menu Links */}
-              <div className="hidden md:flex space-x-[72px]">
-                <Link 
-                  href="#" 
-                  className="px-8 py-4 text-h3  text-white  hover:text-primary"
-                >
-                  Our Services
-                </Link>
-                <Link 
-                  href="#" 
-                  className="px-8 py-4 text-h3  text-white  hover:text-primary"
-                >
-                  Our Work
-                </Link>
-                <Link 
-                  href="#" 
-                  className="px-8 py-4 text-h3  text-white  hover:text-primary"
-                >
-                  Our Team
-                </Link>
-              </div>
-            {/* </div> */}
-
-          {/* Right side icons */}
-          <div className="hidden md:flex items-center gap-x-8">
-            
-            <button
-              type="button"
-              className="relative rounded-full"
-            >
-              <Youtube />
-            </button>
-            <button
-              type="button"
-              className="relative rounded-full"
-            >
-              <Mailbox />
-            </button>
-            
-            
-
-            {/* Profile Dropdown
-            <div className="relative ml-3">
-              <button
-                type="button"
-                className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                <span className="sr-only">Open user menu</span>
-                <Image 
-                  className="h-8 w-8 rounded-full" 
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
-                  alt="User profile" 
-                  width={32} 
-                  height={32}
-                />
-              </button>
-            </div> */}
-          </div>
-
-          <div className="flex lg:hidden">
-          <button
-              type="button"
-              className="relative rounded-full"
-            >
-              <Hamburger />
-            </button>
-        </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="sm:hidden" id="mobile-menu">
-          <div className="space-y-1 px-2 pb-3 pt-2">
-            <Link 
-              href="#" 
-              className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-            >
-              Dashboard
-            </Link>
-            <Link 
-              href="#" 
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              Team
-            </Link>
-            <Link 
-              href="#" 
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              Projects
-            </Link>
-            <Link 
-              href="#" 
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              Calendar
-            </Link>
-          </div>
-        </div>
-      )}
-    </nav>
+    <div className="bg-red-300">
+       <nav className="flex justify-between items-center w-[92%] mx-auto">
+    <div>
+      {/* <Image 
+        src="https://cdn-icons-png.flaticon.com/512/5968/5968204.png" 
+        alt="Logo" 
+        width={64} 
+        height={64} 
+        className="cursor-pointer"
+      /> */}
+      <LogoButton></LogoButton>
+    </div>
+    <div
+      className={`md:static absolute md:min-h-fit min-h-[60vh] left-0 md:w-auto w-full flex items-center px-5 ${
+        menuOpen ? 'top-[9%]' : 'top-[-100%]'
+      }`}
+    >
+      <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8">
+        <li>
+          <Link href="#" className="px-8 py-4 text-h3  text-white  hover:text-primary">
+          Our Services
+          </Link>
+        </li>
+        <li>
+          <Link href="#" className="px-8 py-4 text-h3  text-white  hover:text-primary">
+          Our Work
+          </Link>
+        </li>
+        <li>
+          <Link href="#" className="px-8 py-4 text-h3  text-white  hover:text-primary">
+          Our Team
+          </Link>
+        </li>
+      </ul>
+    </div>
+    <div className="flex items-center gap-8">
+      {/* <button className="bg-[#a6c1ee] text-white px-5 py-2 rounded-full hover:bg-[#87acec]">
+        Sign in
+      </button> */}
+      <YoutubeButton href="https://youtube.com" />
+      <MailButton  />
+      {/* <div className="text-3xl cursor-pointer md:hidden" onClick={toggleMenu}>
+        {menuOpen ? <XIcon size={24} /> : <MenuIcon size={24} />}
+      </div> */}
+    </div>
+  </nav>
+    </div>
+   
   );
 
 }
