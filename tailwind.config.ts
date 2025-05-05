@@ -42,8 +42,19 @@ export default {
           DEFAULT: '#E8EAEE',
           text: '#B6BFC9'
         }
+      },
+      fontSize: {
+        h3: [
+          "18px",
+          {
+            fontWeight: 700,
+            lineHeight: "24px",
+          },
+        ],
       }
-    }
+      
+    },
+    
   },
   plugins: []
 } satisfies Config
