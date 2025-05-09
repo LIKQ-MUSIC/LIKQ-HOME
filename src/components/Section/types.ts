@@ -1,6 +1,7 @@
 import React from 'react'
 
 export interface ISectionProps {
-  title: string
+  className?: string
+  title?: string
   children?: React.ReactNode
 }
