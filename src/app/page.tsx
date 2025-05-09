@@ -3,6 +3,7 @@ import Section from '@/components/Section'
 import { Title } from '@/ui/Typography'
 import Microphone from '@/ui/Icons/Microphone'
 import Card from '@/components/Card'
+import VideoLanding from '@/components/VideoLanding'
 
 export default function Home() {
   const services = [
@@ -39,7 +40,11 @@ export default function Home() {
   ]
   return (
     <>
-      <Section className="w-full p-0 bg-[#030827]">
+      <Section className="relative w-full p-0 bg-[#030827] overflow-hidden">
+        {/* Background Video */}
+        <VideoLanding />
+
+        {/* Foreground Content */}
         <Navbar />
       </Section>
 
