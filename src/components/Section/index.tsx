@@ -8,7 +8,7 @@ const Section = ({ title, children, className }: ISectionProps) => {
   return (
     <section
       className={cn([
-        'h-[100dvh] flex flex-col items-center justify-start p-20',
+        'min-h-[100dvh] flex flex-col items-center justify-start p-20',
         className
       ])}
     >
