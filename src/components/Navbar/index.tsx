@@ -27,7 +27,7 @@ const Navbar = () => {
 
   return (
     <div className="bg-red-300">
-      <nav className=" w-full max-w-7xl px-4 py-2 mx-auto  mt-[68px] sticky top-3  lg:px-8 lg:py-3 ">
+      <nav className=" w-full max-w-7xl px-4 py-2 mx-auto lg:px-8 lg:py-3 ">
         <div className="container flex flex-wrap items-center justify-between mx-auto px-[18px]">
           {/* <LogoButton /> */}
           <a href="#" className="mr-4 hidden lg:block cursor-pointer py-1.5">
