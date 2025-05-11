@@ -5,10 +5,21 @@ import { Title } from '@/ui/Typography'
 import Section from '@/components/Section'
 
 import WorkDetail from './_components/WorkDetail'
-import { IWorkItem, WorkCarouselProps } from './_components/WorkCarousel/types'
+import { WorkCarouselProps } from './_components/WorkCarousel/types'
 import WorkCarousel from '@/components/Works/_components/WorkCarousel'
+import { IWorkItem } from '@/components/Works/types'
 
 const items: IWorkItem[] = [
+  {
+    title: 'YOU: YORA & YOU FAN MEETING',
+    category: 'event',
+    image:
+      'https://firebasestorage.googleapis.com/v0/b/likq-38cdb.firebasestorage.app/o/works%2Fyou%20yorayou%20thumbnail.jpg?alt=media&token=327f9f99-1cc4-4dc8-bbb9-f567d7a7423c',
+    description: `YOU: YORA & U FAN MEET คือกิจกรรมแฟนมีตครั้งแรกจาก Kim Yora
+พบกับโชว์ดนตรีสดสุดอบอุ่น พร้อมเซอร์ไพรส์ที่เตรียมมาเพื่อคุณ
+ร่วมสร้างความทรงจำและโมเมนต์พิเศษเฉพาะแฟน ๆ เท่านั้น
+มาร่วมเป็นส่วนหนึ่งของค่ำคืนที่เต็มไปด้วยเสียงเพลงและความรัก`
+  },
   {
     title: 'คาปิบาราไม่ได้นอน',
     category: 'video',
@@ -36,7 +47,7 @@ const Works = () => {
       <Title level={5}>ตัวอย่างผลงานของ LiKQ Music</Title>
 
       <div className="p-10">
-        <WorkDetail youtubeId={focusItem.youtubeId || ''} />
+        <WorkDetail item={focusItem} />
 
         <WorkCarousel setFocusItem={setFocusItem} items={items} />
       </div>

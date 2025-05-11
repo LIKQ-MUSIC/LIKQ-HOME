@@ -4,9 +4,25 @@ import { Eye, Loader2, PlayCircle } from 'lucide-react'
 import { Paragraph, Title } from '@/ui/Typography'
 import { useVideoDetails } from '@/hooks/api/youtube'
 import CategoriesBadge from '@/components/Works/_components/CategoriesBadge'
+import { IWorkItem } from '@/components/Works/types'
+import VideoDetail from '@/components/Works/_components/WorkDetail/_components/VideoDetail'
+import { useMemo, useState } from 'react'
+import { useImageLoaded } from '@/hooks/use-image-loaded'
+import { cn } from '@/utils'
+import EventDetail from '@/components/Works/_components/WorkDetail/_components/EventDetail'
 
-const WorkDetail = ({ youtubeId }: { youtubeId: string }) => {
-  const { data, isLoading } = useVideoDetails(youtubeId)
+const WorkDetail = ({ item }: { item: IWorkItem }) => {
+  const { data, isLoading } = useVideoDetails(
+    item.category === 'video' ? item.youtubeId || '' : ''
+  )
+
+  const imageSrc = useMemo(
+    () =>
+      item.category === 'video' && !isLoading ? data?.thumbnailUrl : item.image,
+    [item, data]
+  )
+
+  const { ref, loaded } = useImageLoaded(imageSrc || '')
 
   return (
     <div className="video-card">
@@ -19,30 +35,31 @@ const WorkDetail = ({ youtubeId }: { youtubeId: string }) => {
           ) : (
             <>
               <img
-                className="thumbnail"
-                src={data?.thumbnailUrl}
-                alt={data?.title}
+                ref={ref}
+                className={cn([
+                  'thumbnail transition-all opacity-0',
+                  loaded && 'opacity-1'
+                ])}
+                src={imageSrc}
+                alt={`thumbnail-${item.title}`}
               />
-              <PlayCircle className="play-icon" size={32} />
+              {item.category === 'video' && (
+                <PlayCircle className="play-icon" size={32} />
+              )}
             </>
           )}
         </div>
       </div>
 
       <div className="video-meta">
-        <CategoriesBadge category="video" />
+        <CategoriesBadge category={item.category} />
 
         <Title level={5} className="line-clamp-2">
-          {data?.title}
+          {item.category === 'video' ? data?.title : item.title}
         </Title>
 
-        <Paragraph className="line-clamp-4">{data?.description}</Paragraph>
-        <div className="video-stats">
-          <Eye size={16} />
-          <Paragraph>{data?.statistics.view} views</Paragraph>
-          <Paragraph>•</Paragraph>
-          <Paragraph>{data?.statistics.like} likes</Paragraph>
-        </div>
+        {item.category === 'event' && <EventDetail {...item} />}
+        {data && item.category === 'video' && <VideoDetail {...data} />}
       </div>
     </div>
   )

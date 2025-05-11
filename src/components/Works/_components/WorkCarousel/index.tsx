@@ -31,10 +31,13 @@ const WorkCarousel = ({ items, setFocusItem }: WorkCarouselProps) => {
   return isLoading ? (
     'Loading...'
   ) : (
-    <Carousel className="w-full">
+    <Carousel className="w-full mt-4">
       <CarouselContent>
         {resultsItem.map(work => (
-          <CarouselItem className="basis-1/4" key={work.title}>
+          <CarouselItem
+            className="basis-1/2 md:basis-1/3 lg:basis-1/4"
+            key={work.title}
+          >
             <WorkItem
               onClick={() => {
                 setFocusItem(work)
