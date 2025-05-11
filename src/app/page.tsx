@@ -14,27 +14,27 @@ export default function Home() {
       icon: <Microphone className="text-primary" />
     },
     {
-      title: 'Music Production',
+      title: 'Music Production 1',
       description: 'Prod. / Songwriting Arranging',
       icon: <Microphone className="text-primary" />
     },
     {
-      title: 'Music Production',
+      title: 'Music Production 2',
       description: 'Prod. / Songwriting Arranging',
       icon: <Microphone className="text-primary" />
     },
     {
-      title: 'Music Production',
+      title: 'Music Production 3',
       description: 'Prod. / Songwriting Arranging',
       icon: <Microphone className="text-primary" />
     },
     {
-      title: 'Music Production',
+      title: 'Music Production 4',
       description: 'Prod. / Songwriting Arranging',
       icon: <Microphone className="text-primary" />
     },
     {
-      title: 'Music Production',
+      title: 'Music Production 5',
       description: 'Prod. / Songwriting Arranging',
       icon: <Microphone className="text-primary" />
     }
@@ -56,7 +56,7 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
           {services.map(service => (
-            <Card {...service} />
+            <Card key={service.title} {...service} />
           ))}
         </div>
       </Section>
