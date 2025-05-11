@@ -21,7 +21,13 @@ export default {
         secondary: {
           DEFAULT: '#BEADC4',
           hover: '#ab9cb0',
-          active: '#988a9d'
+          active: '#988a9d',
+          dark: {
+            DEFAULT: '#8f8293'
+          },
+          light: {
+            DEFAULT: '#f9f7f9'
+          }
         },
         danger: {
           DEFAULT: '#ba1a1a',
@@ -45,16 +51,14 @@ export default {
       },
       fontSize: {
         h3: [
-          "18px",
+          '18px',
           {
             fontWeight: 700,
-            lineHeight: "24px",
-          },
-        ],
+            lineHeight: '24px'
+          }
+        ]
       }
-      
-    },
-    
+    }
   },
   plugins: []
 } satisfies Config
