@@ -11,6 +11,8 @@
     "deploy": "firebase deploy"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.75.7",
+    "axios": "^1.9.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.509.0",
     "next": "15.1.6",
@@ -23,6 +25,7 @@
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
+    "@types/gapi.client.youtube-v3": "^0.0.4",
     "@types/jest": "^29.5.14",
     "@types/node": "^20",
     "@types/react": "18.3.1",

@@ -4,6 +4,7 @@ import { Title } from '@/ui/Typography'
 import Microphone from '@/ui/Icons/Microphone'
 import Card from '@/components/Card'
 import VideoLanding from '@/components/VideoLanding'
+import Works from '@/components/Works'
 
 export default function Home() {
   const services = [
@@ -60,9 +61,7 @@ export default function Home() {
         </div>
       </Section>
 
-      <Section title="Our Works">
-        <Title level={5}>ตัวอย่างผลงานของ LiKQ Music</Title>
-      </Section>
+      <Works />
 
       <Section title="Our Teams"></Section>
     </>

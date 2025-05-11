@@ -1,0 +1,27 @@
+.video-card {
+  @apply grid grid-cols-2 gap-4 p-4 min-h-[300px];
+}
+
+.thumbnail-section {
+  @apply flex justify-center items-center;
+}
+
+.thumbnail-container {
+  @apply relative w-full aspect-video shrink-0 overflow-hidden rounded-xl;
+}
+
+.thumbnail {
+  @apply w-full h-full object-cover;
+}
+
+.play-icon {
+  @apply absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 text-white bg-black/40 p-2 rounded-full;
+}
+
+.video-meta {
+  @apply flex flex-col justify-center gap-4;
+}
+
+.video-stats {
+  @apply text-sm text-secondary-dark mt-2 flex items-center gap-2;
+}
