@@ -1,6 +1,7 @@
-import { getVideoDetailsRepo } from '@/repositories'
+import { getVideoDetailsRepo, getVideosListRepo } from '@/repositories'
+import Video = gapi.client.youtube.Video
 
-interface IVideoDetails {
+export interface IVideoDetails {
   videoId: string
   title: string
   thumbnailUrl: string
@@ -21,14 +22,28 @@ export const getVideoDetails = async (id: string): Promise<IVideoDetails> => {
     throw new Error('No video details found.')
   }
 
-  return {
-    videoId: video.id || '',
-    title: video.snippet?.title || '',
-    thumbnailUrl: video.snippet?.thumbnails?.maxres?.url || '',
-    description: video.snippet?.description || '',
-    statistics: {
-      view: parseInt(video.statistics?.viewCount || '0', 10),
-      like: parseInt(video.statistics?.likeCount || '0', 10)
-    }
+  return videoToIVideoDetails(video)
+}
+
+const videoToIVideoDetails = (
+  video: Video,
+  thumbnailResolution?: 'standard' | 'maxres'
+) => ({
+  videoId: video.id || '',
+  title: video.snippet?.title || '',
+  thumbnailUrl:
+    video.snippet?.thumbnails?.[thumbnailResolution || 'maxres']?.url || '',
+  description: video.snippet?.description || '',
+  statistics: {
+    view: parseInt(video.statistics?.viewCount || '0', 10),
+    like: parseInt(video.statistics?.likeCount || '0', 10)
   }
+})
+
+export const getVideoList = async (ids: string[]): Promise<IVideoDetails[]> => {
+  const resp = await getVideosListRepo(ids)
+
+  const { data } = resp
+
+  return data.items?.map(v => videoToIVideoDetails(v, 'standard')) || []
 }
