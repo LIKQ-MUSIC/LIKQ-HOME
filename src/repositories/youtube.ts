@@ -9,3 +9,12 @@ export const getVideoDetailsRepo = (id: string) => {
     }
   })
 }
+
+export const getVideosListRepo = (ids: string[]) => {
+  return youtubeClient.get<VideoListResponse>('/videos', {
+    params: {
+      part: 'snippet',
+      id: ids.join(',')
+    }
+  })
+}
