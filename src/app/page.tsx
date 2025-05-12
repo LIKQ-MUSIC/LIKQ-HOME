@@ -56,7 +56,7 @@ export default function Home() {
         <Navbar />
       </Section>
 
-      <Section title="Our Services">
+      <Section id="services" title="Our Services">
         <Title className="text-center" level={5}>
           บริการผลิตดนตรีหลากหลายรูปแบบ พร้อมทีมงานมืออาชีพมากประสบการณ์
         </Title>

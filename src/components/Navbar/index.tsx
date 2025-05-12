@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useMobile } from '@/hooks/use-mobile'
 import Hamburger from '@/ui/Icons/Hamburger'
 import Close from '@/ui/Icons/Close'
@@ -40,8 +40,14 @@ const Navbar = () => {
           </a>
           <NavbarLinks />
           <div className="lg:flex items-center gap-8 hidden">
-            <Youtube className="youtube-icon" href="https://youtube.com" />
-            <Mailbox className="mailbox-icon" />
+            <Youtube
+              className="youtube-icon"
+              href="https://youtube.com/@likqmusic"
+            />
+            <Mailbox
+              href="mailto:Lovepeachstudio@gmail.com"
+              className="mailbox-icon"
+            />
           </div>
 
           <button
