@@ -5,6 +5,7 @@ import Microphone from '@/ui/Icons/Microphone'
 import Card from '@/components/Card'
 import VideoLanding from '@/components/VideoLanding'
 import Works from '@/components/Works'
+import Team from '@/components/Team'
 
 export default function Home() {
   const services = [
@@ -63,7 +64,7 @@ export default function Home() {
 
       <Works />
 
-      <Section title="Our Teams"></Section>
+      <Team />
     </>
   )
 }
