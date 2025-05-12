@@ -4,9 +4,10 @@ import { Title } from '@/ui/Typography'
 
 import { cn } from '@/utils'
 
-const Section = ({ title, children, className }: ISectionProps) => {
+const Section = ({ id, title, children, className }: ISectionProps) => {
   return (
     <section
+      id={id}
       className={cn([
         'min-h-[100dvh] flex flex-col items-center justify-start p-8 md:p-20',
         className

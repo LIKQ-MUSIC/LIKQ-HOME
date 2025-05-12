@@ -4,4 +4,5 @@ export interface ISectionProps {
   className?: string
   title?: string
   children?: React.ReactNode
+  id?: string
 }
