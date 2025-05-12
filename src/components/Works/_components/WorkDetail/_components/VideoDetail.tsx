@@ -2,13 +2,13 @@ import React from 'react'
 import { Paragraph } from '@/ui/Typography'
 import { Eye } from 'lucide-react'
 import { IVideoDetails } from '@/services'
+import Link from 'next/link'
+import Button from '@/ui/Button'
 
-const VideoDetail = ({ description, statistics }: IVideoDetails) => {
+const VideoDetail = ({ description, statistics, videoId }: IVideoDetails) => {
   return (
     <>
-      <Paragraph className="line-clamp-3 md:line-clamp-4">
-        {description}
-      </Paragraph>
+      <Paragraph className="line-clamp-4">{description}</Paragraph>
       <div className="video-stats">
         <Eye size={16} />
         <Paragraph>{statistics.view} views</Paragraph>

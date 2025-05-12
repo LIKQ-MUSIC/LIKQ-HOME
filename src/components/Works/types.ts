@@ -1,10 +1,29 @@
+import dayjs from '@/utils/dayjs'
+
 export type Category = 'video' | 'event' | 'link'
 
-export type IWorkItem = {
+export interface BaseWorkItem {
   image?: string
-  youtubeId?: string
-  category: Category
   title: string
   description?: string
-  url?: string
 }
+
+export interface VideoWorkItem extends BaseWorkItem {
+  youtubeId: string
+  category: 'video'
+}
+
+export interface EventWorkItem extends BaseWorkItem {
+  category: 'event'
+  start: dayjs.Dayjs
+  end: dayjs.Dayjs
+  location: string
+  url: string
+}
+
+export interface LinkWorkItem extends BaseWorkItem {
+  category: 'link'
+  url: string
+}
+
+export type IWorkItem = VideoWorkItem | EventWorkItem | LinkWorkItem

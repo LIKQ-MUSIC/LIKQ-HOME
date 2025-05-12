@@ -8,6 +8,7 @@ import WorkDetail from './_components/WorkDetail'
 import { WorkCarouselProps } from './_components/WorkCarousel/types'
 import WorkCarousel from '@/components/Works/_components/WorkCarousel'
 import { IWorkItem } from '@/components/Works/types'
+import dayjs from '@/utils/dayjs'
 
 const items: IWorkItem[] = [
   {
@@ -19,7 +20,19 @@ const items: IWorkItem[] = [
 พบกับโชว์ดนตรีสดสุดอบอุ่น พร้อมเซอร์ไพรส์ที่เตรียมมาเพื่อคุณ
 ร่วมสร้างความทรงจำและโมเมนต์พิเศษเฉพาะแฟน ๆ เท่านั้น
 มาร่วมเป็นส่วนหนึ่งของค่ำคืนที่เต็มไปด้วยเสียงเพลงและความรัก`,
-    url: 'https://you-fanmeet-uz8l.vercel.app/'
+    url: 'https://you-fanmeet-uz8l.vercel.app/',
+    start: dayjs('2025-05-25T19:00'),
+    end: dayjs('2025-05-25T20:00'),
+    location: 'Black Neko'
+  },
+  {
+    title: 'LiKQ Music Soundcloud',
+    category: 'link',
+    description:
+      'SoundCloud ของ LiKQ ที่คุณสามารถติดตามเพลงใหม่, โปรเจกต์ต่าง ๆ ที่กำลังจะเกิดขึ้นได้ เพลงอื่น ๆ ที่ไม่ได้ลงผ่าน Youtube',
+    image:
+      'https://firebasestorage.googleapis.com/v0/b/likq-38cdb.firebasestorage.app/o/staff%2Flikq-soundcloud.jpeg?alt=media&token=a504954d-8a1d-428b-990e-f28a52220c04',
+    url: `https://soundcloud.com/prod-lightz`
   },
   {
     title: 'คาปิบาราไม่ได้นอน',
