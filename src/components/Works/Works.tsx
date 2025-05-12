@@ -44,12 +44,12 @@ const Works = () => {
   >(items[0])
 
   return (
-    <Section title="Our Works">
+    <Section className="min-h-[80dvh] md:min-h-dvh" title="Our Works">
       <Title className="text-center" level={5}>
         ตัวอย่างผลงานของ LiKQ Music
       </Title>
 
-      <div className="p-10">
+      <div className="p-1 mt-4 md:p-5 lg:p-10">
         <WorkDetail item={focusItem} />
 
         <WorkCarousel setFocusItem={setFocusItem} items={items} />

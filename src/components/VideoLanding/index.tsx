@@ -23,7 +23,7 @@ const VideoLanding = () => {
       <video
         ref={videoRef}
         className={cn(
-          'absolute top-0 left-0 w-full h-full object-cover z-0 transition-opacity duration-700 object-[70%_center] lg:object-center', // 👈 this controls left/right positioning
+          'absolute top-0 left-0 w-full h-full object-cover z-0 transition-opacity duration-700 object-[68%_center] lg:object-center', // 👈 this controls left/right positioning
           isVideoLoaded ? 'opacity-100' : 'opacity-0'
         )}
         autoPlay

@@ -49,6 +49,7 @@ const WorkCarousel = ({ items, setFocusItem }: WorkCarouselProps) => {
           </CarouselItem>
         ))}
       </CarouselContent>
+
       <CarouselPrevious />
       <CarouselNext />
     </Carousel>
