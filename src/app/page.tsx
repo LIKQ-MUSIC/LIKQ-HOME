@@ -41,7 +41,7 @@ export default function Home() {
   ]
   return (
     <>
-      <Section className="relative w-full p-0 bg-[#030827] overflow-hidden">
+      <Section className="relative w-full p-0 md:p-0 bg-[#030827] overflow-hidden">
         {/* Background Video */}
         <VideoLanding />
 
@@ -50,7 +50,7 @@ export default function Home() {
       </Section>
 
       <Section title="Our Services">
-        <Title level={5}>
+        <Title className="text-center" level={5}>
           บริการผลิตดนตรีหลากหลายรูปแบบ พร้อมทีมงานมืออาชีพมากประสบการณ์
         </Title>
 

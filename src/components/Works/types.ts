@@ -6,4 +6,5 @@ export type IWorkItem = {
   category: Category
   title: string
   description?: string
+  url?: string
 }

@@ -34,18 +34,28 @@ const WorkDetail = ({ item }: { item: IWorkItem }) => {
             </div>
           ) : (
             <>
-              <img
-                ref={ref}
-                className={cn([
-                  'thumbnail transition-all opacity-0',
-                  loaded && 'opacity-1'
-                ])}
-                src={imageSrc}
-                alt={`thumbnail-${item.title}`}
-              />
-              {item.category === 'video' && (
-                <PlayCircle className="play-icon" size={32} />
-              )}
+              <a
+                href={
+                  item.category === 'video'
+                    ? `https://youtube.com/watch?v=${item.youtubeId}`
+                    : item.url || '#'
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  ref={ref}
+                  className={cn([
+                    'thumbnail transition-all opacity-0',
+                    loaded && 'opacity-1'
+                  ])}
+                  src={imageSrc}
+                  alt={`thumbnail-${item.title}`}
+                />
+                {item.category === 'video' && (
+                  <PlayCircle className="play-icon" size={32} />
+                )}
+              </a>
             </>
           )}
         </div>

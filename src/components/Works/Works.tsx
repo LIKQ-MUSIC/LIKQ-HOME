@@ -18,7 +18,8 @@ const items: IWorkItem[] = [
     description: `YOU: YORA & U FAN MEET คือกิจกรรมแฟนมีตครั้งแรกจาก Kim Yora
 พบกับโชว์ดนตรีสดสุดอบอุ่น พร้อมเซอร์ไพรส์ที่เตรียมมาเพื่อคุณ
 ร่วมสร้างความทรงจำและโมเมนต์พิเศษเฉพาะแฟน ๆ เท่านั้น
-มาร่วมเป็นส่วนหนึ่งของค่ำคืนที่เต็มไปด้วยเสียงเพลงและความรัก`
+มาร่วมเป็นส่วนหนึ่งของค่ำคืนที่เต็มไปด้วยเสียงเพลงและความรัก`,
+    url: 'https://you-fanmeet-uz8l.vercel.app/'
   },
   {
     title: 'คาปิบาราไม่ได้นอน',
@@ -44,7 +45,9 @@ const Works = () => {
 
   return (
     <Section title="Our Works">
-      <Title level={5}>ตัวอย่างผลงานของ LiKQ Music</Title>
+      <Title className="text-center" level={5}>
+        ตัวอย่างผลงานของ LiKQ Music
+      </Title>
 
       <div className="p-10">
         <WorkDetail item={focusItem} />
