@@ -31,7 +31,7 @@ const staffMembers: StaffMember[] = [
 
 const Team = () => {
   return (
-    <Section title="Our Team">
+    <Section className="min-h-[70dvh]" title="Our Team">
       <div className="grid grid-cols-1 md:grid-cols-3 mt-8 gap-4">
         {staffMembers.map((staffMember: StaffMember) => (
           <StaffCard key={staffMember.name} {...staffMember} />
