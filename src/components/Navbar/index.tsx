@@ -9,6 +9,7 @@ import Mailbox from '@/ui/Icons/Mailbox'
 import NavbarLinks from '../NavbarLinks/NavbarLinks'
 import Logo from '@/ui/Icons/Logo'
 import MobileNavLinks from '@/components/MobileNavLinks/MobileNavLinks'
+import SoundCloud from '@/ui/Icons/SoundCloud'
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -25,6 +26,26 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen)
   }
 
+  const outerNavLinks = (
+    <>
+      <Youtube className="youtube-icon" href="https://youtube.com/@likqmusic" />
+
+      <a
+        href="https://soundcloud.com/prod-lightz"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-12 h-12 p-2 transition-all rounded-full flex-all-center bg-white text-primary hover:bg-primary-hover hover:text-white"
+      >
+        <SoundCloud />
+      </a>
+
+      <Mailbox
+        href="mailto:Lovepeachstudio@gmail.com"
+        className="mailbox-icon"
+      />
+    </>
+  )
+
   return (
     <div className="w-full bg-white lg:bg-transparent z-20">
       <nav className="w-full max-w-7xl px-4 py-4 mx-auto lg:px-8 lg:py-6 z-50">
@@ -40,14 +61,7 @@ const Navbar = () => {
           </a>
           <NavbarLinks />
           <div className="lg:flex items-center gap-8 hidden">
-            <Youtube
-              className="youtube-icon"
-              href="https://youtube.com/@likqmusic"
-            />
-            <Mailbox
-              href="mailto:Lovepeachstudio@gmail.com"
-              className="mailbox-icon"
-            />
+            {outerNavLinks}
           </div>
 
           <button
@@ -63,9 +77,11 @@ const Navbar = () => {
 
           {/* Mobile Menu */}
           {isMenuOpen && isMobile && (
-            <div className="absolute top-16 right-0 bg-white w-64 z-50 shadow-lg md:hidden">
+            <div className="absolute rounded-xl top-16 right-0 bg-white w-64 z-50 shadow-lg md:hidden">
               <nav className="flex flex-col py-4">
                 <MobileNavLinks onLinkClick={() => setIsMenuOpen(false)} />
+
+                <div className="flex-all-center gap-8">{outerNavLinks}</div>
               </nav>
             </div>
           )}
