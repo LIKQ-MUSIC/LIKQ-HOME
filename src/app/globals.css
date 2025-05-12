@@ -91,3 +91,7 @@ body {
 .mailbox-icon:hover .mailbox-bg {
   fill: #153051;
 }
+
+.flex-all-center {
+  @apply flex justify-center items-center;
+}
