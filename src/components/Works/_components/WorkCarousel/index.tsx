@@ -12,6 +12,7 @@ import {
 } from '@/ui/Carousel'
 import WorkItem from '@/components/Works/_components/WorkItem'
 import React from 'react'
+import Autoplay from 'embla-carousel-autoplay'
 
 const WorkCarousel = ({ items, setFocusItem }: WorkCarouselProps) => {
   const videoIds = items
@@ -31,7 +32,17 @@ const WorkCarousel = ({ items, setFocusItem }: WorkCarouselProps) => {
   return isLoading ? (
     'Loading...'
   ) : (
-    <Carousel className="w-full mt-4">
+    <Carousel
+      opts={{
+        slidesToScroll: 'auto'
+      }}
+      plugins={[
+        Autoplay({
+          delay: 2000
+        })
+      ]}
+      className="w-full mt-4"
+    >
       <CarouselContent>
         {resultsItem.map(work => (
           <CarouselItem

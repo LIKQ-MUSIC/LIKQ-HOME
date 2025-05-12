@@ -10,6 +10,7 @@ import { useMemo, useState } from 'react'
 import { useImageLoaded } from '@/hooks/use-image-loaded'
 import { cn } from '@/utils'
 import EventDetail from '@/components/Works/_components/WorkDetail/_components/EventDetail'
+import LinkDetail from '@/components/Works/_components/WorkDetail/_components/LinkDetail'
 
 const WorkDetail = ({ item }: { item: IWorkItem }) => {
   const { data, isLoading } = useVideoDetails(
@@ -69,6 +70,7 @@ const WorkDetail = ({ item }: { item: IWorkItem }) => {
         </Title>
 
         {item.category === 'event' && <EventDetail {...item} />}
+        {item.category === 'link' && <LinkDetail {...item} />}
         {data && item.category === 'video' && <VideoDetail {...data} />}
       </div>
     </div>
