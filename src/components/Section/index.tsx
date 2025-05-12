@@ -8,11 +8,15 @@ const Section = ({ title, children, className }: ISectionProps) => {
   return (
     <section
       className={cn([
-        'min-h-[100dvh] flex flex-col items-center justify-start p-20',
+        'min-h-[100dvh] flex flex-col items-center justify-start p-8 md:p-20',
         className
       ])}
     >
-      {title && <Title level={2}>{title}</Title>}
+      {title && (
+        <Title className="text-center" level={2}>
+          {title}
+        </Title>
+      )}
 
       {children}
     </section>

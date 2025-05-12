@@ -19,7 +19,7 @@
 }
 
 .video-meta {
-  @apply flex flex-col justify-center gap-4;
+  @apply flex flex-col justify-center gap-2 md:gap-4;
 }
 
 .video-stats {

@@ -6,7 +6,9 @@ import { IVideoDetails } from '@/services'
 const VideoDetail = ({ description, statistics }: IVideoDetails) => {
   return (
     <>
-      <Paragraph className="line-clamp-4">{description}</Paragraph>
+      <Paragraph className="line-clamp-3 md:line-clamp-4">
+        {description}
+      </Paragraph>
       <div className="video-stats">
         <Eye size={16} />
         <Paragraph>{statistics.view} views</Paragraph>
