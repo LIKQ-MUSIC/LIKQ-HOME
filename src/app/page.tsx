@@ -6,6 +6,7 @@ import Card from '@/components/Card'
 import VideoLanding from '@/components/VideoLanding'
 import Works from '@/components/Works'
 import Team from '@/components/Team'
+import Contact from '@/components/Contact'
 
 export default function Home() {
   const services = [
@@ -65,6 +66,10 @@ export default function Home() {
       <Works />
 
       <Team />
+
+      <Contact />
+
+      <div className="bg-primary w-full h-[150px]" />
     </>
   )
 }
