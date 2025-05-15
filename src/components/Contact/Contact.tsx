@@ -20,7 +20,7 @@ const contactList: ContactItem[] = [
   },
   {
     icon: <Mail className="w-5 h-5 text-white" />,
-    text: 'Lovepeachstudio@gmail.com'
+    text: 'contact@likqmusic.com'
   }
 ]
 
