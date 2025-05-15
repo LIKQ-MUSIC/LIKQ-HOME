@@ -39,10 +39,7 @@ const Navbar = () => {
         <SoundCloud />
       </a>
 
-      <Mailbox
-        href="mailto:Lovepeachstudio@gmail.com"
-        className="mailbox-icon"
-      />
+      <Mailbox href="mailto:contact@likqmusic.com" className="mailbox-icon" />
     </>
   )
 

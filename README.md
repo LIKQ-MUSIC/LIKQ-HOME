@@ -110,7 +110,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 **LIKQ MUSIC**  
 Phone: +66924090388
-Email: lovepeachstudio@gmail.com
+Email: contact@likqmusic.com
 
 <p align="center">
   Made with 💙 by the LIKQ MUSIC Team
