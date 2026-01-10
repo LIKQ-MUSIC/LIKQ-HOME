@@ -57,7 +57,7 @@ const Works = () => {
   >(items[0])
 
   return (
-    <Section id="work" className="min-h-[80dvh] md:min-h-dvh" title="Our Works">
+    <Section id="work" className="" title="Our Works">
       <Title className="text-center" level={5}>
         ตัวอย่างผลงานของ LiKQ Music
       </Title>
