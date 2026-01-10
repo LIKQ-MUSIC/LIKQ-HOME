@@ -6,7 +6,7 @@ import Card from '@/components/Card'
 import VideoLanding from '@/components/VideoLanding'
 import Works from '@/components/Works'
 import Team from '@/components/Team'
-import Contact from '@/components/Contact'
+import Footer from '@/components/Footer'
 import Fansong from '@/ui/Icons/Fansong'
 import Advertised from '@/ui/Icons/Advertised'
 import MixMaster from '@/ui/Icons/MixMaster'
@@ -72,9 +72,7 @@ export default function Home() {
 
       <Team />
 
-      <Contact />
-
-      <div className="bg-primary w-full h-[150px]" />
+      <Footer />
     </>
   )
 }
