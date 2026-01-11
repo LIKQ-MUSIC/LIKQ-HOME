@@ -1,7 +1,8 @@
 import React from 'react'
-import { Facebook, Instagram, Youtube } from 'lucide-react'
-import Line from '@/ui/Icons/Line'
 import { Title } from '@/ui/Typography'
+import Youtube from '@/ui/Icons/YouTube'
+import Mailbox from '@/ui/Icons/Mailbox'
+import SoundCloud from '@/ui/Icons/SoundCloud'
 
 const Footer = () => {
     return (
@@ -14,24 +15,24 @@ const Footer = () => {
                         <div className="contact-list space-y-4">
                             <Title level={3} className="text-white mb-6">ติดต่อเรา</Title>
                             <p className="text-white/90 text-lg">โทรศัพท์: 092-409-0388 (คุณนพ Producer)</p>
-                            <p className="text-white/90 text-lg">อีเมล: Lovepeachstudio@gmail.com</p>
+                            <p className="text-white/90 text-lg">
+                                อีเมล: <a href="mailto:contact@likqmusic.com" className="hover:underline">contact@likqmusic.com</a>
+                            </p>
                         </div>
 
                         <div className="social-links">
                             <Title level={4} className="text-white mb-4 text-xl">ติดตามเราได้ที่</Title>
-                            <div className="flex space-x-4">
-                                <a href="#" className="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors" aria-label="Facebook">
-                                    <Facebook className="w-6 h-6" />
+                            <div className="flex space-x-4 items-center">
+                                <Youtube className="youtube-icon" href="https://youtube.com/@likqmusic" />
+                                <a
+                                    href="https://soundcloud.com/prod-lightz"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-12 h-12 p-2 transition-all rounded-full flex items-center justify-center bg-white text-primary hover:bg-primary-hover hover:text-white"
+                                >
+                                    <SoundCloud />
                                 </a>
-                                <a href="#" className="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors" aria-label="Instagram">
-                                    <Instagram className="w-6 h-6" />
-                                </a>
-                                <a href="#" className="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors" aria-label="Line">
-                                    <Line className="w-6 h-6 text-white" />
-                                </a>
-                                <a href="#" className="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors" aria-label="YouTube">
-                                    <Youtube className="w-6 h-6" />
-                                </a>
+                                <Mailbox href="mailto:contact@likqmusic.com" className="mailbox-icon" />
                             </div>
                         </div>
                     </div>
