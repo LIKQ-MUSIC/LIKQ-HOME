@@ -48,7 +48,7 @@ export default function Home() {
   ]
   return (
     <>
-      <Section className="relative w-full p-0 md:p-0 bg-[#030827] overflow-hidden">
+      <Section className="relative w-full p-0 md:p-0 bg-[#030827] overflow-hidden h-[100dvh]">
         {/* Background Video */}
         <VideoLanding />
 
