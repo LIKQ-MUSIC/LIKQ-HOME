@@ -136,7 +136,7 @@ const Works = () => {
         ))}
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={handleCloseModal} className="bg-primary">
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         {selectedItem && <WorkDetail item={selectedItem} />}
       </Modal>
     </Section>

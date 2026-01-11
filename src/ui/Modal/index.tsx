@@ -43,20 +43,20 @@ const Modal = ({ isOpen, onClose, children, title, className }: ModalProps) => {
     >
       <div
         className={cn(
-          'bg-white border border-transparent rounded-2xl shadow-xl w-full max-w-4xl relative overflow-hidden animate-modal',
+          'bg-white border border-transparent rounded-2xl shadow-xl w-full max-w-6xl relative overflow-hidden animate-modal',
           className
         )}
       >
-        <div className="flex justify-between items-center p-4 border-b border-gray-100 absolute right-0 top-0 z-10">
+        <div className="absolute right-0 top-0 z-10 p-4">
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500 hover:text-gray-700"
+            className="p-1 rounded-full bg-white/50 hover:bg-white transition-colors text-gray-500 hover:text-gray-700"
           >
-            <X size={24} />
+            <X size={20} />
           </button>
         </div>
         
-        <div className="p-6 md:p-8 pt-12 md:pt-14 max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <div className="max-h-[90vh] overflow-y-auto custom-scrollbar">
             {children}
         </div>
       </div>
