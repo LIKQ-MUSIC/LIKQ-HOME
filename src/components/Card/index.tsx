@@ -37,11 +37,11 @@ const Card = ({ title, icon, description }: CardProps) => {
       {/* Content */}
       <div className="mt-8 px-6 py-11 text-center">
         <RenderedDefaultString element={title}>
-          <Title level={6}>{title}</Title>
+          <Title level={6} className="text-primary">{title}</Title>
         </RenderedDefaultString>
 
         <RenderedDefaultString element={description}>
-          <Paragraph className="mt-2">{description}</Paragraph>
+          <Paragraph className="mt-2 text-gray-700">{description}</Paragraph>
         </RenderedDefaultString>
       </div>
     </div>

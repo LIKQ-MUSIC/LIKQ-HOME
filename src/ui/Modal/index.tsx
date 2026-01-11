@@ -43,14 +43,14 @@ const Modal = ({ isOpen, onClose, children, title, className }: ModalProps) => {
     >
       <div
         className={cn(
-          'bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-4xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-200',
+          'bg-white border border-transparent rounded-2xl shadow-xl w-full max-w-4xl relative overflow-hidden animate-modal',
           className
         )}
       >
-        <div className="flex justify-between items-center p-4 border-b border-gray-100 dark:border-gray-800 absolute right-0 top-0 z-10">
+        <div className="flex justify-between items-center p-4 border-b border-gray-100 absolute right-0 top-0 z-10">
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 hover:text-gray-700"
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500 hover:text-gray-700"
           >
             <X size={24} />
           </button>

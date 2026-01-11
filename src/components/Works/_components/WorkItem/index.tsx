@@ -15,7 +15,7 @@ const WorkItem = ({ imageUrl, name, category, onClick, className }: WorkItemProp
     <div
       onClick={onClick}
       className={cn(
-        "group relative w-full overflow-hidden rounded-xl cursor-pointer bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800 dark:bg-slate-800",
+        "group relative w-full overflow-hidden rounded-xl cursor-pointer bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100",
         className
       )}
     >
@@ -32,7 +32,7 @@ const WorkItem = ({ imageUrl, name, category, onClick, className }: WorkItemProp
       </div>
 
       <div className="p-4">
-        <h3 className="font-bold text-lg text-primary dark:text-white line-clamp-2 group-hover:text-secondary transition-colors">
+        <h3 className="font-bold text-lg text-primary line-clamp-2 group-hover:text-secondary transition-colors">
             {name}
         </h3>
       </div>

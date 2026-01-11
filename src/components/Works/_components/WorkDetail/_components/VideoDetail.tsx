@@ -8,7 +8,7 @@ import Button from '@/ui/Button'
 const VideoDetail = ({ description, statistics, videoId }: IVideoDetails) => {
   return (
     <>
-      <Paragraph className="line-clamp-4">{description}</Paragraph>
+      <Paragraph className="line-clamp-4 text-primary-light">{description}</Paragraph>
       <div className="video-stats">
         <Eye size={16} />
         <Paragraph>{statistics.view} views</Paragraph>
