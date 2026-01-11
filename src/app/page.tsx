@@ -12,6 +12,7 @@ import Advertised from '@/ui/Icons/Advertised'
 import MixMaster from '@/ui/Icons/MixMaster'
 import WritingComposing from '@/ui/Icons/WritingComposing'
 import Arrange from '@/ui/Icons/Arrange'
+import AboutUs from '@/components/AboutUs'
 
 export default function Home() {
   const services = [
@@ -56,6 +57,8 @@ export default function Home() {
         {/* Foreground Content */}
         <Navbar />
       </Section>
+
+      <AboutUs />
 
       <Section id="services" title="Our Services">
         <Title className="text-center" level={5}>
