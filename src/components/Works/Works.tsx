@@ -123,7 +123,7 @@ const Works = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-1 mt-8 md:p-5 lg:p-10 min-h-[400px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-1 mt-8 md:p-5 lg:p-10 min-h-[400px] items-start">
         {filteredItems.map((item, index) => (
           <WorkItem
             key={`${item.title}-${index}`}
@@ -136,7 +136,7 @@ const Works = () => {
         ))}
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal} className="bg-primary">
         {selectedItem && <WorkDetail item={selectedItem} />}
       </Modal>
     </Section>
