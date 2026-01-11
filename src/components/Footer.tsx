@@ -1,4 +1,5 @@
 import React from 'react'
+import dayjs from 'dayjs'
 import { Title } from '@/ui/Typography'
 import Youtube from '@/ui/Icons/YouTube'
 import Mailbox from '@/ui/Icons/Mailbox'
@@ -81,7 +82,7 @@ const Footer = () => {
 
                 <div className="mt-16 pt-8 border-t border-white/10 text-center">
                     <p id="copyright" className="text-white/60 text-sm">
-                        &copy; 2024 LiKQ Music Production. สงวนลิขสิทธิ์.
+                        &copy; {dayjs().format("YYYY")} LiKQ Music Production. สงวนลิขสิทธิ์.
                     </p>
                 </div>
             </div>

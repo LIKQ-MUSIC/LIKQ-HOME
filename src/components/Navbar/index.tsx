@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useMobile } from '@/hooks/use-mobile'
 import Hamburger from '@/ui/Icons/Hamburger'
 import Close from '@/ui/Icons/Close'
 import Youtube from '@/ui/Icons/YouTube'
@@ -13,18 +12,52 @@ import SoundCloud from '@/ui/Icons/SoundCloud'
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const isMobile = useMobile()
+  const [isMobileNav, setIsMobileNav] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
 
-  // Close menu when switching to desktop
+  // Track screen size for mobile nav visibility (matching lg breakpoint)
   useEffect(() => {
-    if (!isMobile && isMenuOpen) {
-      setIsMenuOpen(false)
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 1024
+      setIsMobileNav(isMobile)
+      if (!isMobile) {
+        setIsMenuOpen(false)
+      }
     }
-  }, [isMobile, isMenuOpen])
+
+    // Initial check
+    handleResize()
+    
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Handle scroll for sticky navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      // Find the About Us or Services section to determine when to switch
+      // We want to switch AFTER About Us. About Us is followed by Services.
+      // So let's target the Services section.
+      const servicesSection = document.getElementById('services')
+      if (servicesSection && window.scrollY > servicesSection.offsetTop - 100) {
+        setIsScrolled(true)
+      } else {
+        // Fallback or explicit reset
+        setIsScrolled(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    // Initial check
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
+
+  const navIconColor = isScrolled ? '#153051' : 'white'
 
   const outerNavLinks = (
     <>
@@ -44,19 +77,23 @@ const Navbar = () => {
   )
 
   return (
-    <div className="w-full bg-white lg:bg-transparent z-20">
-      <nav className="w-full max-w-7xl px-4 py-4 mx-auto lg:px-8 lg:py-6 z-50">
+    <div
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
+      }`}
+    >
+      <nav className="w-full max-w-7xl px-4 mx-auto lg:px-8 z-50">
         <div className="container flex flex-wrap items-center justify-between mx-auto px-[18px]">
           {/* <LogoButton /> */}
           <a href="#" className="mr-4 hidden lg:block cursor-pointer py-1.5">
-            <img src="/logo-default.svg"></img>
+            <Logo className="h-90 w-28" fill={navIconColor} />
           </a>
 
           <a href="#" className="mr-4 lg:hidden cursor-pointer py-1.5">
-            {/* <img src="/logo-hover.svg"></img> */}
-            <Logo className="h-90 w-28" fill="#153051" />
+            {/* Mobile Logo */}
+            <Logo className="h-90 w-28" fill={navIconColor} />
           </a>
-          <NavbarLinks />
+          <NavbarLinks isScrolled={isScrolled} />
           <div className="lg:flex items-center gap-8 hidden">
             {outerNavLinks}
           </div>
@@ -68,13 +105,13 @@ const Navbar = () => {
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           >
             <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-              {isMenuOpen ? <Close /> : <Hamburger />}
+              {isMenuOpen ? <Close fill={navIconColor} /> : <Hamburger fill={navIconColor} />}
             </span>
           </button>
 
           {/* Mobile Menu */}
-          {isMenuOpen && isMobile && (
-            <div className="absolute rounded-xl top-16 right-0 bg-white w-64 z-50 shadow-lg md:hidden">
+          {isMenuOpen && isMobileNav && (
+            <div className="absolute rounded-xl top-16 right-0 bg-white w-64 z-50 shadow-lg lg:hidden">
               <nav className="flex flex-col py-4">
                 <MobileNavLinks onLinkClick={() => setIsMenuOpen(false)} />
 

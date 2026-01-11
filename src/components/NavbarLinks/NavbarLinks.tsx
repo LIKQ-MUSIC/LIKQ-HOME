@@ -1,7 +1,7 @@
 import React from 'react'
 import { Title } from '@/ui/Typography'
 
-const NavbarLinks = () => {
+const NavbarLinks = ({ isScrolled }: { isScrolled?: boolean }) => {
   const links = [
     { href: '#services', label: 'Our Services' },
     { href: '#work', label: 'Our Work' },
@@ -30,7 +30,12 @@ const NavbarLinks = () => {
               onClick={e => handleClick(e, href)}
               className="flex items-center"
             >
-              <Title level={6} className="text-white hover:text-primary">
+              <Title
+                level={6}
+                className={`hover:text-primary transition-colors duration-300 ${
+                  isScrolled ? 'text-primary' : 'text-white'
+                }`}
+              >
                 {label}
               </Title>
             </a>
