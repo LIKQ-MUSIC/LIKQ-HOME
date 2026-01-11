@@ -32,7 +32,7 @@ const WorkItem = ({ imageUrl, name, category, onClick, className }: WorkItemProp
       </div>
 
       <div className="p-4">
-        <h3 className="font-bold text-lg text-primary line-clamp-2 group-hover:text-secondary transition-colors">
+        <h3 className="font-bold text-lg text-primary line-clamp-2 min-h-[3.5rem] group-hover:text-secondary transition-colors">
             {name}
         </h3>
       </div>

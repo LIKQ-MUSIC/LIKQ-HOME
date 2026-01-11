@@ -16,7 +16,7 @@ const EventDetail = ({
 }: EventWorkItem) => {
   return (
     <>
-      <Paragraph className="line-clamp-4 text-primary-light">{description}</Paragraph>
+      <Paragraph className="line-clamp-4">{description}</Paragraph>
 
       <div className="w-full flex items-center gap-2">
         <Link
