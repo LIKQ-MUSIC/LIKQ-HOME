@@ -16,7 +16,7 @@ import Autoplay from 'embla-carousel-autoplay'
 
 const images = [
   { src: '/images/about/group-photo.jpg', alt: 'YOU: YORA & YOU' },
-  { src: '/images/about/event-atmosphere.jpg', alt: 'YOU: YORA & YOU' },
+  { src: '/images/about/event-atmosgphere.jpg', alt: 'YOU: YORA & YOU' },
   { src: '/images/about/team-studio.jpg', alt: 'Studio Record "Still With You"' },
 ]
 
