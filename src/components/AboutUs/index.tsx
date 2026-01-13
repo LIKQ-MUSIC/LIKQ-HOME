@@ -16,13 +16,19 @@ import Autoplay from 'embla-carousel-autoplay'
 
 const images = [
   { src: '/images/about/group-photo.jpg', alt: 'YOU: YORA & YOU' },
-  { src: '/images/about/event-atmosgphere.jpg', alt: 'YOU: YORA & YOU' },
-  { src: '/images/about/team-studio.jpg', alt: 'Studio Record "Still With You"' },
+  { src: '/images/about/event-atmosphere.jpg', alt: 'YOU: YORA & YOU' },
+  {
+    src: '/images/about/team-studio.jpg',
+    alt: 'Studio Record "Still With You"'
+  }
 ]
 
 const AboutUs = () => {
   return (
-    <Section id="about-us" className="bg-[#030827] md:px-0 pr-4 text-white p-0 !py-0 overflow-hidden min-h-screen flex items-center">
+    <Section
+      id="about-us"
+      className="bg-[#030827] md:px-0 pr-4 text-white p-0 !py-0 overflow-hidden min-h-screen flex items-center"
+    >
       <div className="w-full h-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 items-center w-full h-full">
           {/* Carousel - Left Side (Full Width) */}
@@ -34,8 +40,8 @@ const AboutUs = () => {
               }}
               plugins={[
                 Autoplay({
-                  delay: 4000,
-                }),
+                  delay: 4000
+                })
               ]}
               className="w-full h-full relative group"
             >
@@ -68,19 +74,23 @@ const AboutUs = () => {
 
           {/* Text Content - Right Side */}
           <div className="space-y-8 order-1 lg:order-2 py-16 px-8 md:px-16 lg:px-24 text-center lg:text-left text-lg leading-relaxed text-gray-400 bg-[#030827] h-full flex flex-col justify-center col-span-5">
-             <div className="mb-4">
-                <Title level={2} className="text-white">About Us</Title>
-             </div>
+            <div className="mb-4">
+              <Title level={2} className="text-white">
+                About Us
+              </Title>
+            </div>
             <p className="text-xl">
               <strong className="text-white text-2xl">LiKQ Music</strong>{' '}
               คือทีมผลิตดนตรีครบวงจรที่มุ่งเน้นคุณภาพและความคิดสร้างสรรค์
-              เราเชี่ยวชาญในงาน <strong className="text-white">Music Production</strong> ทุกขั้นตอน
-              ตั้งแต่การเขียนเนื้อร้อง แต่งทำนอง เรียบเรียงดนตรี
+              เราเชี่ยวชาญในงาน{' '}
+              <strong className="text-white">Music Production</strong>{' '}
+              ทุกขั้นตอน ตั้งแต่การเขียนเนื้อร้อง แต่งทำนอง เรียบเรียงดนตรี
               ไปจนถึงการมิกซ์และมาสเตอร์ริ่ง
             </p>
             <p>
               ไม่ว่าจะเป็นเพลง Original สำหรับศิลปิน, เพลงประกอบโฆษณา, แฟนซอง
-              หรือโปรเจกต์พิเศษต่าง ๆ เราพร้อมดูแลและให้คำปรึกษาด้วยทีมงานมืออาชีพ
+              หรือโปรเจกต์พิเศษต่าง ๆ
+              เราพร้อมดูแลและให้คำปรึกษาด้วยทีมงานมืออาชีพ
               เพื่อให้ได้ผลงานที่ตรงตามวิสัยทัศน์ของคุณมากที่สุด
             </p>
 
