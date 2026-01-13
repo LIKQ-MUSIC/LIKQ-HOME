@@ -26,6 +26,18 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
+      - name: Setup Environment
+        env:
+          VARS_CONTEXT: ${{ toJSON(vars) }}
+        run: |
+          if [ "${{ github.ref_name }}" == "develop" ]; then
+            SUFFIX="_DEV"
+          else
+            SUFFIX="_PROD"
+          fi
+
+          echo "$VARS_CONTEXT" | jq -r --arg suffix "$SUFFIX" 'to_entries[] | select(.key | endswith($suffix)) | "\(.key | sub($suffix + "$"; ""))=\(.value)"' >> .env
+
       - name: Build (Next.js on Pages)
         run: yarn pages:build
         env:
