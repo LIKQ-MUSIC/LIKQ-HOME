@@ -13,6 +13,8 @@ jobs:
       contents: read
       deployments: write
     name: Deploy
+    environment:
+      name: ${{ github.ref_name == 'develop' && 'development' || 'production' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,22 +28,15 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
-      - name: Setup Environment
-        env:
-          VARS_CONTEXT: ${{ toJSON(vars) }}
-        run: |
-          if [ "${{ github.ref_name }}" == "develop" ]; then
-            SUFFIX="_DEV"
-          else
-            SUFFIX="_PROD"
-          fi
-
-          echo "$VARS_CONTEXT" | jq -r --arg suffix "$SUFFIX" 'to_entries[] | select(.key | endswith($suffix)) | "\(.key | sub($suffix + "$"; ""))=\(.value)"' >> .env
-
       - name: Build (Next.js on Pages)
         run: yarn pages:build
         env:
           NEXT_PUBLIC_YOUTUBE_API_KEY: ${{ secrets.NEXT_PUBLIC_YOUTUBE_API_KEY }}
+          NEXT_PUBLIC_GATEWAY_API_URL: ${{ secrets.NEXT_PUBLIC_GATEWAY_API_URL }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_KEY }}
+          PRIVATE_SUPABASE_KEY: ${{ secrets.PRIVATE_SUPABASE_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
