@@ -57,7 +57,7 @@ export default async function BackofficeLayout({
 
         <nav className="flex-1 space-y-2">
           <Link
-            href="/backoffice/dashboard"
+            href="/dashboard"
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-zinc-400 hover:bg-zinc-900 hover:text-white transition-colors"
           >
             <LayoutDashboard size={20} />
@@ -69,7 +69,7 @@ export default async function BackofficeLayout({
           </div>
 
           <Link
-            href="/backoffice/products"
+            href="/products"
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-zinc-400 hover:bg-zinc-900 hover:text-white transition-colors"
           >
             <svg
@@ -93,7 +93,7 @@ export default async function BackofficeLayout({
           </Link>
 
           <Link
-            href="/backoffice/orders"
+            href="/orders"
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-zinc-400 hover:bg-zinc-900 hover:text-white transition-colors"
           >
             <svg

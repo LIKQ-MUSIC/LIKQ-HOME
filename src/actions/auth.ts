@@ -66,7 +66,7 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/backoffice/dashboard')
+  redirect('/dashboard')
 }
 
 export async function logout() {

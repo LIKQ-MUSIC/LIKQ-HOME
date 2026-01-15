@@ -37,8 +37,8 @@ async function getWorks(): Promise<IWorkItem[]> {
       image: item.image_url || '', // Fallback or if API still returns it
       youtubeId: item.youtube_id,
       url: item.external_url,
-      start: item.start_date ? dayjs(item.start_date) : undefined,
-      end: item.end_date ? dayjs(item.end_date) : undefined,
+      start: item.start_date || undefined,
+      end: item.end_date || undefined,
       location: item.location
     }))
   } catch (error) {

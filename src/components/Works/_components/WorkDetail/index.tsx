@@ -19,11 +19,15 @@ const WorkDetail = ({ item }: { item: IWorkItem }) => {
 
   const imageSrc = useMemo(
     () =>
-      item.category === 'video' && !isLoading ? data?.thumbnailUrl : item.image,
+      item.category === 'video' && !isLoading
+        ? data?.thumbnailUrl
+        : item.image || undefined,
     [item, data]
   )
 
   const { ref, loaded } = useImageLoaded(imageSrc || '')
+
+  if (!imageSrc) return null
 
   return (
     <div className="video-card">
@@ -50,7 +54,7 @@ const WorkDetail = ({ item }: { item: IWorkItem }) => {
                     'thumbnail transition-all opacity-0',
                     loaded && 'opacity-1'
                   ])}
-                  src={imageSrc}
+                  src={imageSrc || undefined}
                   alt={`thumbnail-${item.title}`}
                 />
                 {item.category === 'video' && (
