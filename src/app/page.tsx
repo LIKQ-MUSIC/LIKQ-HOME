@@ -14,7 +14,42 @@ import WritingComposing from '@/ui/Icons/WritingComposing'
 import Arrange from '@/ui/Icons/Arrange'
 import AboutUs from '@/components/AboutUs'
 
-export default function Home() {
+import { apiClient } from '@/lib/api-client'
+import { IWorkItem } from '@/components/Works/types'
+import dayjs from '@/utils/dayjs'
+
+export const revalidate = 3600 // Verify static rebuild every hour if revalidated
+
+async function getWorks(): Promise<IWorkItem[]> {
+  try {
+    const response = await apiClient.get('/works')
+
+    // Transform API response to IWorkItem matches
+    return response.data.data.map((item: any) => ({
+      title: item.title,
+      category: item.category,
+      description: item.description,
+      // Map media_ids or image_url from API to 'image' field if available.
+      // API might return standard fields, adjusting mapping as needed.
+      // For now, assume API returns close match or we map basically.
+      // If we don't have full media resolution in GET /works yet, we might miss images unless /works joins them.
+      // Let's assume basic mapping for now.
+      image: item.image_url || '', // Fallback or if API still returns it
+      youtubeId: item.youtube_id,
+      url: item.external_url,
+      start: item.start_date ? dayjs(item.start_date) : undefined,
+      end: item.end_date ? dayjs(item.end_date) : undefined,
+      location: item.location
+    }))
+  } catch (error) {
+    console.error('Failed to fetch works for SSG:', error)
+    return []
+  }
+}
+
+export default async function Home() {
+  const worksData = await getWorks()
+
   const services = [
     {
       title: 'Writing and Composing',
@@ -50,7 +85,9 @@ export default function Home() {
   return (
     <>
       <Section className="relative w-full p-0 md:p-0 bg-[#030827] overflow-hidden h-[100dvh]">
-        <h1 className="sr-only">LiKQ MUSIC - Production & Entertainment Services</h1>
+        <h1 className="sr-only">
+          LiKQ MUSIC - Production & Entertainment Services
+        </h1>
         {/* Background Video */}
         <VideoLanding />
 
@@ -72,7 +109,7 @@ export default function Home() {
         </div>
       </Section>
 
-      <Works />
+      <Works items={worksData} />
 
       <Team />
 

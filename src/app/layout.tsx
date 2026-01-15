@@ -4,8 +4,6 @@ import './globals.css'
 import { inter, notoSans } from '@/utils/font'
 import ReactQueryProvider from '@/provider/ReactQueryProvider'
 
-export const runtime = 'edge'
-
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin']
