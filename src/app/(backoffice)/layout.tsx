@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { logout } from '@/actions/auth'
 import { LogOut, LayoutDashboard, Settings, User } from 'lucide-react'
 
-// ... imports
+export const runtime = 'edge'
 
 export default async function BackofficeLayout({
   children
