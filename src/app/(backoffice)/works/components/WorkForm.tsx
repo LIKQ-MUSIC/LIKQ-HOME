@@ -198,39 +198,56 @@ const WorkForm = ({ initialData, isEdit = false }: WorkFormProps) => {
                 <label className="block text-sm font-medium text-gray-400">
                   Cover Image
                 </label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={e => setSelectedFile(e.target.files?.[0] || null)}
-                    className="hidden"
-                    id="image-upload"
-                  />
-                  <label
-                    htmlFor="image-upload"
-                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-zinc-700 rounded-lg cursor-pointer hover:border-indigo-500 hover:bg-zinc-800/50 transition-all"
-                  >
-                    {selectedFile ? (
-                      <div className="text-center">
-                        <p className="text-white font-medium">
-                          {selectedFile.name}
-                        </p>
-                        <p className="text-xs text-zinc-500 mt-1">
-                          Click to change
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center">
-                        <Upload className="w-6 h-6 text-zinc-500 mb-2" />
-                        <span className="text-sm text-zinc-400">
-                          Upload cover image
-                        </span>
-                        <span className="text-xs text-zinc-600 mt-1">
-                          Supports JPG, PNG, WEBP
-                        </span>
-                      </div>
-                    )}
-                  </label>
+                <div className="space-y-4">
+                  {!selectedFile && initialData?.image_url && (
+                    <div className="relative w-full aspect-video md:w-64 rounded-lg overflow-hidden bg-zinc-900 border border-zinc-700">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={initialData.image_url}
+                        alt="Current Cover"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={e =>
+                        setSelectedFile(e.target.files?.[0] || null)
+                      }
+                      className="hidden"
+                      id="image-upload"
+                    />
+                    <label
+                      htmlFor="image-upload"
+                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-zinc-700 rounded-lg cursor-pointer hover:border-indigo-500 hover:bg-zinc-800/50 transition-all"
+                    >
+                      {selectedFile ? (
+                        <div className="text-center">
+                          <p className="text-white font-medium">
+                            {selectedFile.name}
+                          </p>
+                          <p className="text-xs text-zinc-500 mt-1">
+                            Click to change selection
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center">
+                          <Upload className="w-6 h-6 text-zinc-500 mb-2" />
+                          <span className="text-sm text-zinc-400">
+                            {initialData?.image_url
+                              ? 'Change cover image'
+                              : 'Upload cover image'}
+                          </span>
+                          <span className="text-xs text-zinc-600 mt-1">
+                            Supports JPG, PNG, WEBP
+                          </span>
+                        </div>
+                      )}
+                    </label>
+                  </div>
                 </div>
               </div>
             </>
