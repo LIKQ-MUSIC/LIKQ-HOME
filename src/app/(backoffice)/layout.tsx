@@ -142,7 +142,7 @@ export default async function BackofficeLayout({
             Settings
           </div>
           <Link
-            href="#"
+            href="/dashboard/users"
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-zinc-400 hover:bg-zinc-900 hover:text-white transition-colors"
           >
             <User size={20} />
