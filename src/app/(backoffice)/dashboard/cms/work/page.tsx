@@ -43,7 +43,7 @@ const WorksPage = () => {
         <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
           Manage Works
         </h1>
-        <Link href="/works/create">
+        <Link href="/dashboard/cms/work/create">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             Add Work
@@ -84,7 +84,7 @@ const WorksPage = () => {
                   </td>
                   <td className="p-4 flex justify-end gap-2 text-gray-400">
                     <Link
-                      href={`/works/${work.id}`}
+                      href={`/dashboard/cms/work/${work.id}`}
                       className="p-2 hover:bg-white/10 rounded-lg transition-colors hover:text-white"
                       title="Edit"
                     >

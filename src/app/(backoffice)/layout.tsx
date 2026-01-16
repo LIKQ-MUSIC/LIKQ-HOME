@@ -3,7 +3,14 @@ import { redirect } from 'next/navigation'
 import { getUserRole } from '@/services/auth-service'
 import Link from 'next/link'
 import { logout } from '@/actions/auth'
-import { LogOut, LayoutDashboard, Settings, User } from 'lucide-react'
+import {
+  LogOut,
+  LayoutDashboard,
+  Settings,
+  User,
+  Briefcase,
+  Image
+} from 'lucide-react'
 
 export const runtime = 'edge'
 
@@ -64,10 +71,6 @@ export default async function BackofficeLayout({
             <span>Dashboard</span>
           </Link>
 
-          <div className="mt-8 text-xs font-semibold text-zinc-500 uppercase tracking-wider pl-3">
-            Content Management
-          </div>
-
           <Link
             href="/products"
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-zinc-400 hover:bg-zinc-900 hover:text-white transition-colors"
@@ -113,6 +116,26 @@ export default async function BackofficeLayout({
               <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
             </svg>
             <span>Orders</span>
+          </Link>
+
+          <div className="mt-8 text-xs font-semibold text-zinc-500 uppercase tracking-wider pl-3">
+            Content Management
+          </div>
+
+          <Link
+            href="/dashboard/cms/work"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-zinc-400 hover:bg-zinc-900 hover:text-white transition-colors"
+          >
+            <Briefcase size={20} />
+            <span>Works</span>
+          </Link>
+
+          <Link
+            href="/dashboard/cms/aboutus"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-zinc-400 hover:bg-zinc-900 hover:text-white transition-colors"
+          >
+            <Image size={20} />
+            <span>About Us</span>
           </Link>
 
           <div className="mt-8 text-xs font-semibold text-zinc-500 uppercase tracking-wider pl-3">

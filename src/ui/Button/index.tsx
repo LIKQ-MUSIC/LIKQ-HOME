@@ -27,7 +27,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled}
         className={cn([
           `relative overflow-hidden font-medium
-          transition-all duration-300 ease-in-out hover:shadow-lg active:scale-95`,
+          transition-all duration-300 ease-in-out hover:shadow-lg active:scale-95 flex items-center justify-center whitespace-nowrap`,
           defaultSize,
           defaultClasses,
           className,

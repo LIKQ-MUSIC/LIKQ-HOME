@@ -13,6 +13,7 @@ import MixMaster from '@/ui/Icons/MixMaster'
 import WritingComposing from '@/ui/Icons/WritingComposing'
 import Arrange from '@/ui/Icons/Arrange'
 import AboutUs from '@/components/AboutUs'
+import { getAboutUsImages } from '@/services/about-us'
 
 import { apiClient } from '@/lib/api-client'
 import { IWorkItem } from '@/components/Works/types'
@@ -49,6 +50,16 @@ async function getWorks(): Promise<IWorkItem[]> {
 
 export default async function Home() {
   const worksData = await getWorks()
+  const aboutUsData = await getAboutUsImages()
+
+  // Map to component format or use default if empty/failed
+  const aboutUsImages =
+    aboutUsData && aboutUsData.length > 0
+      ? aboutUsData.map((img: any) => ({
+          src: img.image_url,
+          alt: img.alt_text || ''
+        }))
+      : []
 
   const services = [
     {
@@ -95,7 +106,7 @@ export default async function Home() {
         <Navbar />
       </Section>
 
-      <AboutUs />
+      <AboutUs images={aboutUsImages} />
 
       <Section id="services" title="Our Services">
         <Title className="text-center" level={5}>

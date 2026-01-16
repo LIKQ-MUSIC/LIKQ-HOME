@@ -1,6 +1,5 @@
 'use client'
 
-import React from 'react'
 import Section from '@/components/Section'
 import { Title } from '@/ui/Typography'
 import {
@@ -14,16 +13,7 @@ import Image from 'next/image'
 
 import Autoplay from 'embla-carousel-autoplay'
 
-const images = [
-  { src: '/images/about/group-photo.jpg', alt: 'YOU: YORA & YOU' },
-  { src: '/images/about/event-atmosphere.jpg', alt: 'YOU: YORA & YOU' },
-  {
-    src: '/images/about/team-studio.jpg',
-    alt: 'Studio Record "Still With You"'
-  }
-]
-
-const AboutUs = () => {
+const AboutUs = ({ images }: { images: { src: string; alt: string }[] }) => {
   return (
     <Section
       id="about-us"
@@ -46,23 +36,28 @@ const AboutUs = () => {
               className="w-full h-full relative group"
             >
               <CarouselContent className="h-full ml-0">
-                {images.map((image, index) => (
-                  <CarouselItem key={index} className="basis-full pl-0 h-full">
-                    <div className="relative w-full h-[500px] lg:h-screen">
-                      <Image
-                        src={image.src}
-                        alt={image.alt}
-                        fill
-                        className="object-cover"
-                      />
-                      {/* Overlay gradient */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent pointer-events-none" />
-                      <div className="absolute bottom-6 left-6 text-white font-medium text-base md:text-xl bg-black/50 px-4 py-2 rounded-full backdrop-blur-sm shadow-lg">
-                        {image.alt}
+                {images.map(
+                  (image: { src: string; alt: string }, index: number) => (
+                    <CarouselItem
+                      key={index}
+                      className="basis-full pl-0 h-full"
+                    >
+                      <div className="relative w-full h-[500px] lg:h-screen">
+                        <Image
+                          src={image.src}
+                          alt={image.alt}
+                          fill
+                          className="object-cover"
+                        />
+                        {/* Overlay gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent pointer-events-none" />
+                        <div className="absolute bottom-6 left-6 text-white font-medium text-base md:text-xl bg-black/50 px-4 py-2 rounded-full backdrop-blur-sm shadow-lg">
+                          {image.alt}
+                        </div>
                       </div>
-                    </div>
-                  </CarouselItem>
-                ))}
+                    </CarouselItem>
+                  )
+                )}
               </CarouselContent>
               {/* Navigation hidden by default, shown on hover if needed, or rely on autoplay */}
               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute bottom-4 right-4 flex gap-2 z-10">
