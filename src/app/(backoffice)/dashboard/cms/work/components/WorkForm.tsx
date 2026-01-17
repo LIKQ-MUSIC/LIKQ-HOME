@@ -81,7 +81,7 @@ const WorkForm = ({ initialData, isEdit = false }: WorkFormProps) => {
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['works'] })
       await revalidateWorks()
-      router.push('/works')
+      router.push('/dashboard/cms/work')
     },
     onError: (err: any) => {
       setError(err.response?.data?.error || 'Something went wrong')
@@ -100,7 +100,7 @@ const WorkForm = ({ initialData, isEdit = false }: WorkFormProps) => {
     <div className="max-w-3xl mx-auto p-6 space-y-8">
       <div className="flex items-center gap-4">
         <Link
-          href="/works"
+          href="/dashboard/cms/work"
           className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
         >
           <ArrowLeft className="w-5 h-5" />
