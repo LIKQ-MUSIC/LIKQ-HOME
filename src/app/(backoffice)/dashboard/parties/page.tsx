@@ -10,7 +10,8 @@ import {
   Trash2,
   Search,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Book
 } from 'lucide-react'
 import { usePagination } from '@/hooks/use-pagination'
 
@@ -102,13 +103,22 @@ export default function PartiesPage() {
             Manage contract parties and legal entities
           </p>
         </div>
-        <Link
-          href="/dashboard/parties/new"
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
-        >
-          <PlusCircle size={20} />
-          <span>Add Party</span>
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            href="/dashboard/parties/docs"
+            className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors border border-zinc-700"
+          >
+            <Book size={20} />
+            <span>API Docs</span>
+          </Link>
+          <Link
+            href="/dashboard/parties/new"
+            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+          >
+            <PlusCircle size={20} />
+            <span>Add Party</span>
+          </Link>
+        </div>
       </div>
 
       {/* Search Filter */}
