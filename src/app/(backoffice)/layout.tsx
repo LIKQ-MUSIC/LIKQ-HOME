@@ -9,7 +9,8 @@ import {
   Settings,
   User,
   Briefcase,
-  Image
+  Image,
+  Book
 } from 'lucide-react'
 
 export const runtime = 'edge'
@@ -141,6 +142,14 @@ export default async function BackofficeLayout({
           <div className="mt-8 text-xs font-semibold text-zinc-500 uppercase tracking-wider pl-3">
             Document Management
           </div>
+
+          <Link
+            href="/dashboard/api-docs"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-zinc-400 hover:bg-zinc-900 hover:text-white transition-colors"
+          >
+            <Book size={20} />
+            <span>API Docs</span>
+          </Link>
 
           <Link
             href="/dashboard/parties"
