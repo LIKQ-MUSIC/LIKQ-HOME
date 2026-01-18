@@ -59,6 +59,9 @@ export default {
           }
         ]
       },
+      fontFamily: {
+        sans: ['var(--font-noto-sans-thai)', 'var(--font-inter)', 'sans-serif']
+      },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },

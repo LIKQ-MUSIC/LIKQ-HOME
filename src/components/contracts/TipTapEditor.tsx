@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
+import { BubbleMenu } from '@tiptap/react/menus'
 import StarterKit from '@tiptap/starter-kit'
 import {
   Bold,
@@ -10,9 +11,20 @@ import {
   ListOrdered,
   Heading1,
   Heading2,
-  Undo,
-  Redo
+  Heading3
 } from 'lucide-react'
+import { Extension } from '@tiptap/core'
+
+const TabIndent = Extension.create({
+  name: 'tabIndent',
+  addKeyboardShortcuts() {
+    return {
+      Tab: () => {
+        return this.editor.commands.insertContent('    ')
+      }
+    }
+  }
+})
 
 interface TipTapEditorProps {
   content: string
@@ -21,7 +33,7 @@ interface TipTapEditorProps {
 
 export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [StarterKit, TabIndent],
     content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
@@ -29,7 +41,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
     editorProps: {
       attributes: {
         class:
-          'prose prose-invert max-w-none focus:outline-none min-h-[400px] p-4 font-sarabun'
+          'prose-sm max-w-none focus:outline-none min-h-[400px] font-sarabun text-black text-[14px] leading-snug prose-headings:text-black [&_h1]:text-black [&_h2]:text-black [&_h3]:text-black prose-h1:text-lg prose-h1:font-bold prose-h1:mb-2 prose-h1:mt-3 prose-h2:text-base prose-h2:font-semibold prose-h2:mb-1 prose-h2:mt-2 prose-h3:text-[14px] prose-h3:font-semibold prose-h3:mb-1 prose-h3:mt-2 prose-p:leading-snug prose-p:mb-1 prose-p:text-[14px] prose-strong:text-black prose-strong:font-semibold prose-li:text-[14px] prose-li:mb-0.5'
       }
     },
     immediatelyRender: false
@@ -47,47 +59,49 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
   }
 
   return (
-    <div className="border border-zinc-700 rounded-lg overflow-hidden">
-      {/* Toolbar */}
-      <div className="flex flex-wrap gap-1 p-2 border-b border-zinc-700 bg-zinc-900">
+    <div className="relative">
+      <BubbleMenu
+        editor={editor}
+        className="flex overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-xl text-black"
+      >
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`p-2 rounded hover:bg-zinc-800 ${
+          className={`p-2 hover:bg-zinc-100 ${
             editor.isActive('bold')
-              ? 'bg-zinc-800 text-indigo-400'
-              : 'text-zinc-400'
+              ? 'text-indigo-600 bg-indigo-50'
+              : 'text-zinc-600'
           }`}
         >
-          <Bold size={18} />
+          <Bold size={16} />
         </button>
 
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`p-2 rounded hover:bg-zinc-800 ${
+          className={`p-2 hover:bg-zinc-100 ${
             editor.isActive('italic')
-              ? 'bg-zinc-800 text-indigo-400'
-              : 'text-zinc-400'
+              ? 'text-indigo-600 bg-indigo-50'
+              : 'text-zinc-600'
           }`}
         >
-          <Italic size={18} />
+          <Italic size={16} />
         </button>
 
-        <div className="w-px bg-zinc-700 mx-1" />
+        <div className="w-px bg-zinc-200 mx-1 my-2" />
 
         <button
           type="button"
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 1 }).run()
           }
-          className={`p-2 rounded hover:bg-zinc-800 ${
+          className={`p-2 hover:bg-zinc-100 ${
             editor.isActive('heading', { level: 1 })
-              ? 'bg-zinc-800 text-indigo-400'
-              : 'text-zinc-400'
+              ? 'text-indigo-600 bg-indigo-50'
+              : 'text-zinc-600'
           }`}
         >
-          <Heading1 size={18} />
+          <Heading1 size={16} />
         </button>
 
         <button
@@ -95,64 +109,58 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 2 }).run()
           }
-          className={`p-2 rounded hover:bg-zinc-800 ${
+          className={`p-2 hover:bg-zinc-100 ${
             editor.isActive('heading', { level: 2 })
-              ? 'bg-zinc-800 text-indigo-400'
-              : 'text-zinc-400'
+              ? 'text-indigo-600 bg-indigo-50'
+              : 'text-zinc-600'
           }`}
         >
-          <Heading2 size={18} />
+          <Heading2 size={16} />
         </button>
 
-        <div className="w-px bg-zinc-700 mx-1" />
+        <button
+          type="button"
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
+          className={`p-2 hover:bg-zinc-100 ${
+            editor.isActive('heading', { level: 3 })
+              ? 'text-indigo-600 bg-indigo-50'
+              : 'text-zinc-600'
+          }`}
+        >
+          <Heading3 size={16} />
+        </button>
+
+        <div className="w-px bg-zinc-200 mx-1 my-2" />
 
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`p-2 rounded hover:bg-zinc-800 ${
+          className={`p-2 hover:bg-zinc-100 ${
             editor.isActive('bulletList')
-              ? 'bg-zinc-800 text-indigo-400'
-              : 'text-zinc-400'
+              ? 'text-indigo-600 bg-indigo-50'
+              : 'text-zinc-600'
           }`}
         >
-          <List size={18} />
+          <List size={16} />
         </button>
 
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`p-2 rounded hover:bg-zinc-800 ${
+          className={`p-2 hover:bg-zinc-100 ${
             editor.isActive('orderedList')
-              ? 'bg-zinc-800 text-indigo-400'
-              : 'text-zinc-400'
+              ? 'text-indigo-600 bg-indigo-50'
+              : 'text-zinc-600'
           }`}
         >
-          <ListOrdered size={18} />
+          <ListOrdered size={16} />
         </button>
-
-        <div className="w-px bg-zinc-700 mx-1" />
-
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().undo()}
-          className="p-2 rounded hover:bg-zinc-800 text-zinc-400 disabled:opacity-30"
-        >
-          <Undo size={18} />
-        </button>
-
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().redo()}
-          className="p-2 rounded hover:bg-zinc-800 text-zinc-400 disabled:opacity-30"
-        >
-          <Redo size={18} />
-        </button>
-      </div>
+      </BubbleMenu>
 
       {/* Editor */}
-      <div className="bg-zinc-950 text-white">
+      <div className="text-black">
         <EditorContent editor={editor} />
       </div>
     </div>

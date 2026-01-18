@@ -1,14 +1,27 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import { ArrowLeft, Save, PlusCircle, X, Download } from 'lucide-react'
+import {
+  ArrowLeft,
+  Save,
+  PlusCircle,
+  X,
+  Download,
+  Sparkles,
+  Trash2,
+  Plus,
+  Pencil,
+  Check
+} from 'lucide-react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
-import PDFExportButton, { ContractPDF } from '@/components/contracts/PDFExport'
-import { pdf } from '@react-pdf/renderer'
+import PDFExportButton from '@/components/contracts/PDFExport'
+import ContractPreview from '@/components/contracts/ContractPreview'
+import { usePdfGeneration } from '@/hooks/usePdfGeneration'
+import { extractHtmlWithStyles } from '@/lib/extractHtml'
 
 // Dynamic import to avoid SSR issues with TipTap
 const TipTapEditor = dynamic(
@@ -23,12 +36,15 @@ interface Party {
   id: string
   legal_name: string
   display_name?: string | null
+  tax_id?: string | null
+  address?: string | null
 }
 
 interface ContractParty {
   party_id: string
   role: string
   sign_label?: string
+  signed_date?: string
 }
 
 interface ContractFormData {
@@ -53,6 +69,7 @@ interface ContractDetail {
     role: string
     sign_label?: string
   }>
+  rules?: string[]
   latest_version?: {
     content_text: string
   }
@@ -73,6 +90,10 @@ export default function ContractFormPage() {
   const queryClient = useQueryClient()
   const isNew = !params.id || params.id === 'new'
 
+  // Ref for easy height calculation
+  const contentRef = useRef<HTMLDivElement>(null)
+  const [pageHeight, setPageHeight] = useState('297mm')
+
   const [formData, setFormData] = useState<ContractFormData>({
     contract_number: '',
     origin: 'Internal',
@@ -84,9 +105,47 @@ export default function ContractFormPage() {
   const [newParty, setNewParty] = useState<ContractParty>({
     party_id: '',
     role: '',
-    sign_label: ''
+    sign_label: '',
+    signed_date: ''
   })
+  const [editingPartyIndex, setEditingPartyIndex] = useState<number | null>(
+    null
+  )
+  const [editingRuleIndex, setEditingRuleIndex] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  // Calculate pages on content change (dynamic page height)
+  useEffect(() => {
+    // Small delay to allow DOM to update
+    const timer = setTimeout(() => {
+      if (contentRef.current) {
+        const A4_HEIGHT_PX = 1123 // Approx 297mm in pixels (96 DPI)
+        const contentHeight = contentRef.current.scrollHeight
+        // Calculate pages: minimum 1
+        let pages = Math.ceil(contentHeight / A4_HEIGHT_PX)
+        if (pages < 1) pages = 1
+
+        // Ensure the container is always a multiple of 297mm
+        setPageHeight(`${pages * 297}mm`)
+      }
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [formData.content, formData.parties])
+
+  // AI Rules State
+  const [rules, setRules] = useState<string[]>([])
+  const [newRule, setNewRule] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
+
+  // PDF Generation hook
+  const {
+    previewPdf,
+    savePdf,
+    isGenerating: isPdfGenerating
+  } = usePdfGeneration()
+
+  // Local loading state for immediate feedback during HTML extraction
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false)
 
   // Fetch available parties
   const { data: availableParties = [] } = useQuery({
@@ -104,7 +163,11 @@ export default function ContractFormPage() {
       const res = await apiClient.get(`/contracts/${params.id}/versions`)
       return res.data as ContractVersion[]
     },
-    enabled: !isNew
+    enabled: !isNew,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    refetchIntervalInBackground: false
   })
 
   const loadVersion = (version: ContractVersion) => {
@@ -124,7 +187,11 @@ export default function ContractFormPage() {
       const res = await apiClient.get(`/contracts/${params.id}`)
       return res.data as ContractDetail
     },
-    enabled: !isNew
+    enabled: !isNew,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    refetchIntervalInBackground: false
   })
 
   // Update form data when contract detail is loaded
@@ -140,9 +207,11 @@ export default function ContractFormPage() {
           contractDetail.parties?.map((p: any) => ({
             party_id: p.id,
             role: p.role,
-            sign_label: p.sign_label // Map from backend
+            sign_label: p.sign_label,
+            signed_date: p.signed_date // Assuming this exists in DB, or we'll add it
           })) || []
       })
+      setRules(contractDetail.rules || [])
     }
   }, [contractDetail])
 
@@ -156,37 +225,49 @@ export default function ContractFormPage() {
     return party?.display_name || party?.legal_name || partyId
   }
 
-  // Helper to generate and upload PDF
-  const generateAndUploadPDF = async (data: any, contractNum: string) => {
-    const pdfContract = {
-      contract_number: contractNum,
-      title: data.title,
-      origin: data.origin,
-      current_status: data.current_status,
-      parties:
-        data.parties?.map((p: any) => {
-          const partyObj = getParty(p.party_id)
-          return {
-            legal_name: partyObj?.legal_name || p.party_id,
-            display_name: partyObj?.display_name || undefined,
-            role: p.role,
-            sign_label: p.sign_label
-          }
-        }) || [],
-      latest_version: {
-        content_text: data.content || ''
-      }
+  // Helper to generate and upload PDF using Gotenberg
+  const generateAndUploadPDF = async (contractNum: string) => {
+    if (!contentRef.current) {
+      throw new Error('Content ref is not available')
     }
 
-    const blob = await pdf(<ContractPDF contract={pdfContract} />).toBlob()
-    const formData = new FormData()
-    formData.append('file', blob, `contract-${contractNum}.pdf`)
-    formData.append('folder', 'contracts')
+    // Extract HTML from the preview component (now async)
+    const html = await extractHtmlWithStyles(contentRef.current)
 
-    const uploadRes = await apiClient.post('/storage/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
-    return uploadRes.data.url
+    // Generate filename
+    const filename = `contract-${contractNum}.pdf`
+
+    // Use Gotenberg service to generate and upload
+    const url = await savePdf(html, filename)
+
+    if (!url) {
+      throw new Error('Failed to generate and upload PDF')
+    }
+
+    return url
+  }
+
+  // Preview PDF handler with immediate loading feedback
+  const handlePreviewPdf = async () => {
+    if (!contentRef.current) {
+      alert('Content is not ready for preview')
+      return
+    }
+
+    // Set loading immediately for instant feedback
+    setIsPreviewLoading(true)
+
+    try {
+      // Extract HTML (this takes time)
+      const html = await extractHtmlWithStyles(contentRef.current)
+      // Generate and preview PDF
+      await previewPdf(html)
+    } catch (error) {
+      console.error('Preview failed:', error)
+      alert('Failed to generate preview')
+    } finally {
+      setIsPreviewLoading(false)
+    }
   }
 
   // Create/Update contract mutation
@@ -197,36 +278,47 @@ export default function ContractFormPage() {
       const isFinal = payload.current_status === 'Active'
 
       if (isNew) {
+        // Create Contract first to get contract number
+        const res = await apiClient.post('/contracts', payload)
+        const contractNumber = res.data.contract_number
+
+        // Generate and upload PDF with actual contract number
         try {
-          fileUrl = await generateAndUploadPDF(payload, 'PENDING')
+          fileUrl = await generateAndUploadPDF(contractNumber)
         } catch (e) {
           console.error('Failed to generate PDF', e)
         }
 
-        // Create Contract
-        const res = await apiClient.post('/contracts', {
-          ...payload,
-          file_url: fileUrl
-        })
+        // Create version with PDF URL
+        if (fileUrl) {
+          await apiClient.post(`/contracts/${res.data.id}/versions`, {
+            content_text: payload.content,
+            is_final: isFinal,
+            file_url: fileUrl
+          })
+        }
+
         return res.data
       } else {
+        // Update existing contract
         // Update contract metadata including parties
         await apiClient.put(`/contracts/${params.id}`, {
           title: payload.title,
           current_status: payload.current_status,
-          parties: payload.parties // Ensure backend handles party replacement/update
+          parties: payload.parties,
+          rules: payload.rules
         })
 
+        // Generate and upload PDF
         try {
           fileUrl = await generateAndUploadPDF(
-            payload,
             contractDetail?.contract_number || ''
           )
         } catch (e) {
           console.error('Failed to generate PDF', e)
         }
 
-        // Create new version
+        // Create new version with PDF URL
         await apiClient.post(`/contracts/${params.id}/versions`, {
           content_text: payload.content,
           is_final: isFinal,
@@ -246,22 +338,100 @@ export default function ContractFormPage() {
     }
   })
 
-  // Add Party Logic
+  // Add/Edit Party Logic
   const addParty = () => {
     if (newParty.party_id) {
-      setFormData({
-        ...formData,
-        parties: [...formData.parties, newParty]
-      })
-      setNewParty({ party_id: '', role: '', sign_label: '' })
+      if (editingPartyIndex !== null) {
+        const updatedParties = [...formData.parties]
+        updatedParties[editingPartyIndex] = newParty
+        setFormData({ ...formData, parties: updatedParties })
+        setEditingPartyIndex(null)
+      } else {
+        setFormData({
+          ...formData,
+          parties: [...formData.parties, newParty]
+        })
+      }
+      setNewParty({ party_id: '', role: '', sign_label: '', signed_date: '' })
     }
   }
 
+  const editParty = (index: number) => {
+    setEditingPartyIndex(index)
+    setNewParty(formData.parties[index])
+  }
+
   const removeParty = (index: number) => {
+    if (editingPartyIndex === index) {
+      setEditingPartyIndex(null)
+      setNewParty({ party_id: '', role: '', sign_label: '', signed_date: '' })
+    }
     setFormData({
       ...formData,
       parties: formData.parties.filter((_, i) => i !== index)
     })
+  }
+
+  // Validations & AI Logic
+  const handleAddRule = () => {
+    if (newRule.trim()) {
+      if (editingRuleIndex !== null) {
+        const updatedRules = [...rules]
+        updatedRules[editingRuleIndex] = newRule.trim()
+        setRules(updatedRules)
+        setEditingRuleIndex(null)
+      } else {
+        setRules([...rules, newRule.trim()])
+      }
+      setNewRule('')
+    }
+  }
+
+  const editRule = (index: number) => {
+    setEditingRuleIndex(index)
+    setNewRule(rules[index])
+  }
+
+  const handleDeleteRule = (index: number) => {
+    if (editingRuleIndex === index) {
+      setEditingRuleIndex(null)
+      setNewRule('')
+    }
+    setRules(rules.filter((_, i) => i !== index))
+  }
+
+  const handleGenerateAI = async () => {
+    try {
+      setIsGenerating(true)
+      const fullParties = formData.parties.map(p => {
+        const party = availableParties.find(ap => ap.id === p.party_id)
+        return {
+          legal_name: party?.legal_name || '',
+          display_name: party?.display_name,
+          tax_id: party?.tax_id,
+          address: party?.address,
+          role: p.role,
+          sign_label: p.sign_label
+        }
+      })
+
+      const res = await apiClient.post('/contracts/generate', {
+        parties: fullParties,
+        rules: rules,
+        existingContent: formData.content
+      })
+
+      setFormData(prev => ({ ...prev, content: res.data.content }))
+    } catch (e: any) {
+      if (e.response?.status === 400) {
+        alert('BAD REQUEST: The AI detected an out-of-scope request.')
+      } else {
+        console.error(e)
+        alert('Failed to generate contract content.')
+      }
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -272,8 +442,9 @@ export default function ContractFormPage() {
       origin: formData.origin,
       title: formData.title,
       current_status: formData.current_status,
-      parties: formData.parties.length > 0 ? formData.parties : undefined,
-      content: formData.content || undefined
+      parties: formData.parties,
+      content: formData.content,
+      rules: rules
     }
 
     saveContract(payload)
@@ -292,7 +463,8 @@ export default function ContractFormPage() {
         legal_name: partyObj?.legal_name || '...',
         display_name: partyObj?.display_name || undefined,
         role: p.role,
-        sign_label: p.sign_label
+        sign_label: p.sign_label,
+        signed_date: p.signed_date
       }
     }),
     latest_version: {
@@ -320,7 +492,12 @@ export default function ContractFormPage() {
           </div>
         </div>
 
-        <PDFExportButton contract={previewContract} />
+        <PDFExportButton
+          contract={previewContract}
+          mode="gotenberg"
+          contentRef={contentRef}
+          disabled={!formData.content}
+        />
       </div>
 
       {error && (
@@ -422,97 +599,364 @@ export default function ContractFormPage() {
           {/* Existing Parties */}
           {formData.parties.length > 0 && (
             <div className="space-y-2">
-              {formData.parties.map((party, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 bg-zinc-950 rounded-lg"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-white font-medium">
-                      {getPartyName(party.party_id)}
-                    </span>
-                    {party.sign_label && (
-                      <span className="text-zinc-400 text-sm bg-zinc-900 px-2 py-0.5 rounded">
-                        {party.sign_label}
-                      </span>
-                    )}
-                    {party.role && (
-                      <span className="text-indigo-400 text-sm">
-                        {party.role}
-                      </span>
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => removeParty(index)}
-                    className="p-1 text-zinc-400 hover:text-red-400"
+              {formData.parties.map((party, index) => {
+                if (editingPartyIndex === index) {
+                  return (
+                    <div
+                      key={index}
+                      className="flex gap-2 p-2 bg-zinc-900 border border-indigo-500/50 rounded-lg"
+                    >
+                      <select
+                        value={newParty.party_id}
+                        onChange={e =>
+                          setNewParty({ ...newParty, party_id: e.target.value })
+                        }
+                        className="flex-1 px-3 py-1.5 bg-zinc-950 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500"
+                      >
+                        <option value="">Select Party</option>
+                        {availableParties.map(p => (
+                          <option key={p.id} value={p.id}>
+                            {p.display_name || p.legal_name}
+                          </option>
+                        ))}
+                      </select>
+
+                      <input
+                        type="text"
+                        value={newParty.sign_label || ''}
+                        onChange={e =>
+                          setNewParty({
+                            ...newParty,
+                            sign_label: e.target.value
+                          })
+                        }
+                        placeholder="Label"
+                        className="px-3 py-1.5 bg-zinc-950 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500 w-32"
+                      />
+
+                      <select
+                        value={newParty.role}
+                        onChange={e =>
+                          setNewParty({ ...newParty, role: e.target.value })
+                        }
+                        className="flex-1 px-3 py-1.5 bg-zinc-950 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500"
+                      >
+                        <option value="">Select Role</option>
+                        <option value="ผู้ว่าจ้าง">
+                          ผู้ว่าจ้าง (Employer)
+                        </option>
+                        <option value="ผู้รับจ้าง">
+                          ผู้รับจ้าง (Contractor)
+                        </option>
+                        <option value="พยาน 1">พยาน 1 (Witness 1)</option>
+                        <option value="พยาน 2">พยาน 2 (Witness 2)</option>
+                      </select>
+
+                      <input
+                        type="date"
+                        value={newParty.signed_date || ''}
+                        onChange={e =>
+                          setNewParty({
+                            ...newParty,
+                            signed_date: e.target.value
+                          })
+                        }
+                        className="px-3 py-1.5 bg-zinc-950 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500 w-36"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={addParty}
+                        className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
+                        title="Save Changes"
+                      >
+                        <Check size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingPartyIndex(null)
+                          setNewParty({
+                            party_id: '',
+                            role: '',
+                            sign_label: '',
+                            signed_date: ''
+                          })
+                        }}
+                        className="p-1.5 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg transition-colors"
+                        title="Cancel Edit"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  )
+                }
+
+                return (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-zinc-950 rounded-lg"
                   >
-                    <X size={16} />
-                  </button>
-                </div>
-              ))}
+                    <div className="flex items-center gap-3">
+                      <span className="text-white font-medium">
+                        {getPartyName(party.party_id)}
+                      </span>
+                      {party.sign_label && (
+                        <span className="text-zinc-400 text-sm bg-zinc-900 px-2 py-0.5 rounded">
+                          {party.sign_label}
+                        </span>
+                      )}
+                      {party.role && (
+                        <span className="text-indigo-400 text-sm">
+                          {party.role}
+                        </span>
+                      )}
+                      {party.signed_date && (
+                        <span className="text-zinc-500 text-xs">
+                          ({party.signed_date})
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => editParty(index)}
+                        className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded transition-colors"
+                        title="Edit Party"
+                      >
+                        <Pencil size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeParty(index)}
+                        className="p-1.5 text-zinc-400 hover:text-red-400 hover:bg-zinc-800 rounded transition-colors"
+                        title="Remove Party"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           )}
 
-          {/* Add Party */}
-          <div className="flex gap-2">
-            <select
-              value={newParty.party_id}
-              onChange={e =>
-                setNewParty({ ...newParty, party_id: e.target.value })
-              }
-              className="flex-1 px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
-            >
-              <option value="">Select Party</option>
-              {availableParties.map(party => (
-                <option key={party.id} value={party.id}>
-                  {party.display_name || party.legal_name}
-                </option>
-              ))}
-            </select>
+          {/* Add Party Form (Hidden when editing) */}
+          {editingPartyIndex === null && (
+            <div className="flex gap-2">
+              <select
+                value={newParty.party_id}
+                onChange={e =>
+                  setNewParty({ ...newParty, party_id: e.target.value })
+                }
+                className="flex-1 px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+              >
+                <option value="">Select Party</option>
+                {availableParties.map(party => (
+                  <option key={party.id} value={party.id}>
+                    {party.display_name || party.legal_name}
+                  </option>
+                ))}
+              </select>
 
-            <input
-              type="text"
-              value={newParty.sign_label || ''}
-              onChange={e =>
-                setNewParty({ ...newParty, sign_label: e.target.value })
-              }
-              placeholder="Label (Optional)"
-              className="px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500 w-48"
-            />
+              <input
+                type="text"
+                value={newParty.sign_label || ''}
+                onChange={e =>
+                  setNewParty({ ...newParty, sign_label: e.target.value })
+                }
+                placeholder="Label"
+                className="px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500 w-48"
+              />
 
-            <select
-              value={newParty.role}
-              onChange={e => setNewParty({ ...newParty, role: e.target.value })}
-              className="flex-1 px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
-            >
-              <option value="">Select Role (Optional)</option>
-              <option value="ผู้ว่าจ้าง">ผู้ว่าจ้าง (Employer)</option>
-              <option value="ผู้รับจ้าง">ผู้รับจ้าง (Contractor)</option>
-              <option value="พยาน 1">พยาน 1 (Witness 1)</option>
-              <option value="พยาน 2">พยาน 2 (Witness 2)</option>
-            </select>
+              <select
+                value={newParty.role}
+                onChange={e =>
+                  setNewParty({ ...newParty, role: e.target.value })
+                }
+                className="flex-1 px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+              >
+                <option value="">Select Role</option>
+                <option value="ผู้ว่าจ้าง">ผู้ว่าจ้าง (Employer)</option>
+                <option value="ผู้รับจ้าง">ผู้รับจ้าง (Contractor)</option>
+                <option value="พยาน 1">พยาน 1 (Witness 1)</option>
+                <option value="พยาน 2">พยาน 2 (Witness 2)</option>
+              </select>
 
-            <button
-              type="button"
-              onClick={addParty}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
-            >
-              <PlusCircle size={20} />
-            </button>
+              <input
+                type="date"
+                value={newParty.signed_date || ''}
+                onChange={e =>
+                  setNewParty({ ...newParty, signed_date: e.target.value })
+                }
+                className="px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500 w-40"
+              />
+
+              <button
+                type="button"
+                onClick={addParty}
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+              >
+                <PlusCircle size={20} />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Rules & Purpose */}
+        <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-4">
+          <h2 className="text-xl font-semibold text-white">Rules & Purpose</h2>
+          <p className="text-sm text-zinc-400">
+            Define the purpose and specific constraints for this contract. These
+            rules will be stored and used for AI generation.
+          </p>
+
+          <div>
+            {editingRuleIndex === null && (
+              <div className="flex gap-2 mb-3">
+                <input
+                  type="text"
+                  value={newRule}
+                  onChange={e => setNewRule(e.target.value)}
+                  onKeyDown={e =>
+                    e.key === 'Enter' && (e.preventDefault(), handleAddRule())
+                  }
+                  placeholder="Add a rule (e.g. 'Must include NDA clause')"
+                  className="flex-1 px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                />
+                <button
+                  onClick={handleAddRule}
+                  type="button"
+                  className="p-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors"
+                >
+                  <Plus size={20} />
+                </button>
+              </div>
+            )}
+            {rules.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {rules.map((rule, idx) => {
+                  if (editingRuleIndex === idx) {
+                    return (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-2 bg-zinc-950 border border-indigo-500/50 rounded-full pl-3 pr-1 py-1"
+                      >
+                        <input
+                          type="text"
+                          value={newRule}
+                          onChange={e => setNewRule(e.target.value)}
+                          onKeyDown={e =>
+                            e.key === 'Enter' &&
+                            (e.preventDefault(), handleAddRule())
+                          }
+                          className="bg-transparent border-none text-white text-sm focus:outline-none w-48"
+                          autoFocus
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddRule}
+                          className="p-0.5 text-emerald-400 hover:text-emerald-300 transition-colors"
+                          title="Save Rule"
+                        >
+                          <Check size={16} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingRuleIndex(null)
+                            setNewRule('')
+                          }}
+                          className="p-0.5 text-zinc-500 hover:text-white transition-colors"
+                          title="Cancel Edit"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    )
+                  }
+                  return (
+                    <span
+                      key={idx}
+                      className="flex items-center gap-1.5 px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-sm group transition-all"
+                    >
+                      {rule}
+                      <div className="flex items-center gap-1 border-l border-zinc-700/50 ml-1 pl-1">
+                        <button
+                          type="button"
+                          onClick={() => editRule(idx)}
+                          className="hover:text-white transition-colors p-0.5"
+                          title="Edit Rule"
+                        >
+                          <Pencil size={12} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteRule(idx)}
+                          className="hover:text-red-400 transition-colors p-0.5"
+                          title="Delete Rule"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    </span>
+                  )
+                })}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Contract Content & Versions */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:col-span-3 bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-4">
-            <h2 className="text-xl font-semibold text-white">
-              Contract Content
-            </h2>
-            <TipTapEditor
-              content={formData.content}
-              onChange={content => setFormData({ ...formData, content })}
-            />
+          <div className="lg:col-span-3 space-y-4">
+            {/* AI Rules & Generation */}
+            {/* AI Generation Trigger */}
+            <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                  <Sparkles className="text-indigo-400" size={20} />
+                  AI Assistant
+                </h2>
+                <p className="text-sm text-zinc-400 mt-1">
+                  Generate content using the Parties and Rules defined above.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleGenerateAI}
+                disabled={isGenerating}
+                className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors disabled:opacity-50 whitespace-nowrap"
+              >
+                {isGenerating ? (
+                  <Sparkles className="animate-spin" size={20} />
+                ) : (
+                  <Sparkles size={20} />
+                )}
+                <span>
+                  {isGenerating ? 'Generating...' : 'Generate Content'}
+                </span>
+              </button>
+            </div>
+
+            <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-4">
+              <h2 className="text-xl font-semibold text-white">
+                Contract Content (A4 Preview)
+              </h2>
+
+              <ContractPreview
+                content={formData.content}
+                contractNumber={formData.contract_number || ''}
+                onChange={content => setFormData({ ...formData, content })}
+                contentRef={contentRef}
+                parties={formData.parties.map(p => ({
+                  legal_name: getParty(p.party_id)?.legal_name || '',
+                  role: p.role || '',
+                  signed_date: p.signed_date
+                }))}
+              />
+            </div>
           </div>
 
           {/* Version History Sidebar */}
