@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import Link from 'next/link'
@@ -15,6 +15,12 @@ import {
 } from 'lucide-react'
 import { usePagination } from '@/hooks/use-pagination'
 import { revalidateQuotations } from './actions'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip'
 
 interface QuotationItem {
   description: string
@@ -176,9 +182,10 @@ export default function QuotationsPage() {
         />
       </div>
 
-      <div className="bg-zinc-900 rounded-lg border border-zinc-800 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+      <TooltipProvider>
+        <div className="bg-zinc-900 rounded-lg border border-zinc-800 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
             <thead>
               <tr className="border-b border-zinc-800 bg-zinc-950">
                 <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
@@ -264,22 +271,59 @@ export default function QuotationsPage() {
                       {formatDate(quotation.valid_until_date)}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        <Link
-                          href={`/dashboard/quotations/${quotation.id}`}
-                          className="p-2 text-zinc-400 hover:text-indigo-400 transition-colors"
-                          title="View/Edit"
-                        >
-                          <Pencil size={16} />
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(quotation.id)}
-                          className="p-2 text-zinc-400 hover:text-red-400 transition-colors"
-                          title="Delete"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
+                      {(() => {
+                          const actions = [
+                            {
+                              component: (
+                                <Tooltip key="edit">
+                                  <TooltipTrigger asChild>
+                                    <Link
+                                      href={`/dashboard/quotations/${quotation.id}`}
+                                      className="p-2 text-zinc-400 hover:text-indigo-400 transition-colors"
+                                    >
+                                      <Pencil size={16} />
+                                    </Link>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>View/Edit</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              )
+                            },
+                            {
+                              component: (
+                                <Tooltip key="delete">
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      onClick={() => handleDelete(quotation.id)}
+                                      className="p-2 text-zinc-400 hover:text-red-400 transition-colors"
+                                    >
+                                      <Trash2 size={16} />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Delete</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              )
+                            }
+                          ]
+
+                          const showSeparator = actions.length > 2
+
+                          return (
+                            <div className="flex justify-end items-center gap-2">
+                              {actions.map((action, index) => (
+                                <React.Fragment key={index}>
+                                  {action.component}
+                                  {showSeparator && index < actions.length - 1 && (
+                                    <span className="text-zinc-600">:</span>
+                                  )}
+                                </React.Fragment>
+                            ))}
+                          </div>
+                        )
+                      })()}
                     </td>
                   </tr>
                 ))
@@ -288,6 +332,7 @@ export default function QuotationsPage() {
           </table>
         </div>
       </div>
+      </TooltipProvider>
 
       {/* Pagination Controls */}
       {quotations && quotations.length > 0 && (

@@ -78,22 +78,6 @@ export default function PartiesPage() {
     }
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-zinc-400">Loading...</div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500">Failed to load parties</div>
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -158,7 +142,28 @@ export default function PartiesPage() {
             </tr>
           </thead>
           <tbody>
-            {!parties || parties.length === 0 ? (
+            {isLoading ? (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="px-6 py-12 text-center text-zinc-500"
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="h-4 w-4 border-2 border-zinc-600 border-t-indigo-500 rounded-full animate-spin"></div>
+                    <span>Loading...</span>
+                  </div>
+                </td>
+              </tr>
+            ) : error ? (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="px-6 py-12 text-center text-red-500"
+                >
+                  Failed to load parties. Please try again.
+                </td>
+              </tr>
+            ) : !parties || parties.length === 0 ? (
               <tr>
                 <td
                   colSpan={5}
