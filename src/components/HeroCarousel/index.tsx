@@ -58,12 +58,12 @@ const HeroCarousel = ({ images }: HeroCarouselProps) => {
       {/* Hero Content Overlay */}
       <div className="absolute inset-0 flex flex-col justify-center items-center text-center z-10 px-4 pointer-events-none">
         <div className="pointer-events-auto flex flex-col items-center">
-          <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-prompt text-white mb-6 drop-shadow-2xl tracking-tighter animate-fade-in">
+          <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-prompt text-white mb-6 drop-shadow-2xl tracking-tighter">
             Crafting Your Vibe. <br className="hidden md:block" /> Defining Your
             Sound
           </h1>
           <p
-            className="text-xl md:text-2xl mt-2 md:mt-4 text-gray-200 mb-10 max-w-3xl mx-auto drop-shadow-md font-medium leading-relaxed animate-fade-in"
+            className="text-xl md:text-2xl mt-2 md:mt-4 text-gray-200 mb-10 max-w-3xl mx-auto drop-shadow-md font-medium leading-relaxed opacity-0 animate-fade-in"
             style={{ animationDelay: '0.2s' }}
           >
             ดีไซน์ตัวตนผ่านเสียงเพลง <br className="md:hidden" />{' '}
@@ -72,7 +72,7 @@ const HeroCarousel = ({ images }: HeroCarouselProps) => {
           <a
             href="#contact"
             className="inline-block px-10 py-4 bg-white text-[#030827] text-lg font-semibold rounded-full 
-                       hover:bg-[#E8EAEE] hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.3)] animate-scale-in"
+                       hover:bg-[#E8EAEE] hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.3)] opacity-0 animate-scale-in"
             style={{ animationDelay: '0.4s' }}
           >
             เริ่มโปรเจกต์กับเรา
