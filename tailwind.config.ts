@@ -60,7 +60,8 @@ export default {
         ]
       },
       fontFamily: {
-        sans: ['var(--font-noto-sans-thai)', 'var(--font-inter)', 'sans-serif']
+        sans: ['var(--font-noto-sans-thai)', 'var(--font-inter)', 'sans-serif'],
+        prompt: ['var(--font-prompt)']
       },
       keyframes: {
         fadeIn: {

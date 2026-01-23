@@ -1,9 +1,8 @@
-import Navbar from '@/components/Navbar'
 import Section from '@/components/Section'
 import { Title } from '@/ui/Typography'
 import Microphone from '@/ui/Icons/Microphone'
 import Card from '@/components/Card'
-import VideoLanding from '@/components/VideoLanding'
+import HeroCarousel from '@/components/HeroCarousel'
 import Works from '@/components/Works'
 import Team from '@/components/Team'
 import Footer from '@/components/Footer'
@@ -95,18 +94,9 @@ export default async function Home() {
   ]
   return (
     <>
-      <Section className="relative w-full p-0 md:p-0 bg-[#030827] overflow-hidden h-[100dvh]">
-        <h1 className="sr-only">
-          LiKQ MUSIC - Production & Entertainment Services
-        </h1>
-        {/* Background Video */}
-        <VideoLanding />
+      <HeroCarousel images={aboutUsImages} />
 
-        {/* Foreground Content */}
-        <Navbar />
-      </Section>
-
-      <AboutUs images={aboutUsImages} />
+      <AboutUs />
 
       <Section id="services" title="Our Services">
         <Title className="text-center" level={5}>
