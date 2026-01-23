@@ -15,8 +15,8 @@ export interface VideoWorkItem extends BaseWorkItem {
 
 export interface EventWorkItem extends BaseWorkItem {
   category: 'event'
-  start: dayjs.Dayjs
-  end: dayjs.Dayjs
+  start: dayjs.Dayjs | string
+  end: dayjs.Dayjs | string
   location: string
   url: string
 }

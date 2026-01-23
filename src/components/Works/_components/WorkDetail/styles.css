@@ -1,17 +1,17 @@
 .video-card {
-  @apply grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 min-h-[300px];
+  @apply grid grid-cols-1 md:grid-cols-[1.5fr_1fr] min-h-[500px];
 }
 
 .thumbnail-section {
-  @apply flex justify-center items-center;
+  @apply h-full;
 }
 
 .thumbnail-container {
-  @apply relative w-full aspect-video shrink-0 overflow-hidden rounded-xl;
+  @apply relative w-full aspect-video md:aspect-auto md:h-full overflow-hidden bg-gray-100;
 }
 
 .thumbnail {
-  @apply w-full h-full object-cover;
+  @apply w-full h-full object-cover absolute inset-0;
 }
 
 .play-icon {
@@ -19,7 +19,7 @@
 }
 
 .video-meta {
-  @apply flex flex-col justify-center gap-2 md:gap-4;
+  @apply flex flex-col justify-center gap-2 md:gap-4 p-8 md:p-12;
 }
 
 .video-stats {
