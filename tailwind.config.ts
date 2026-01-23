@@ -7,6 +7,7 @@ export default {
     './src/ui/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}'
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -57,6 +58,23 @@ export default {
             lineHeight: '24px'
           }
         ]
+      },
+      fontFamily: {
+        sans: ['var(--font-noto-sans-thai)', 'var(--font-inter)', 'sans-serif']
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }
+        },
+        scaleIn: {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' }
+        }
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out forwards',
+        'scale-in': 'scaleIn 0.3s ease-out forwards'
       }
     }
   },

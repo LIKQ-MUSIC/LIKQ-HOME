@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { createGoogleCalendarLink } from '@/utils'
 import { CalendarPlus } from 'lucide-react'
 
+import dayjs from '@/utils/dayjs'
+
 const EventDetail = ({
   title,
   start,
@@ -14,13 +16,15 @@ const EventDetail = ({
   description,
   url
 }: EventWorkItem) => {
+  const startDate = typeof start === 'string' ? dayjs(start) : start
+  const endDate = typeof end === 'string' ? dayjs(end) : end
   return (
     <>
       <Paragraph className="line-clamp-4">{description}</Paragraph>
 
       <div className="w-full flex items-center gap-2">
         <Link
-          href={createGoogleCalendarLink(title, start, end, {
+          href={createGoogleCalendarLink(title, startDate, endDate, {
             description: description,
             location
           })}
