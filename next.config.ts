@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'cdn.likqmusic.com'
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com'
       }
     ]
   }

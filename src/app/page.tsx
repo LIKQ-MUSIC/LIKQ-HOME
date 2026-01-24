@@ -1,4 +1,5 @@
 import Section from '@/components/Section'
+import Navbar from '@/components/Navbar'
 import { Title } from '@/ui/Typography'
 import Microphone from '@/ui/Icons/Microphone'
 import Card from '@/components/Card'
@@ -94,6 +95,7 @@ export default async function Home() {
   ]
   return (
     <>
+      <Navbar />
       <HeroCarousel images={aboutUsImages} />
 
       <AboutUs />

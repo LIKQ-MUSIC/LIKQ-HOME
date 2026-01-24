@@ -2,7 +2,9 @@
 
 import React from 'react'
 import Image from 'next/image'
-import Navbar from '@/components/Navbar'
+{
+  /* Hero Content Overlay */
+}
 import Autoplay from 'embla-carousel-autoplay'
 
 import {
@@ -42,6 +44,7 @@ const HeroCarousel = ({ images }: HeroCarouselProps) => {
                   alt={image.alt}
                   fill
                   priority={index === 0} // Priority for the first image (LCP)
+                  sizes="100vw"
                   className="object-cover"
                 />
                 {/* Overlay gradient for text readability */}
@@ -51,9 +54,6 @@ const HeroCarousel = ({ images }: HeroCarouselProps) => {
           ))}
         </CarouselContent>
       </Carousel>
-
-      {/* Navbar overlay */}
-      <Navbar />
 
       {/* Hero Content Overlay */}
       <div className="absolute inset-0 flex flex-col justify-center items-center text-center z-10 px-4 pointer-events-none">
