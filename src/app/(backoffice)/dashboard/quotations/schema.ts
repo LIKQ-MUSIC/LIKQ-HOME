@@ -27,10 +27,7 @@ const formItemSchema = z.object({
 })
 
 export const quotationFormSchema = z.object({
-  quotation_number: z
-    .string()
-    .min(1, 'Quotation number is required')
-    .trim(),
+  quotation_number: z.string().trim().optional(),
   contact_person_id: z.string().optional().or(z.literal('')),
   bill_to_party_id: z.string().optional().or(z.literal('')),
   approver_id: z.string().optional().or(z.literal('')),
@@ -39,8 +36,17 @@ export const quotationFormSchema = z.object({
   valid_until_date: z.string().optional().or(z.literal('')),
   approved_date: z.string().optional().or(z.literal('')),
   accepted_date: z.string().optional().or(z.literal('')),
-  status: z.enum(['Draft', 'Sent', 'Accepted', 'Rejected', 'Expired', 'Cancelled']),
-  total_amount: z.number().min(0, 'Total amount must be greater than or equal to 0'),
+  status: z.enum([
+    'Draft',
+    'Sent',
+    'Accepted',
+    'Rejected',
+    'Expired',
+    'Cancelled'
+  ]),
+  total_amount: z
+    .number()
+    .min(0, 'Total amount must be greater than or equal to 0'),
   currency: z.string().min(1, 'Currency is required').default('THB'),
   items: z
     .array(formItemSchema)
@@ -65,7 +71,8 @@ export const quotationFormSchema = z.object({
         })
       },
       {
-        message: 'At least one complete item (with description, quantity > 0, and price) is required'
+        message:
+          'At least one complete item (with description, quantity > 0, and price) is required'
       }
     )
 })
