@@ -12,6 +12,8 @@ import {
   Image,
   Book
 } from 'lucide-react'
+import { Suspense } from 'react'
+import DashboardLoading from './loading'
 
 export const runtime = 'edge'
 
@@ -264,9 +266,11 @@ export default async function BackofficeLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-zinc-950 p-8">
-        <div className="mx-auto max-w-5xl">{children}</div>
-      </main>
+      <Suspense fallback={<DashboardLoading />}>
+        <main className="flex-1 overflow-y-auto bg-zinc-950 p-8">
+          <div className="mx-auto max-w-5xl">{children}</div>
+        </main>
+      </Suspense>
     </div>
   )
 }

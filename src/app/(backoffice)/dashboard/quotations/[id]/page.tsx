@@ -677,11 +677,17 @@ export default function QuotationFormPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  Quotation Number *
+                  Quotation Number
+                  {isNew && (
+                    <span className="ml-2 text-xs text-indigo-400">
+                      (Auto-generated)
+                    </span>
+                  )}
+                  {!isNew && ' *'}
                 </label>
                 <input
                   type="text"
-                  value={formData.quotation_number}
+                  value={formData.quotation_number || ''}
                   onChange={e => {
                     setFormData({
                       ...formData,
@@ -701,9 +707,13 @@ export default function QuotationFormPage() {
                       ? 'border-red-500'
                       : 'border-zinc-700'
                   }`}
-                  placeholder="e.g. Q-2024-001"
-                  required
-                  disabled={isViewMode}
+                  placeholder={
+                    isNew
+                      ? 'Auto-generated (QT-YYYYMM-XXXX)'
+                      : 'e.g. Q-2024-001'
+                  }
+                  required={!isNew}
+                  disabled={isNew || isViewMode}
                 />
                 {fieldErrors.quotation_number && (
                   <p className="mt-1 text-sm text-red-400">

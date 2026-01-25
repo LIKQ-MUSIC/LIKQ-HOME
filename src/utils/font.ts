@@ -1,4 +1,4 @@
-import { Inter, Noto_Sans_Thai } from 'next/font/google'
+import { Inter, Noto_Sans_Thai, Prompt } from 'next/font/google'
 
 export const inter = Inter({
   weight: 'variable',
@@ -11,4 +11,11 @@ export const notoSans = Noto_Sans_Thai({
   weight: ['400', '700'], // or ["100", "300", "400", "500", "700", "900"]
   display: 'swap',
   variable: '--font-noto-sans-thai'
+})
+
+export const prompt = Prompt({
+  weight: ['400', '500', '700', '900'],
+  subsets: ['thai', 'latin'],
+  variable: '--font-prompt',
+  display: 'swap'
 })

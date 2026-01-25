@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from 'react'
 import { LoaderCircle } from 'lucide-react'
+import Image from 'next/image'
 import { cn } from '@/utils'
 
 import { VIDEO_URL } from './constants'
@@ -19,9 +20,20 @@ const VideoLanding = () => {
 
   return (
     <>
+      {/* Static Fallback Image for LCP & Mobile */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/images/about/team-studio.jpg"
+          alt="LiKQ Music Studio Background"
+          fill
+          priority
+          className="object-cover object-[68%_center] lg:object-center"
+        />
+      </div>
+
       {/* Loading Spinner */}
       {!isVideoLoaded && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#030827]">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/30">
           <LoaderCircle className="animate-spin text-white w-10 h-10" />
         </div>
       )}
