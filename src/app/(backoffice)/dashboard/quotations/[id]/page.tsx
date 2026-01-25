@@ -382,6 +382,10 @@ export default function QuotationFormPage() {
   useEffect(() => {
     if (quotation) {
       setFormData(normalizeQuotationData(quotation))
+      // Load VAT rate if it exists, otherwise default to 7
+      if (typeof quotation.vat_rate === 'number') {
+        setVatRate(quotation.vat_rate)
+      }
     }
   }, [quotation])
 
@@ -426,6 +430,7 @@ export default function QuotationFormPage() {
       status: data.status.toUpperCase(), // Convert to uppercase to match API format (DRAFT, SENT, etc.)
       total_amount: data.total_amount,
       currency: data.currency || 'THB',
+      vat_rate: vatRate,
       items: filteredItems.length > 0 ? filteredItems : null // Send null if no items (matching API response format)
     }
 
