@@ -307,10 +307,22 @@ export default function QuotationPreview({
                           Contact Person (ผู้ติดต่อ)
                         </h3>
                         {contactPerson ? (
-                          <p className="font-semibold text-gray-800">
-                            {contactPerson.display_name ||
-                              contactPerson.legal_name}
-                          </p>
+                          <div className="space-y-1">
+                            <p className="font-semibold text-gray-800">
+                              {contactPerson.display_name ||
+                                contactPerson.legal_name}
+                            </p>
+                            {contactPerson.address && (
+                              <p className="text-gray-600 whitespace-pre-wrap">
+                                {contactPerson.address}
+                              </p>
+                            )}
+                            {contactPerson.tax_id && (
+                              <p className="text-gray-600">
+                                Tax ID: {contactPerson.tax_id}
+                              </p>
+                            )}
+                          </div>
                         ) : (
                           <p className="text-gray-400 italic">
                             No contact person
