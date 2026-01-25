@@ -186,92 +186,92 @@ export default function QuotationsPage() {
         <div className="bg-zinc-900 rounded-lg border border-zinc-800 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-            <thead>
-              <tr className="border-b border-zinc-800 bg-zinc-950">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
-                  Quotation Number
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
-                  Total Amount
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
-                  Issued Date
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
-                  Valid Until
-                </th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-zinc-300">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-12 text-center text-zinc-500"
-                  >
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="h-4 w-4 border-2 border-zinc-600 border-t-indigo-500 rounded-full animate-spin"></div>
-                      <span>Loading...</span>
-                    </div>
-                  </td>
+              <thead>
+                <tr className="border-b border-zinc-800 bg-zinc-950">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
+                    Quotation Number
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
+                    Status
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
+                    Total Amount
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
+                    Issued Date
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
+                    Valid Until
+                  </th>
+                  <th className="px-6 py-4 text-right text-sm font-semibold text-zinc-300">
+                    Actions
+                  </th>
                 </tr>
-              ) : error ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-12 text-center text-red-500"
-                  >
-                    Failed to load quotations. Please try again.
-                  </td>
-                </tr>
-              ) : !quotations || quotations.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-12 text-center text-zinc-500"
-                  >
-                    No quotations found. Create your first quotation to get
-                    started.
-                  </td>
-                </tr>
-              ) : (
-                quotations.map(quotation => (
-                  <tr
-                    key={quotation.id}
-                    className="border-b border-zinc-800 hover:bg-zinc-850/50"
-                  >
-                    <td className="px-6 py-4 text-white font-medium">
-                      {quotation.quotation_number}
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="px-6 py-12 text-center text-zinc-500"
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="h-4 w-4 border-2 border-zinc-600 border-t-indigo-500 rounded-full animate-spin"></div>
+                        <span>Loading...</span>
+                      </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
-                          quotation.status
-                        )}`}
-                      >
-                        {quotation.status || 'Draft'}
-                      </span>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="px-6 py-12 text-center text-red-500"
+                    >
+                      Failed to load quotations. Please try again.
                     </td>
-                    <td className="px-6 py-4 text-zinc-300">
-                      {formatCurrency(
-                        quotation.total_amount,
-                        quotation.currency
-                      )}
+                  </tr>
+                ) : !quotations || quotations.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="px-6 py-12 text-center text-zinc-500"
+                    >
+                      No quotations found. Create your first quotation to get
+                      started.
                     </td>
-                    <td className="px-6 py-4 text-zinc-400">
-                      {formatDate(quotation.issued_date)}
-                    </td>
-                    <td className="px-6 py-4 text-zinc-400">
-                      {formatDate(quotation.valid_until_date)}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      {(() => {
+                  </tr>
+                ) : (
+                  quotations.map(quotation => (
+                    <tr
+                      key={quotation.id}
+                      className="border-b border-zinc-800 hover:bg-zinc-850/50"
+                    >
+                      <td className="px-6 py-4 text-white font-medium">
+                        {quotation.quotation_number}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
+                            quotation.status
+                          )}`}
+                        >
+                          {quotation.status || 'Draft'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-zinc-300">
+                        {formatCurrency(
+                          quotation.total_amount,
+                          quotation.currency
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-zinc-400">
+                        {formatDate(quotation.issued_date)}
+                      </td>
+                      <td className="px-6 py-4 text-zinc-400">
+                        {formatDate(quotation.valid_until_date)}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {(() => {
                           const actions = [
                             {
                               component: (
@@ -316,22 +316,23 @@ export default function QuotationsPage() {
                               {actions.map((action, index) => (
                                 <React.Fragment key={index}>
                                   {action.component}
-                                  {showSeparator && index < actions.length - 1 && (
-                                    <span className="text-zinc-600">:</span>
-                                  )}
+                                  {showSeparator &&
+                                    index < actions.length - 1 && (
+                                      <span className="text-zinc-600">:</span>
+                                    )}
                                 </React.Fragment>
-                            ))}
-                          </div>
-                        )
-                      })()}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                              ))}
+                            </div>
+                          )
+                        })()}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
       </TooltipProvider>
 
       {/* Pagination Controls */}

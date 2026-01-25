@@ -1,4 +1,33 @@
-@import '@/components/Works/_components/WorkDetail/styles.css';
+/* WorkDetail styles inlined */
+@layer components {
+  .video-card {
+    @apply grid grid-cols-1 md:grid-cols-[1.5fr_1fr] min-h-[500px];
+  }
+
+  .thumbnail-section {
+    @apply h-full;
+  }
+
+  .thumbnail-container {
+    @apply relative w-full aspect-video md:aspect-auto md:h-full overflow-hidden bg-gray-100;
+  }
+
+  .thumbnail {
+    @apply w-full h-full object-cover absolute inset-0;
+  }
+
+  .play-icon {
+    @apply absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 text-white bg-black/40 p-2 rounded-full;
+  }
+
+  .video-meta {
+    @apply flex flex-col justify-center gap-2 md:gap-4 p-8 md:p-12;
+  }
+
+  .video-stats {
+    @apply text-sm text-secondary-dark mt-2 flex items-center gap-2;
+  }
+}
 
 @tailwind base;
 @tailwind components;

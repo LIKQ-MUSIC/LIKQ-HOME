@@ -18,7 +18,7 @@ interface QuotationItem {
 
 interface QuotationPreviewProps {
   formData: {
-    quotation_number: string
+    quotation_number?: string
     issued_date?: string
     valid_until_date?: string
     items: QuotationItem[]
