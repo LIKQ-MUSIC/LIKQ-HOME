@@ -300,12 +300,31 @@ export default function QuotationPreview({
                 {/* Page 1 Specific Info */}
                 {isFirstPage && (
                   <div className="flex justify-between mb-8 text-sm">
+                    <div className="w-[45%] space-y-2">
+                      <div className="flex justify-between border-b border-gray-100 pb-1">
+                        <span className="text-gray-600">No. (เลขที่):</span>
+                        <span className="font-semibold">
+                          {formData.quotation_number || 'DRAFT'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between border-b border-gray-100 pb-1">
+                        <span className="text-gray-600">Date (วันที่):</span>
+                        <span>{formatDate(formData.issued_date)}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-gray-100 pb-1">
+                        <span className="text-gray-600">
+                          Valid Until (ใช้ได้ถึง):
+                        </span>
+                        <span>{formatDate(formData.valid_until_date)}</span>
+                      </div>
+                    </div>
+
                     <div className="w-[48%]">
-                      <h3 className="font-bold text-gray-800 border-b border-gray-300 mb-2 pb-1">
-                        Customer (ลูกค้า)
+                      <h3 className="font-bold text-gray-800 border-b border-gray-300 mb-2 pb-1 text-right">
+                        Bill To (ลูกค้า)
                       </h3>
                       {billToParty ? (
-                        <div className="space-y-1">
+                        <div className="space-y-1 text-right">
                           <p className="font-semibold">
                             {billToParty.legal_name}
                           </p>
@@ -328,29 +347,10 @@ export default function QuotationPreview({
                           )}
                         </div>
                       ) : (
-                        <p className="text-gray-400 italic">
+                        <p className="text-gray-400 italic text-right">
                           No customer selected
                         </p>
                       )}
-                    </div>
-
-                    <div className="w-[45%] space-y-2">
-                      <div className="flex justify-between border-b border-gray-100 pb-1">
-                        <span className="text-gray-600">No. (เลขที่):</span>
-                        <span className="font-semibold">
-                          {formData.quotation_number || 'DRAFT'}
-                        </span>
-                      </div>
-                      <div className="flex justify-between border-b border-gray-100 pb-1">
-                        <span className="text-gray-600">Date (วันที่):</span>
-                        <span>{formatDate(formData.issued_date)}</span>
-                      </div>
-                      <div className="flex justify-between border-b border-gray-100 pb-1">
-                        <span className="text-gray-600">
-                          Valid Until (ใช้ได้ถึง):
-                        </span>
-                        <span>{formatDate(formData.valid_until_date)}</span>
-                      </div>
                     </div>
                   </div>
                 )}
