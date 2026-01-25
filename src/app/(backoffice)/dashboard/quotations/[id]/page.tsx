@@ -790,13 +790,13 @@ export default function QuotationFormPage() {
                 </label>
                 <input
                   type="number"
-                  min="7"
+                  min="0"
                   max="100"
                   step="1"
                   value={vatRate}
                   onChange={e => {
                     const value = parseFloat(e.target.value)
-                    if (value >= 7 && value <= 100) {
+                    if (value >= 0 && value <= 100) {
                       setVatRate(value)
                     }
                   }}
