@@ -7,6 +7,8 @@ import { Clock, User, FileText } from 'lucide-react'
 interface AuditLog {
   id: string
   user_id: string | null
+  user_name?: string | null
+  user_email?: string | null
   action: string
   target_table: string
   target_id: string | null
@@ -118,7 +120,10 @@ export default function AuditLogTimeline({
                     </h3>
                     <p className="text-sm text-zinc-400 flex items-center gap-1 mt-1">
                       <User size={14} />
-                      {log.user_id || 'System'}
+                      {log.user_name ||
+                        log.user_email ||
+                        log.user_id ||
+                        'System'}
                     </p>
                   </div>
                   <span className="text-xs text-zinc-500">
