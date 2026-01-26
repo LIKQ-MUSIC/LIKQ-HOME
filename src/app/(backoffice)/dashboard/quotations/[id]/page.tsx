@@ -442,7 +442,7 @@ export default function QuotationFormPage() {
       total_amount: data.total_amount,
       currency: data.currency || 'THB',
       vat_rate: data.vat_rate,
-      payment_method: data.payment_method || null,
+      payment_method: data.payment_method || '',
       items: filteredItems.length > 0 ? filteredItems : null // Send null if no items (matching API response format)
     }
 
