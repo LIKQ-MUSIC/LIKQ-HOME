@@ -65,7 +65,14 @@ export default function QuotationPreview({
   const formatDate = (dateString?: string) => {
     if (!dateString) return '-'
     try {
-      return new Date(dateString).toLocaleDateString('en-GB')
+      const date = new Date(dateString)
+      // Use Thai Buddhist calendar (adds 543 years to Gregorian year)
+      const day = date.getDate()
+      const month = date.getMonth() + 1
+      const buddhistYear = date.getFullYear() + 543
+
+      // Format as DD/MM/YYYY (Buddhist Era)
+      return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${buddhistYear}`
     } catch {
       return dateString
     }
@@ -154,22 +161,20 @@ export default function QuotationPreview({
     })
 
     // Check if Footer fits on the last page
-    // Footer needs to be added to the current height tracking
     if (currentHeight + footerHeight > USABLE_HEIGHT_PX) {
-      // Footer doesn't fit, push current items as a page
-      newPages.push({ items: currentItems, startIndex })
-
-      // Create a new empty page just for the footer (or with remaining items if any logic was different)
-      // Since the loop finished, currentItems contains the last batch.
-      // But wait, the loop put items into currentItems.
-      // If we push the page now, we have an empty page for footer?
-      // Actually, we need to move the last item(s) to the new page if strict,
-      // OR just have a page with header + footer?
-      // Let's just create a new page with 0 items implies meaningful header + footer.
-      newPages.push({ items: [], startIndex: formData.items.length })
+      // Footer doesn't fit - only push empty page if we have items to separate
+      if (currentItems.length > 0) {
+        newPages.push({ items: currentItems, startIndex })
+        newPages.push({ items: [], startIndex: formData.items.length })
+      } else if (newPages.length > 0) {
+        // Footer doesn't fit on current empty page, push it
+        newPages.push({ items: [], startIndex: formData.items.length })
+      }
     } else {
-      // Footer fits, push the last page
-      newPages.push({ items: currentItems, startIndex })
+      // Footer fits, push the last page only if it has content or is the first page
+      if (currentItems.length > 0 || newPages.length === 0) {
+        newPages.push({ items: currentItems, startIndex })
+      }
     }
 
     setPaginatedData({ pages: newPages })
@@ -249,7 +254,7 @@ export default function QuotationPreview({
         <div className="text-white animate-pulse">Calculating layout...</div>
       ) : (
         /* Actual Render Container */
-        <div ref={contentRef} className="flex flex-col gap-8 print:gap-0">
+        <div ref={contentRef} className="flex flex-col pdf-page-gap">
           {paginatedData.pages.map((page, pageIndex) => {
             const isLastPage = pageIndex === totalPages - 1
             const isFirstPage = pageIndex === 0
@@ -257,7 +262,7 @@ export default function QuotationPreview({
             return (
               <div
                 key={pageIndex}
-                className="bg-white text-black shadow-xl relative print:shadow-none print:break-after-page"
+                className={`bg-white text-black shadow-xl relative print:shadow-none ${!isLastPage ? 'print:break-after-page' : ''}`}
                 style={{
                   width: `${A4_WIDTH_MM}mm`,
                   height: `${A4_HEIGHT_MM}mm`, // STRICT HEIGHT
@@ -265,10 +270,11 @@ export default function QuotationPreview({
                   padding: `${PADDING_MM}mm`,
                   boxSizing: 'border-box',
                   display: 'flex',
-                  flexDirection: 'column'
+                  flexDirection: 'column',
+                  fontFamily: '"TH Sarabun New", "Sarabun", sans-serif'
                 }}
               >
-                {/* Header */}
+                {/* Header - Show on ALL pages */}
                 <div className="flex justify-between items-start mb-8 border-b-2 border-gray-200 pb-4">
                   <div className="flex items-center gap-4">
                     {/* Logo */}
@@ -278,22 +284,22 @@ export default function QuotationPreview({
                       className="h-12 w-auto"
                     />
                     <div>
-                      <h1 className="font-bold text-xl text-indigo-900">
+                      <h1 className="font-bold text-xl text-indigo-900 font-sans">
                         LiKQ MUSIC
                       </h1>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 font-sans">
                         Music Production & Entertainment Services
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <h2 className="text-2xl font-bold text-gray-800">
+                    <h2 className="text-2xl font-bold text-gray-800 font-sans">
                       QUOTATION
                     </h2>
-                    <p className="text-sm font-semibold text-gray-600">
+                    <p className="text-sm font-semibold text-gray-600 font-sarabun">
                       ใบเสนอราคา
                     </p>
-                    <div className="mt-2 text-sm text-gray-600">
+                    <div className="mt-2 text-sm text-gray-600 font-sans">
                       <span className="font-semibold">Page:</span>{' '}
                       {pageIndex + 1} / {totalPages}
                     </div>
@@ -306,22 +312,20 @@ export default function QuotationPreview({
                     <div className="w-[45%] flex flex-col gap-6">
                       {/* Contact Person Section */}
                       <div>
-                        <h3 className="font-bold text-gray-800 border-b border-gray-300 mb-2 pb-1">
+                        <h3 className="font-bold text-gray-800 border-b border-gray-300 mb-2 pb-1 font-sans">
                           Contact Person (ผู้ติดต่อ)
                         </h3>
                         {contactPerson ? (
                           <div className="space-y-1">
-                            <p className="font-semibold text-gray-800">
+                            <p className="font-semibold text-gray-800 font-sans">
                               {contactPerson.display_name ||
                                 contactPerson.legal_name}
                             </p>
-                            {contactPerson.address && (
-                              <p className="text-gray-600 whitespace-pre-wrap">
-                                {contactPerson.address}
-                              </p>
-                            )}
+                            <p className="text-gray-600 whitespace-pre-wrap font-sarabun">
+                              {contactPerson.address}
+                            </p>
                             {contactPerson.tax_id && (
-                              <p className="text-gray-600">
+                              <p className="text-gray-600 font-sans">
                                 Tax ID: {contactPerson.tax_id}
                               </p>
                             )}
@@ -336,40 +340,48 @@ export default function QuotationPreview({
                       {/* Quotation Details */}
                       <div className="space-y-2">
                         <div className="flex justify-between border-b border-gray-100 pb-1">
-                          <span className="text-gray-600">No. (เลขที่):</span>
-                          <span className="font-semibold">
+                          <span className="text-gray-600 font-sans">
+                            No. (เลขที่):
+                          </span>
+                          <span className="font-semibold font-sans">
                             {formData.quotation_number || 'DRAFT'}
                           </span>
                         </div>
                         <div className="flex justify-between border-b border-gray-100 pb-1">
-                          <span className="text-gray-600">Date (วันที่):</span>
-                          <span>{formatDate(formData.issued_date)}</span>
+                          <span className="text-gray-600 font-sans">
+                            Date (วันที่):
+                          </span>
+                          <span className="font-sans">
+                            {formatDate(formData.issued_date)}
+                          </span>
                         </div>
                         <div className="flex justify-between border-b border-gray-100 pb-1">
-                          <span className="text-gray-600">
+                          <span className="text-gray-600 font-sans">
                             Valid Until (ใช้ได้ถึง):
                           </span>
-                          <span>{formatDate(formData.valid_until_date)}</span>
+                          <span className="font-sans">
+                            {formatDate(formData.valid_until_date)}
+                          </span>
                         </div>
                       </div>
                     </div>
 
                     <div className="w-[48%]">
-                      <h3 className="font-bold text-gray-800 border-b border-gray-300 mb-2 pb-1 text-right">
+                      <h3 className="font-bold text-gray-800 border-b border-gray-300 mb-2 pb-1 text-right font-sans">
                         Bill To (ลูกค้า)
                       </h3>
                       {billToParty ? (
                         <div className="space-y-1 text-right">
-                          <p className="font-semibold">
+                          <p className="font-semibold font-sans">
                             {billToParty.legal_name}
                           </p>
                           {billToParty.address && (
-                            <p className="text-gray-600 whitespace-pre-wrap">
+                            <p className="text-gray-600 whitespace-pre-wrap font-sarabun">
                               {billToParty.address}
                             </p>
                           )}
                           {billToParty.tax_id && (
-                            <p className="text-gray-600">
+                            <p className="text-gray-600 font-sans">
                               Tax ID: {billToParty.tax_id}
                             </p>
                           )}
@@ -501,9 +513,11 @@ export default function QuotationPreview({
                           )}
                         </div>
                         <p className="font-semibold text-gray-900">
+                          {contactPerson?.legal_name || 'LiKQ MUSIC'}
+                        </p>
+                        <p className="text-xs text-gray-500">
                           Authorized Signature
                         </p>
-                        <p className="text-xs text-gray-500">LiKQ MUSIC</p>
                         {formData.signature_date ? (
                           <p className="text-xs text-gray-600 mt-1">
                             Date: {formatDate(formData.signature_date)}
@@ -517,8 +531,9 @@ export default function QuotationPreview({
                       <div className="text-center">
                         <div className="mb-2 border-b border-gray-400 w-2/3 mx-auto h-16"></div>
                         <p className="font-semibold text-gray-900">
-                          Customer Acceptance
+                          (___________________)
                         </p>
+                        <p className="text-xs text-gray-500">ผู้อนุมัติ</p>
                         <p className="text-xs text-gray-500">
                           Date: ____/____/____
                         </p>
@@ -527,8 +542,13 @@ export default function QuotationPreview({
                   </div>
                 )}
 
-                {/* Page footer text */}
-                <div className="mt-8 pt-4 border-t border-gray-100 text-xs text-center text-gray-400">
+                {/* Page footer text - Fixed at bottom */}
+                <div
+                  className="absolute bottom-0 left-0 right-0 pt-2 border-t border-gray-100 text-xs text-center text-gray-400"
+                  style={{
+                    padding: `2mm ${PADDING_MM}mm ${PADDING_MM}mm ${PADDING_MM}mm`
+                  }}
+                >
                   LiKQ MUSIC - Music Production & Entertainment Services
                 </div>
               </div>

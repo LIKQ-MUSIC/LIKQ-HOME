@@ -12,14 +12,14 @@ export async function extractHtmlWithStyles(
   // Clone the container to avoid modifying the original
   const clone = containerRef.cloneNode(true) as HTMLDivElement
 
-  // Convert logo image to base64 data URL
-  const logoImg = clone.querySelector(
+  // Convert ALL logo images to base64 data URL (for multi-page documents)
+  const logoImages = clone.querySelectorAll(
     'img[src="/logo-hover.svg"]'
-  ) as HTMLImageElement
+  ) as NodeListOf<HTMLImageElement>
 
-  if (logoImg) {
+  if (logoImages.length > 0) {
     try {
-      // Fetch the logo and convert to base64
+      // Fetch the logo once and convert to base64
       const response = await fetch('/logo-hover.svg')
       const blob = await response.blob()
       const reader = new FileReader()
@@ -29,7 +29,10 @@ export async function extractHtmlWithStyles(
         reader.readAsDataURL(blob)
       })
 
-      logoImg.src = logoDataUrl
+      // Apply the base64 data URL to ALL logo images
+      logoImages.forEach(img => {
+        img.src = logoDataUrl
+      })
     } catch (error) {
       console.warn('Failed to convert logo to base64:', error)
     }
@@ -64,7 +67,10 @@ export async function extractHtmlWithStyles(
   }
 
   // Get the outer HTML of the cloned container
-  const html = clone.outerHTML
+  let html = clone.outerHTML
+
+  // Strip pdf-page-gap class (used only for UI visual separation)
+  html = html.replace(/pdf-page-gap/g, '')
 
   // Extract all applied styles from the document
   const styles = Array.from(document.styleSheets)
@@ -134,16 +140,9 @@ export async function extractHtmlWithStyles(
     }
     
     /* PDF-specific styles for paging */
-    /* Page 1: no margin at all (full bleed for header/logo) */
-    @page :first {
-      size: A4;
-      margin: 0;
-    }
-    
-    /* Pages 2+: add ONLY top/bottom margins, let elements control left/right */
     @page {
       size: A4;
-      margin: 15mm 0;
+      margin: 0;
     }
     
     body {

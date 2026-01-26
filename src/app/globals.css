@@ -191,7 +191,6 @@ body {
   border-radius: 20px;
 }
 
-
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(156, 163, 175, 0.8);
 }
@@ -278,4 +277,9 @@ body {
 .ProseMirror li {
   font-size: 1.25rem;
   margin-bottom: 0.25em;
+}
+
+/* PDF Preview Page Gap - for UI visual separation only */
+.pdf-page-gap {
+  gap: 2rem;
 }
