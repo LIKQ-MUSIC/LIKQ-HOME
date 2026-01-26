@@ -694,7 +694,11 @@ export default function QuotationFormPage() {
       {showPreview ? (
         <div className="flex justify-center max-w-[95vw] mx-auto pb-10">
           <QuotationPreview
-            formData={formData}
+            formData={{
+              ...formData,
+              authorized_signature_url:
+                formData.authorized_signature_url || undefined
+            }}
             parties={parties}
             vatRate={formData.vat_rate}
             contentRef={contentRef}
