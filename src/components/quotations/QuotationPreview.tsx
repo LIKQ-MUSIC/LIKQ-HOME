@@ -121,7 +121,7 @@ export default function QuotationPreview({
     const tableHeaderHeight =
       container.querySelector('#measure-table-header')?.getBoundingClientRect()
         .height || 40
-    const pageFooterTextHeight = 40 // Approx for "LiKQ MUSIC..." footer
+    const pageFooterTextHeight = 60 // Approx for "LiKQ MUSIC..." footer + spacing
 
     // Measure all rows
     const rowHeights: number[] = []
@@ -501,7 +501,7 @@ export default function QuotationPreview({
                     </div>
 
                     {/* Signatures */}
-                    <div className="grid grid-cols-2 gap-8 pt-8 border-t border-gray-200">
+                    <div className="grid grid-cols-2 gap-8 pt-8 border-t border-gray-200 mb-8">
                       <div className="text-center relative">
                         <div className="mb-2 border-b border-gray-400 w-2/3 mx-auto h-16 relative flex items-end justify-center">
                           {formData.authorized_signature_url && (
