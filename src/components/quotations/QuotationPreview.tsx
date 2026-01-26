@@ -318,8 +318,8 @@ export default function QuotationPreview({
                         {contactPerson ? (
                           <div className="space-y-1">
                             <p className="font-semibold text-gray-800 font-sans">
-                              {contactPerson.display_name ||
-                                contactPerson.legal_name}
+                              {contactPerson.legal_name ||
+                                contactPerson.display_name}
                             </p>
                             <p className="text-gray-600 whitespace-pre-wrap font-sarabun">
                               {contactPerson.address}
