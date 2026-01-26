@@ -670,21 +670,26 @@ export default function QuotationFormPage() {
         </div>
       </div>
 
-      {!isNew && formData.status !== 'Approved' && (
-        <div className="max-w-4xl mx-auto">
-          <ApproveQuotationButton
-            quotationId={params.id as string}
-            currentStatus={formData.status}
-            onSuccess={() => {
-              queryClient.invalidateQueries({
-                queryKey: ['quotation', params.id]
-              })
-              // Update local state to hide button immediately if needed
-              setFormData(prev => ({ ...prev, status: 'Approved' }) as any)
-            }}
-          />
-        </div>
-      )}
+      {!isNew &&
+        formData.status !== 'Approved' &&
+        // Only show if the ORIGINAL status (from DB) is NOT Approved.
+        // If original is Approved, it means we must save as Draft first.
+        quotation?.status !== 'APPROVED' &&
+        quotation?.status !== 'Approved' && (
+          <div className="max-w-4xl mx-auto">
+            <ApproveQuotationButton
+              quotationId={params.id as string}
+              currentStatus={formData.status}
+              onSuccess={() => {
+                queryClient.invalidateQueries({
+                  queryKey: ['quotation', params.id]
+                })
+                // Update local state to hide button immediately if needed
+                setFormData(prev => ({ ...prev, status: 'Approved' }) as any)
+              }}
+            />
+          </div>
+        )}
 
       {error && (
         <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4 max-w-4xl mx-auto">
