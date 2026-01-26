@@ -9,6 +9,7 @@ import { ArrowLeft, Save, Plus, X, Loader2, GripVertical } from 'lucide-react'
 import PDFExportButton from '@/components/contracts/PDFExport'
 import QuotationPreview from '@/components/quotations/QuotationPreview'
 import ApproveQuotationButton from '@/components/quotations/ApproveQuotationButton'
+import AuditLogTimeline from '@/components/quotations/AuditLogTimeline'
 import {
   DndContext,
   closestCenter,
@@ -773,15 +774,26 @@ export default function QuotationFormPage() {
                   value={formData.status}
                   onChange={e => {
                     const value = e.target.value
+                    const previousStatus = formData.status
+
                     if (
                       STATUS_OPTIONS.includes(
                         value as (typeof STATUS_OPTIONS)[number]
                       )
                     ) {
-                      setFormData({
+                      const newFormData: any = {
                         ...formData,
                         status: value as QuotationFormData['status']
-                      })
+                      }
+
+                      // If changing from Approved to Draft, clear signature fields
+                      if (previousStatus === 'Approved' && value === 'Draft') {
+                        newFormData.authorized_signature_url = null
+                        newFormData.signature_date = ''
+                        newFormData.approved_date = ''
+                      }
+
+                      setFormData(newFormData)
                     }
                   }}
                   className="w-full px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -1448,6 +1460,13 @@ export default function QuotationFormPage() {
             </div>
           )}
         </form>
+      )}
+
+      {/* Audit Log Timeline - Only show for existing quotations */}
+      {!isNew && !showPreview && (
+        <div className="max-w-4xl mx-auto mt-6">
+          <AuditLogTimeline quotationId={params.id as string} />
+        </div>
       )}
     </div>
   )
