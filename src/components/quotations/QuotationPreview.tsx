@@ -26,6 +26,8 @@ interface QuotationPreviewProps {
     currency: string
     contact_person_id?: string
     bill_to_party_id?: string
+    payment_method?: string
+    signature_date?: string
     status: string
   }
   parties: Party[]
@@ -445,6 +447,16 @@ export default function QuotationPreview({
                   >
                     <div className="flex justify-end mb-8">
                       <div className="w-[45%] space-y-2 text-sm bg-gray-50 p-4 rounded-lg">
+                        {formData.payment_method && (
+                          <div className="mb-3 pb-3 border-b border-gray-200">
+                            <span className="text-gray-600 font-medium">
+                              Payment Method:
+                            </span>
+                            <p className="text-gray-900 font-semibold mt-1">
+                              {formData.payment_method}
+                            </p>
+                          </div>
+                        )}
                         <div className="flex justify-between">
                           <span className="text-gray-600">
                             Subtotal (รวมเงิน):
@@ -478,6 +490,11 @@ export default function QuotationPreview({
                           Authorized Signature
                         </p>
                         <p className="text-xs text-gray-500">LiKQ MUSIC</p>
+                        {formData.signature_date && (
+                          <p className="text-xs text-gray-600 mt-1">
+                            Date: {formatDate(formData.signature_date)}
+                          </p>
+                        )}
                       </div>
                       <div className="text-center">
                         <div className="mb-2 border-b border-gray-400 w-2/3 mx-auto h-16"></div>

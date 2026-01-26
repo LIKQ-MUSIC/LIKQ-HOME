@@ -265,6 +265,8 @@ export default function QuotationFormPage() {
     valid_until_date: defaultDates.valid_until_date,
     approved_date: '',
     accepted_date: '',
+    signature_date: '',
+    payment_method: '',
     status: 'Draft',
     total_amount: 0,
     currency: 'THB',
@@ -488,6 +490,13 @@ export default function QuotationFormPage() {
 
     const acceptedDate = formatDateForAPI(data.accepted_date || '')
     if (acceptedDate) payload.accepted_date = acceptedDate
+
+    const signatureDate = formatDateForAPI(data.signature_date || '')
+    if (signatureDate) payload.signature_date = signatureDate
+
+    if (data.payment_method?.trim()) {
+      payload.payment_method = data.payment_method
+    }
 
     // Convert total_amount to string to match API format (both CREATE and UPDATE use same format)
     payload.total_amount = String(payload.total_amount || 0)
@@ -812,6 +821,76 @@ export default function QuotationFormPage() {
                 <p className="text-xs text-zinc-500 mt-1">
                   Value Added Tax percentage
                 </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                  Payment Method
+                </label>
+                <input
+                  type="text"
+                  value={formData.payment_method || ''}
+                  onChange={e => {
+                    setFormData({ ...formData, payment_method: e.target.value })
+                    if (fieldErrors.payment_method) {
+                      setFieldErrors(prev => {
+                        const next = { ...prev }
+                        delete next.payment_method
+                        return next
+                      })
+                    }
+                  }}
+                  className={`w-full px-4 py-2 bg-zinc-950 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed ${
+                    fieldErrors.payment_method
+                      ? 'border-red-500'
+                      : 'border-zinc-700'
+                  }`}
+                  placeholder="e.g. Bank Transfer, Cash, Credit Card"
+                  disabled={isViewMode}
+                />
+                {fieldErrors.payment_method && (
+                  <p className="mt-1 text-sm text-red-400">
+                    {fieldErrors.payment_method}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                  Signature Date
+                </label>
+                <input
+                  type="date"
+                  value={
+                    formData.signature_date
+                      ? formData.signature_date.split('T')[0]
+                      : ''
+                  }
+                  onChange={e => {
+                    const dateValue = e.target.value
+                      ? new Date(e.target.value).toISOString()
+                      : ''
+                    setFormData({ ...formData, signature_date: dateValue })
+                    if (fieldErrors.signature_date) {
+                      setFieldErrors(prev => {
+                        const next = { ...prev }
+                        delete next.signature_date
+                        return next
+                      })
+                    }
+                  }}
+                  className={`w-full px-4 py-2 bg-zinc-950 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed ${
+                    fieldErrors.signature_date
+                      ? 'border-red-500'
+                      : 'border-zinc-700'
+                  }`}
+                  disabled={isViewMode}
+                />
+                {fieldErrors.signature_date && (
+                  <p className="mt-1 text-sm text-red-400">
+                    {fieldErrors.signature_date}
+                  </p>
+                )}
               </div>
             </div>
           </div>
