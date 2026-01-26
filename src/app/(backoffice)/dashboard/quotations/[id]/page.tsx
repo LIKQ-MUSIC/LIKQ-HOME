@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { ArrowLeft, Save, Plus, X, Loader2, GripVertical } from 'lucide-react'
 import PDFExportButton from '@/components/contracts/PDFExport'
 import QuotationPreview from '@/components/quotations/QuotationPreview'
+import ApproveQuotationButton from '@/components/quotations/ApproveQuotationButton'
 import {
   DndContext,
   closestCenter,
@@ -45,6 +46,7 @@ import {
 const STATUS_OPTIONS = [
   'Draft',
   'Sent',
+  'Approved',
   'Accepted',
   'Rejected',
   'Expired',
@@ -267,12 +269,13 @@ export default function QuotationFormPage() {
     accepted_date: '',
     signature_date: '',
     payment_method: '',
+    vat_rate: 7, // Default 7% VAT (Thailand standard)
     status: 'Draft',
     total_amount: 0,
     currency: 'THB',
-    items: [{ description: '', quantity: 1, price: 0 }]
+    items: [{ description: '', quantity: 1, price: 0 }],
+    authorized_signature_url: undefined
   })
-  const [vatRate, setVatRate] = useState<number>(7) // Default 7% VAT (Thailand standard)
   const [error, setError] = useState<string | null>(null)
   const [isViewMode, setIsViewMode] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<
@@ -359,6 +362,11 @@ export default function QuotationFormPage() {
       valid_until_date: quotation.valid_until_date || '',
       approved_date: quotation.approved_date || '',
       accepted_date: quotation.accepted_date || '',
+      signature_date: quotation.signature_date || '',
+      payment_method: quotation.payment_method || '',
+      vat_rate: !isNaN(parseFloat(String(quotation.vat_rate)))
+        ? parseFloat(String(quotation.vat_rate))
+        : 7,
       status: quotation.status
         ? quotation.status.charAt(0) + quotation.status.slice(1).toLowerCase() // Convert "DRAFT" to "Draft"
         : 'Draft',
@@ -376,17 +384,18 @@ export default function QuotationFormPage() {
         Array.isArray(quotation.items) &&
         quotation.items.length > 0
           ? quotation.items
-          : [{ description: '', quantity: 1, price: 0 }]
+          : [{ description: '', quantity: 1, price: 0 }],
+      authorized_signature_url: quotation.authorized_signature_url
     }
   }
 
   // Update form data when quotation is loaded (normalize GET response format)
   useEffect(() => {
     if (quotation) {
-      setFormData(normalizeQuotationData(quotation))
-      // Load VAT rate if it exists, otherwise default to 7
-      if (typeof quotation.vat_rate === 'number') {
-        setVatRate(quotation.vat_rate)
+      const normalizedData = normalizeQuotationData(quotation)
+      setFormData(normalizedData)
+      if (normalizedData.status === 'Approved') {
+        setIsViewMode(true)
       }
     }
   }, [quotation])
@@ -432,7 +441,8 @@ export default function QuotationFormPage() {
       status: data.status.toUpperCase(), // Convert to uppercase to match API format (DRAFT, SENT, etc.)
       total_amount: data.total_amount,
       currency: data.currency || 'THB',
-      vat_rate: vatRate,
+      vat_rate: data.vat_rate,
+      payment_method: data.payment_method || null,
       items: filteredItems.length > 0 ? filteredItems : null // Send null if no items (matching API response format)
     }
 
@@ -493,10 +503,6 @@ export default function QuotationFormPage() {
 
     const signatureDate = formatDateForAPI(data.signature_date || '')
     if (signatureDate) payload.signature_date = signatureDate
-
-    if (data.payment_method?.trim()) {
-      payload.payment_method = data.payment_method
-    }
 
     // Convert total_amount to string to match API format (both CREATE and UPDATE use same format)
     payload.total_amount = String(payload.total_amount || 0)
@@ -641,15 +647,18 @@ export default function QuotationFormPage() {
             {showPreview ? 'Back to Form' : 'A4 Preview'}
           </button>
 
-          {!isNew && !isViewMode && !showPreview && (
-            <button
-              onClick={() => setIsViewMode(true)}
-              className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
-            >
-              View Mode
-            </button>
-          )}
-          {isViewMode && !showPreview && (
+          {!isNew &&
+            !isViewMode &&
+            !showPreview &&
+            formData.status !== 'Approved' && (
+              <button
+                onClick={() => setIsViewMode(true)}
+                className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+              >
+                View Mode
+              </button>
+            )}
+          {isViewMode && !showPreview && formData.status !== 'Approved' && (
             <button
               onClick={() => setIsViewMode(false)}
               className="px-4 py-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
@@ -659,6 +668,22 @@ export default function QuotationFormPage() {
           )}
         </div>
       </div>
+
+      {!isNew && formData.status !== 'Approved' && (
+        <div className="max-w-4xl mx-auto">
+          <ApproveQuotationButton
+            quotationId={params.id as string}
+            currentStatus={formData.status}
+            onSuccess={() => {
+              queryClient.invalidateQueries({
+                queryKey: ['quotation', params.id]
+              })
+              // Update local state to hide button immediately if needed
+              setFormData(prev => ({ ...prev, status: 'Approved' }) as any)
+            }}
+          />
+        </div>
+      )}
 
       {error && (
         <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4 max-w-4xl mx-auto">
@@ -671,7 +696,7 @@ export default function QuotationFormPage() {
           <QuotationPreview
             formData={formData}
             parties={parties}
-            vatRate={vatRate}
+            vatRate={formData.vat_rate}
             contentRef={contentRef}
           />
         </div>
@@ -756,7 +781,7 @@ export default function QuotationFormPage() {
                     }
                   }}
                   className="w-full px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={isViewMode}
+                  disabled={isViewMode && formData.status !== 'Approved'} // Allow editing if status is Approved even in view mode
                 >
                   {STATUS_OPTIONS.map(status => (
                     <option key={status} value={status}>
@@ -807,11 +832,11 @@ export default function QuotationFormPage() {
                   min="0"
                   max="100"
                   step="1"
-                  value={vatRate}
+                  value={formData.vat_rate}
                   onChange={e => {
                     const value = parseFloat(e.target.value)
                     if (value >= 0 && value <= 100) {
-                      setVatRate(value)
+                      setFormData(prev => ({ ...prev, vat_rate: value }))
                     }
                   }}
                   className="w-full px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -827,8 +852,8 @@ export default function QuotationFormPage() {
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
                   Payment Method
                 </label>
-                <input
-                  type="text"
+                <textarea
+                  rows={3}
                   value={formData.payment_method || ''}
                   onChange={e => {
                     setFormData({ ...formData, payment_method: e.target.value })
@@ -840,12 +865,12 @@ export default function QuotationFormPage() {
                       })
                     }
                   }}
-                  className={`w-full px-4 py-2 bg-zinc-950 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`w-full px-4 py-2 bg-zinc-950 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed resize-y ${
                     fieldErrors.payment_method
                       ? 'border-red-500'
                       : 'border-zinc-700'
                   }`}
-                  placeholder="e.g. Bank Transfer, Cash, Credit Card"
+                  placeholder="e.g. Bank Transfer to Account: 123-456-789&#10;Bank: SCB&#10;Account Name: LiKQ MUSIC"
                   disabled={isViewMode}
                 />
                 {fieldErrors.payment_method && (
@@ -1359,13 +1384,15 @@ export default function QuotationFormPage() {
                 </span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-zinc-400">VAT ({vatRate}%)</span>
+                <span className="text-zinc-400">
+                  VAT ({formData.vat_rate}%)
+                </span>
                 <span className="text-zinc-300 font-medium">
                   {new Intl.NumberFormat('en-US', {
                     style: 'currency',
                     currency: formData.currency || 'THB',
                     minimumFractionDigits: 2
-                  }).format((formData.total_amount * vatRate) / 100)}
+                  }).format((formData.total_amount * formData.vat_rate) / 100)}
                 </span>
               </div>
               <div className="flex justify-between items-center pt-3 border-t border-zinc-800">
@@ -1384,7 +1411,7 @@ export default function QuotationFormPage() {
                       minimumFractionDigits: 2
                     }).format(
                       formData.total_amount +
-                        (formData.total_amount * vatRate) / 100
+                        (formData.total_amount * formData.vat_rate) / 100
                     )}
                   </p>
                 </div>

@@ -38,9 +38,12 @@ export const quotationFormSchema = z.object({
   accepted_date: z.string().optional().or(z.literal('')),
   signature_date: z.string().optional().or(z.literal('')),
   payment_method: z.string().optional().or(z.literal('')),
+  authorized_signature_url: z.string().optional(),
+  vat_rate: z.number().min(0).max(100).default(7),
   status: z.enum([
     'Draft',
     'Sent',
+    'Approved',
     'Accepted',
     'Rejected',
     'Expired',

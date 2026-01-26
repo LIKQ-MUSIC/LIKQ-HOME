@@ -41,6 +41,7 @@
     "html-react-parser": "^5.2.11",
     "lucide-react": "^0.509.0",
     "next": "^16.1.2",
+    "perfect-freehand": "^1.2.2",
     "prettier": "^3.4.2",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",

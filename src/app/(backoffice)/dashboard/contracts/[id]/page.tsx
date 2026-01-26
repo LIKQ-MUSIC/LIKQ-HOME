@@ -20,6 +20,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import PDFExportButton from '@/components/contracts/PDFExport'
 import ContractPreview from '@/components/contracts/ContractPreview'
+import ApproveContractButton from '@/components/contracts/ApproveContractButton'
 import { usePdfGeneration } from '@/hooks/usePdfGeneration'
 import { extractHtmlWithStyles } from '@/lib/extractHtml'
 
@@ -499,6 +500,19 @@ export default function ContractFormPage() {
           disabled={!formData.content}
         />
       </div>
+
+      {!isNew && formData.current_status !== 'Active' && (
+        <ApproveContractButton
+          contractId={params.id as string}
+          onSuccess={() => {
+            queryClient.invalidateQueries({
+              queryKey: ['contracts', params.id]
+            })
+            // Update local state if needed
+            setFormData(prev => ({ ...prev, current_status: 'Active' }))
+          }}
+        />
+      )}
 
       {error && (
         <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4">

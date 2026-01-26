@@ -29,6 +29,7 @@ interface QuotationPreviewProps {
     payment_method?: string
     signature_date?: string
     status: string
+    authorized_signature_url?: string
   }
   parties: Party[]
   vatRate?: number
@@ -445,18 +446,23 @@ export default function QuotationPreview({
                       page.items.length === 0 ? 'mt-4 flex-grow-0' : 'mt-auto'
                     }
                   >
-                    <div className="flex justify-end mb-8">
-                      <div className="w-[45%] space-y-2 text-sm bg-gray-50 p-4 rounded-lg">
+                    <div className="flex justify-between items-end mb-8 gap-8">
+                      {/* Left Column: Payment Method */}
+                      <div className="w-[50%]">
                         {formData.payment_method && (
-                          <div className="mb-3 pb-3 border-b border-gray-200">
-                            <span className="text-gray-600 font-medium">
-                              Payment Method:
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <span className="text-gray-600 font-medium block text-xs uppercase tracking-wide">
+                              วิธีการชำระเงิน (Payment Method)
                             </span>
-                            <p className="text-gray-900 font-semibold mt-1">
+                            <p className="text-gray-900 font-medium mt-2 whitespace-pre-wrap text-sm">
                               {formData.payment_method}
                             </p>
                           </div>
                         )}
+                      </div>
+
+                      {/* Right Column: Totals */}
+                      <div className="w-[45%] space-y-2 text-sm bg-gray-50 p-4 rounded-lg">
                         <div className="flex justify-between">
                           <span className="text-gray-600">
                             Subtotal (รวมเงิน):
@@ -484,15 +490,27 @@ export default function QuotationPreview({
 
                     {/* Signatures */}
                     <div className="grid grid-cols-2 gap-8 pt-8 border-t border-gray-200">
-                      <div className="text-center">
-                        <div className="mb-2 border-b border-gray-400 w-2/3 mx-auto h-16"></div>
+                      <div className="text-center relative">
+                        <div className="mb-2 border-b border-gray-400 w-2/3 mx-auto h-16 relative flex items-end justify-center">
+                          {formData.authorized_signature_url && (
+                            <img
+                              src={formData.authorized_signature_url}
+                              alt="Authorized Signature"
+                              className="absolute bottom-0 h-16 object-contain"
+                            />
+                          )}
+                        </div>
                         <p className="font-semibold text-gray-900">
                           Authorized Signature
                         </p>
                         <p className="text-xs text-gray-500">LiKQ MUSIC</p>
-                        {formData.signature_date && (
+                        {formData.signature_date ? (
                           <p className="text-xs text-gray-600 mt-1">
                             Date: {formatDate(formData.signature_date)}
+                          </p>
+                        ) : (
+                          <p className="text-xs text-gray-500">
+                            Date: ____/____/____
                           </p>
                         )}
                       </div>
