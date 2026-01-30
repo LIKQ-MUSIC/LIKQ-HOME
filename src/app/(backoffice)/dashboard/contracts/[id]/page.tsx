@@ -137,6 +137,7 @@ export default function ContractFormPage() {
   const [rules, setRules] = useState<string[]>([])
   const [newRule, setNewRule] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
+  const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit')
 
   // PDF Generation hook
   const {
@@ -955,21 +956,60 @@ export default function ContractFormPage() {
             </div>
 
             <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white">
-                Contract Content (A4 Preview)
-              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-white">
+                  Contract Content
+                </h2>
+                <div className="flex bg-zinc-950 p-1 rounded-lg border border-zinc-800">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('edit')}
+                    className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${
+                      activeTab === 'edit'
+                        ? 'bg-indigo-600 text-white shadow'
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    Edit Content
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('preview')}
+                    className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${
+                      activeTab === 'preview'
+                        ? 'bg-indigo-600 text-white shadow'
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    Preview & Print
+                  </button>
+                </div>
+              </div>
 
-              <ContractPreview
-                content={formData.content}
-                contractNumber={formData.contract_number || ''}
-                onChange={content => setFormData({ ...formData, content })}
-                contentRef={contentRef}
-                parties={formData.parties.map(p => ({
-                  legal_name: getParty(p.party_id)?.legal_name || '',
-                  role: p.role || '',
-                  signed_date: p.signed_date
-                }))}
-              />
+              {/* Edit Mode */}
+              <div className={activeTab === 'edit' ? 'block' : 'hidden'}>
+                <div className="bg-white rounded-lg text-black p-4 min-h-[500px] border border-zinc-700">
+                  <TipTapEditor
+                    content={formData.content}
+                    onChange={content => setFormData({ ...formData, content })}
+                  />
+                </div>
+              </div>
+
+              {/* Preview Mode */}
+              <div className={activeTab === 'preview' ? 'block' : 'hidden'}>
+                <ContractPreview
+                  content={formData.content}
+                  contractNumber={formData.contract_number || ''}
+                  title={formData.title}
+                  contentRef={contentRef}
+                  parties={formData.parties.map(p => ({
+                    legal_name: getParty(p.party_id)?.legal_name || '',
+                    role: p.role || '',
+                    signed_date: p.signed_date
+                  }))}
+                />
+              </div>
             </div>
           </div>
 
