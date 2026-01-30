@@ -144,25 +144,289 @@ export async function extractHtmlWithStyles(
       size: A4;
       margin: 0;
     }
-    
+
     body {
       margin: 0;
       padding: 0;
       font-family: 'TH Sarabun New', sans-serif;
     }
-    
+
     /* Ensure contract container has white background */
     .bg-white {
       background-color: white !important;
     }
-    
+
     /* Font classes */
     .font-sans {
       font-family: 'Noto Sans Thai', sans-serif !important;
     }
-    
+
     .font-sarabun {
       font-family: 'TH Sarabun New', sans-serif !important;
+    }
+
+    /* Critical flexbox layout styles for PDF */
+    .flex {
+      display: flex !important;
+    }
+
+    .flex-col {
+      flex-direction: column !important;
+    }
+
+    .flex-grow {
+      flex-grow: 1 !important;
+    }
+
+    .flex-shrink-0 {
+      flex-shrink: 0 !important;
+    }
+
+    .items-start {
+      align-items: flex-start !important;
+    }
+
+    .items-center {
+      align-items: center !important;
+    }
+
+    .items-end {
+      align-items: flex-end !important;
+    }
+
+    .justify-between {
+      justify-content: space-between !important;
+    }
+
+    .justify-center {
+      justify-content: center !important;
+    }
+
+    .justify-end {
+      justify-content: flex-end !important;
+    }
+
+    .gap-2 {
+      gap: 0.5rem !important;
+    }
+
+    .gap-4 {
+      gap: 1rem !important;
+    }
+
+    .gap-6 {
+      gap: 1.5rem !important;
+    }
+
+    .gap-8 {
+      gap: 2rem !important;
+    }
+
+    .gap-x-8 {
+      column-gap: 2rem !important;
+    }
+
+    .gap-y-12 {
+      row-gap: 3rem !important;
+    }
+
+    .text-right {
+      text-align: right !important;
+    }
+
+    .text-center {
+      text-align: center !important;
+    }
+
+    .text-left {
+      text-align: left !important;
+    }
+
+    .grid {
+      display: grid !important;
+    }
+
+    .grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    /* Spacing utilities */
+    .mt-auto {
+      margin-top: auto !important;
+    }
+
+    .mb-2 {
+      margin-bottom: 0.5rem !important;
+    }
+
+    .mb-4 {
+      margin-bottom: 1rem !important;
+    }
+
+    .mb-8 {
+      margin-bottom: 2rem !important;
+    }
+
+    .mt-1 {
+      margin-top: 0.25rem !important;
+    }
+
+    .mt-4 {
+      margin-top: 1rem !important;
+    }
+
+    .mt-8 {
+      margin-top: 2rem !important;
+    }
+
+    .pt-2 {
+      padding-top: 0.5rem !important;
+    }
+
+    .pt-8 {
+      padding-top: 2rem !important;
+    }
+
+    .pb-2 {
+      padding-bottom: 0.5rem !important;
+    }
+
+    .pb-4 {
+      padding-bottom: 1rem !important;
+    }
+
+    .pb-6 {
+      padding-bottom: 1.5rem !important;
+    }
+
+    .pb-12 {
+      padding-bottom: 3rem !important;
+    }
+
+    /* Width utilities */
+    .w-auto {
+      width: auto !important;
+    }
+
+    .w-3\\/4 {
+      width: 75% !important;
+    }
+
+    .mx-auto {
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+
+    /* Height utilities */
+    .h-12 {
+      height: 3rem !important;
+    }
+
+    .h-16 {
+      height: 4rem !important;
+    }
+
+    /* Border utilities */
+    .border-b {
+      border-bottom-width: 1px !important;
+      border-bottom-style: solid !important;
+    }
+
+    .border-b-2 {
+      border-bottom-width: 2px !important;
+      border-bottom-style: solid !important;
+    }
+
+    .border-t {
+      border-top-width: 1px !important;
+      border-top-style: solid !important;
+    }
+
+    .border-gray-100 {
+      border-color: rgb(243 244 246) !important;
+    }
+
+    .border-gray-200 {
+      border-color: rgb(229 231 235) !important;
+    }
+
+    .border-gray-400 {
+      border-color: rgb(156 163 175) !important;
+    }
+
+    .border-dashed {
+      border-style: dashed !important;
+    }
+
+    /* Position utilities */
+    .relative {
+      position: relative !important;
+    }
+
+    .absolute {
+      position: absolute !important;
+    }
+
+    .bottom-0 {
+      bottom: 0 !important;
+    }
+
+    .left-0 {
+      left: 0 !important;
+    }
+
+    .right-0 {
+      right: 0 !important;
+    }
+
+    /* Text color utilities */
+    .text-indigo-900 {
+      color: rgb(49 46 129) !important;
+    }
+
+    .text-gray-400 {
+      color: rgb(156 163 175) !important;
+    }
+
+    .text-gray-500 {
+      color: rgb(107 114 128) !important;
+    }
+
+    .text-gray-600 {
+      color: rgb(75 85 99) !important;
+    }
+
+    .text-gray-800 {
+      color: rgb(31 41 55) !important;
+    }
+
+    /* Font size utilities */
+    .text-xs {
+      font-size: 0.75rem !important;
+      line-height: 1rem !important;
+    }
+
+    .text-sm {
+      font-size: 0.875rem !important;
+      line-height: 1.25rem !important;
+    }
+
+    .text-xl {
+      font-size: 1.25rem !important;
+      line-height: 1.75rem !important;
+    }
+
+    /* Font weight utilities */
+    .font-bold {
+      font-weight: 700 !important;
+    }
+
+    .font-semibold {
+      font-weight: 600 !important;
+    }
+
+    .font-medium {
+      font-weight: 500 !important;
     }
   </style>
 </head>
