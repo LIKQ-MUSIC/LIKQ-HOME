@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useLayoutEffect, useState, useRef } from 'react'
+import React, { useLayoutEffect, useState, useRef, useEffect, useCallback } from 'react'
 
 interface ContractPreviewProps {
   content: string
@@ -13,39 +13,37 @@ interface ContractPreviewProps {
     signed_date?: string
     sign_label?: string
   }>
+  isActive?: boolean // New prop to trigger measurement when tab becomes active
 }
-
-// A4 Dimensions in mm (standard)
-const A4_WIDTH_MM = 210
-const A4_HEIGHT_MM = 297
-
-// Approximate pixel conversion (96 DPI)
-const PAGE_HEIGHT_PX = 1122
-const PADDING_MM = 15
-const PADDING_PX = PADDING_MM * 3.78
-const USABLE_HEIGHT_PX = PAGE_HEIGHT_PX - PADDING_PX * 2
 
 export default function ContractPreview({
   content,
   contractNumber,
   title,
   contentRef,
-  parties = []
+  parties = [],
+  isActive = true
 }: ContractPreviewProps) {
-  const measureContainerRef = useRef<HTMLDivElement>(null)
-  const [isMeasuring, setIsMeasuring] = useState(true)
+  const measureRef = useRef<HTMLDivElement>(null)
   const [paginatedPages, setPaginatedPages] = useState<
     { content: string; hasSignature: boolean }[]
   >([])
+  const [isReady, setIsReady] = useState(false)
+
+  // A4 dimensions in pixels (approx. 210mm x 297mm at 96dpi)
+  const A4_HEIGHT_PX = 1123
+  const PADDING_PX = 75.6 // 20mm
+  const USABLE_HEIGHT_PX = A4_HEIGHT_PX - 2 * PADDING_PX
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return '..../..../....'
     try {
       const date = new Date(dateString)
-      const day = date.getDate()
-      const month = date.getMonth() + 1
-      const buddhistYear = date.getFullYear() + 543
-      return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${buddhistYear}`
+      return date.toLocaleDateString('th-TH', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
     } catch {
       return dateString
     }
@@ -55,226 +53,255 @@ export default function ContractPreview({
     return parties.find(party => party.role === role)
   }
 
-  // Trigger measurement when content changes
-  useLayoutEffect(() => {
-    setIsMeasuring(true)
-  }, [content])
+  // Measurement function - can be called manually
+  const measureAndPaginate = useCallback(() => {
+    if (!measureRef.current || !content || !content.trim()) {
+      setPaginatedPages([])
+      setIsReady(false)
+      return
+    }
 
-  // Measurement Logic
-  useLayoutEffect(() => {
-    if (!isMeasuring || !measureContainerRef.current) return
+    const container = measureRef.current
 
-    const container = measureContainerRef.current
+    const header = container.querySelector('#measure-header')
+    const footer = container.querySelector('#measure-footer')
 
-    // Measure fixed elements
-    const headerHeight =
-      container.querySelector('#measure-header-1')?.getBoundingClientRect()
-        .height || 180
-    const contHeaderHeight =
-      container.querySelector('#measure-header-cont')?.getBoundingClientRect()
-        .height || 50
-    const signaturesHeight =
-      container.querySelector('#measure-signatures')?.getBoundingClientRect()
-        .height || 300
-    const pageFooterTextHeight = 60
+    const headerHeight = header?.getBoundingClientRect().height || 150
+    const footerHeight = footer?.getBoundingClientRect().height || 50
+    const signaturesHeight = 350
 
-    // Measure content blocks
     const contentDiv = container.querySelector('#measure-content')
-    if (!contentDiv) return
+    if (!contentDiv) {
+      setPaginatedPages([{ content, hasSignature: true }])
+      setIsReady(true)
+      return
+    }
 
     const children = Array.from(contentDiv.children) as HTMLElement[]
-    const blockHeights: { html: string; height: number }[] = []
+
+    if (children.length === 0) {
+      setPaginatedPages([{ content, hasSignature: true }])
+      setIsReady(true)
+      return
+    }
+
+    const effectiveUsableHeight = USABLE_HEIGHT_PX - headerHeight - footerHeight
+
+    const newPages: { content: string; hasSignature: boolean }[] = []
+    let currentPageContent = ''
+    let currentHeight = 0
 
     children.forEach(child => {
       const rect = child.getBoundingClientRect()
       const style = window.getComputedStyle(child)
       const marginTop = parseFloat(style.marginTop) || 0
       const marginBottom = parseFloat(style.marginBottom) || 0
-      blockHeights.push({
-        html: child.outerHTML,
-        height: rect.height + marginTop + marginBottom
-      })
-    })
+      const height = rect.height + marginTop + marginBottom
 
-    // Pagination Algorithm
-    const newPages: { content: string; hasSignature: boolean }[] = []
-    let currentContent = ''
-    let currentHeight = headerHeight + pageFooterTextHeight // Page 1 starts with full header
-    let isFirstPage = true
-
-    blockHeights.forEach(block => {
-      const availableHeight = isFirstPage
-        ? USABLE_HEIGHT_PX - headerHeight - pageFooterTextHeight
-        : USABLE_HEIGHT_PX - contHeaderHeight - pageFooterTextHeight
-
-      if (currentHeight + block.height > USABLE_HEIGHT_PX) {
-        // Push current page
-        newPages.push({ content: currentContent, hasSignature: false })
-
-        // Reset for next page
-        currentContent = block.html
-        currentHeight = contHeaderHeight + pageFooterTextHeight + block.height
-        isFirstPage = false
+      if (currentHeight + height > effectiveUsableHeight) {
+        if (currentPageContent) {
+          newPages.push({ content: currentPageContent, hasSignature: false })
+        }
+        currentPageContent = child.outerHTML
+        currentHeight = height
       } else {
-        currentContent += block.html
-        currentHeight += block.height
+        currentPageContent += child.outerHTML
+        currentHeight += height
       }
     })
 
-    // Check if signatures fit on the last page
-    const remainingHeight = USABLE_HEIGHT_PX - currentHeight
-    if (remainingHeight >= signaturesHeight) {
-      // Signatures fit on current page
-      newPages.push({ content: currentContent, hasSignature: true })
-    } else {
-      // Signatures don't fit - push current content, then new page for signatures
-      if (currentContent) {
-        newPages.push({ content: currentContent, hasSignature: false })
+    if (currentHeight + signaturesHeight > effectiveUsableHeight) {
+      if (currentPageContent) {
+        newPages.push({ content: currentPageContent, hasSignature: false })
       }
       newPages.push({ content: '', hasSignature: true })
+    } else {
+      newPages.push({ content: currentPageContent, hasSignature: true })
     }
 
     setPaginatedPages(newPages)
-    setIsMeasuring(false)
-  }, [isMeasuring, content])
+    setIsReady(true)
+  }, [content, USABLE_HEIGHT_PX])
 
-  const totalPages = paginatedPages.length
+  // Measure when content changes (with delay for DOM to update)
+  useEffect(() => {
+    if (!content || !content.trim()) {
+      setPaginatedPages([])
+      setIsReady(false)
+      return
+    }
+
+    // Reset ready state when content changes
+    setIsReady(false)
+
+    const timer = setTimeout(() => {
+      measureAndPaginate()
+    }, 150)
+
+    return () => clearTimeout(timer)
+  }, [content, measureAndPaginate])
+
+  // Re-measure when becoming active (tab switch)
+  useEffect(() => {
+    if (isActive && content && content.trim()) {
+      // Small delay to ensure the container is visible and measurable
+      const timer = setTimeout(() => {
+        measureAndPaginate()
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [isActive, measureAndPaginate, content])
 
   return (
-    <div className="w-full overflow-auto bg-zinc-800/50 p-8 rounded-lg flex flex-col items-start gap-8">
-      {/* Hidden Measurement Container */}
+    <div
+      className="w-full bg-zinc-800/50 p-8 rounded-lg border border-zinc-700"
+      style={{
+        maxHeight: 'calc(100vh - 300px)',
+        overflowY: 'auto',
+        overflowX: 'auto',
+        position: 'relative'
+      }}
+    >
+      {/* Measurement Container - Always rendered, always hidden but measurable */}
       <div
-        ref={measureContainerRef}
+        ref={measureRef}
         style={{
-          position: 'absolute',
+          position: 'fixed',
+          top: '-9999px',
+          left: '-9999px',
+          width: '210mm',
+          padding: '20mm',
+          boxSizing: 'border-box',
           visibility: 'hidden',
-          width: `${A4_WIDTH_MM}mm`,
-          padding: `${PADDING_MM}mm`
+          pointerEvents: 'none'
         }}
       >
-        {/* Measure Header Page 1 */}
-        <div id="measure-header-1">
-          <div className="flex justify-between items-start mb-8 border-b-2 border-gray-200 pb-4">
-            <div className="h-12 w-12"></div>
-            <div className="h-20 w-full"></div>
+        <div
+          id="measure-header"
+          style={{ marginBottom: '2rem', borderBottom: '2px solid #e5e7eb', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ height: '3rem', width: '3rem' }}></div>
+            <div>
+              <h1 style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>LiKQ MUSIC</h1>
+              <p style={{ fontSize: '0.75rem' }}>Music Production</p>
+            </div>
           </div>
-          <div className="mb-8 flex justify-between text-sm border-b border-gray-100 pb-6">
-            <div className="h-12"></div>
-            <div className="h-12"></div>
+          <div style={{ textAlign: 'right' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>CONTRACT</h2>
+            <p style={{ fontSize: '0.875rem' }}>Title</p>
+            <p style={{ fontSize: '0.75rem' }}>Page 1 / 1</p>
           </div>
         </div>
 
-        {/* Measure Continuation Header */}
-        <div
-          id="measure-header-cont"
-          className="mb-4 h-8 border-b border-dashed border-gray-300"
-        ></div>
-
-        {/* Measure Content */}
         <div
           id="measure-content"
           className="prose-sm max-w-none font-sarabun text-[14pt] leading-normal text-black [&_p]:mb-2 [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-bold"
           dangerouslySetInnerHTML={{ __html: content }}
         />
 
-        {/* Measure Signatures */}
-        <div id="measure-signatures" className="mt-8 pt-8 border-t border-gray-200">
-          <div className="grid grid-cols-2 gap-x-8 gap-y-12">
-            <div className="text-center">
-              <div className="h-12 w-3/4 mx-auto mb-2"></div>
-              <p className="h-4"></p>
-              <p className="h-4"></p>
-              <p className="h-4"></p>
-            </div>
-            <div className="text-center">
-              <div className="h-12 w-3/4 mx-auto mb-2"></div>
-              <p className="h-4"></p>
-              <p className="h-4"></p>
-              <p className="h-4"></p>
-            </div>
-            <div className="text-center">
-              <div className="h-12 w-3/4 mx-auto mb-2"></div>
-              <p className="h-4"></p>
-              <p className="h-4"></p>
-              <p className="h-4"></p>
-            </div>
-            <div className="text-center">
-              <div className="h-12 w-3/4 mx-auto mb-2"></div>
-              <p className="h-4"></p>
-              <p className="h-4"></p>
-              <p className="h-4"></p>
-            </div>
-          </div>
+        <div
+          id="measure-footer"
+          style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f3f4f6', textAlign: 'center', fontSize: '10px' }}
+        >
+          LiKQ MUSIC - Contract ID
         </div>
       </div>
 
-      {isMeasuring ? (
-        <div className="text-white animate-pulse">Calculating layout...</div>
+      {/* Display States */}
+      {(!content || !content.trim()) ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '5rem 0' }}>
+          <div className="text-zinc-400">No content to preview</div>
+        </div>
+      ) : !isReady ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '5rem 0' }}>
+          <div className="text-white animate-pulse">Processing Layout...</div>
+        </div>
       ) : (
-        <div ref={contentRef} className="flex flex-col pdf-page-gap">
-          {paginatedPages.map((page, pageIndex) => {
-            const isLastPage = pageIndex === totalPages - 1
-            const isFirstPage = pageIndex === 0
-
+        <div
+          ref={contentRef}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2rem' }}
+        >
+          {paginatedPages.map((page, index) => {
+            const isLastPage = index === paginatedPages.length - 1
             return (
               <div
-                key={pageIndex}
-                className={`bg-white text-black shadow-xl relative print:shadow-none ${!isLastPage ? 'print:break-after-page' : ''}`}
+                key={index}
                 style={{
-                  width: `${A4_WIDTH_MM}mm`,
-                  height: `${A4_HEIGHT_MM}mm`,
-                  overflow: 'hidden',
-                  padding: `${PADDING_MM}mm`,
+                  width: '210mm',
+                  height: '297mm',
+                  padding: '20mm',
                   boxSizing: 'border-box',
                   display: 'flex',
                   flexDirection: 'column',
-                  fontFamily: '"TH Sarabun New", "Sarabun", sans-serif'
+                  overflow: 'hidden',
+                  backgroundColor: 'white',
+                  color: 'black',
+                  boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.25)',
+                  position: 'relative',
+                  pageBreakAfter: !isLastPage ? 'always' : 'auto'
                 }}
               >
-                {/* Header - Show on ALL pages */}
-                <div className="flex justify-between items-start mb-8 border-b-2 border-gray-200 pb-4">
-                  <div className="flex items-center gap-4">
+                {/* Header */}
+                <div style={{
+                  marginBottom: '2rem',
+                  borderBottom: '2px solid #e5e7eb',
+                  paddingBottom: '1rem',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  fontFamily: 'system-ui, sans-serif'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <img
                       src="/logo-hover.svg"
                       alt="LiKQ"
-                      className="h-12 w-auto"
+                      style={{ height: '3rem', width: 'auto' }}
                     />
                     <div>
-                      <h1 className="font-bold text-xl text-indigo-900 font-sans">
+                      <h1 style={{ fontWeight: 'bold', fontSize: '1.25rem', color: '#312e81', margin: 0 }}>
                         LiKQ MUSIC
                       </h1>
-                      <p className="text-xs text-gray-500 font-sans">
+                      <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
                         Music Production & Entertainment
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <h2 className="text-xl font-bold text-gray-800 font-sans">
+                  <div style={{ textAlign: 'right' }}>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>
                       CONTRACT
                     </h2>
-                    <p className="text-sm font-semibold text-gray-600 font-sarabun">
+                    <p style={{ fontSize: '0.875rem', fontWeight: '600', color: '#4b5563', margin: 0 }}>
                       สัญญาจ้าง
                     </p>
-                    <p className="text-sm font-medium text-indigo-900 mt-1 font-sans">
+                    <p style={{ fontSize: '0.875rem', fontWeight: '500', color: '#312e81', marginTop: '0.25rem' }}>
                       {contractNumber || 'DRAFT'}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1 font-sans">
-                      Page {pageIndex + 1} / {totalPages}
+                    <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                      Page {index + 1} / {paginatedPages.length}
                     </p>
                   </div>
                 </div>
 
-                {/* Page 1 Specific Info */}
-                {isFirstPage && (
-                  <div className="mb-8 flex justify-between text-sm border-b border-gray-100 pb-6">
+                {/* Title section (Page 1 only) */}
+                {index === 0 && (
+                  <div style={{
+                    marginBottom: '2rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: '0.875rem',
+                    borderBottom: '1px solid #f3f4f6',
+                    paddingBottom: '1.5rem',
+                    fontFamily: 'system-ui, sans-serif'
+                  }}>
                     <div>
-                      <span className="text-gray-500 block font-sans">
+                      <span style={{ color: '#6b7280', display: 'block' }}>
                         Title (เรื่อง):
                       </span>
-                      <span className="font-semibold">{title || '-'}</span>
+                      <span style={{ fontWeight: '600' }}>{title || '-'}</span>
                     </div>
-                    <div className="text-right">
-                      <span className="text-gray-500 block font-sans">
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ color: '#6b7280', display: 'block' }}>
                         Date (วันที่):
                       </span>
                       <span>{formatDate(new Date().toISOString())}</span>
@@ -282,102 +309,88 @@ export default function ContractPreview({
                   </div>
                 )}
 
-                {/* Continuation Header */}
-                {!isFirstPage && (
-                  <div className="mb-4 text-sm text-gray-500 italic border-b border-dashed border-gray-300 pb-2">
-                    Continuation of Contract No. {contractNumber || 'DRAFT'}
-                  </div>
-                )}
-
                 {/* Content */}
-                {page.content && (
-                  <div
-                    className={`flex-grow prose-sm max-w-none font-sarabun text-[14pt] leading-normal text-black [&_p]:mb-2 [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-bold ${!page.hasSignature ? 'pb-12' : ''}`}
-                    dangerouslySetInnerHTML={{ __html: page.content }}
-                  />
-                )}
+                <div
+                  className="prose-sm max-w-none font-sarabun text-[14pt] leading-normal text-black [&_p]:mb-2 [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-bold"
+                  style={{
+                    flexGrow: 1,
+                    paddingBottom: !page.hasSignature ? '3rem' : '0'
+                  }}
+                  dangerouslySetInnerHTML={{ __html: page.content }}
+                />
 
                 {/* Signatures */}
                 {page.hasSignature && (
-                  <div
-                    className={
-                      page.content ? 'mt-auto pb-12' : 'mt-4 flex-grow-0 pb-12'
-                    }
-                  >
-                    <div className="pt-8 border-t border-gray-200 font-sarabun">
-                      <div className="grid grid-cols-2 gap-x-8 gap-y-12">
-                        <div className="text-center">
-                          <div className="border-b border-gray-400 w-3/4 mx-auto mb-2 relative h-12"></div>
-                          <p className="font-semibold text-sm">
-                            ผู้ว่าจ้าง (Employer)
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            ({' '}
-                            {findPartyByRole('ผู้ว่าจ้าง')?.legal_name ||
-                              '................................................'}{' '}
-                            )
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            Date:{' '}
-                            {formatDate(findPartyByRole('ผู้ว่าจ้าง')?.signed_date)}
-                          </p>
-                        </div>
-                        <div className="text-center">
-                          <div className="border-b border-gray-400 w-3/4 mx-auto mb-2 relative h-12"></div>
-                          <p className="font-semibold text-sm">
-                            ผู้รับจ้าง (Contractor)
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            ({' '}
-                            {findPartyByRole('ผู้รับจ้าง')?.legal_name ||
-                              '................................................'}{' '}
-                            )
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            Date:{' '}
-                            {formatDate(findPartyByRole('ผู้รับจ้าง')?.signed_date)}
-                          </p>
-                        </div>
-                        <div className="text-center">
-                          <div className="border-b border-gray-400 w-3/4 mx-auto mb-2 relative h-12"></div>
-                          <p className="font-semibold text-sm">พยาน (Witness)</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            ({' '}
-                            {findPartyByRole('พยาน 1')?.legal_name ||
-                              '................................................'}{' '}
-                            )
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            Date:{' '}
-                            {formatDate(findPartyByRole('พยาน 1')?.signed_date)}
-                          </p>
-                        </div>
-                        <div className="text-center">
-                          <div className="border-b border-gray-400 w-3/4 mx-auto mb-2 relative h-12"></div>
-                          <p className="font-semibold text-sm">พยาน (Witness)</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            ({' '}
-                            {findPartyByRole('พยาน 2')?.legal_name ||
-                              '................................................'}{' '}
-                            )
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            Date:{' '}
-                            {formatDate(findPartyByRole('พยาน 2')?.signed_date)}
-                          </p>
-                        </div>
+                  <div style={{
+                    marginTop: page.content ? 'auto' : '1rem',
+                    paddingTop: '2rem',
+                    borderTop: '1px solid #e5e7eb',
+                    paddingBottom: '3rem'
+                  }}>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(2, 1fr)',
+                      columnGap: '2rem',
+                      rowGap: '3rem'
+                    }}>
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ borderBottom: '1px solid #9ca3af', width: '75%', margin: '0 auto 0.5rem', height: '3rem' }}></div>
+                        <p style={{ fontWeight: '600', fontSize: '0.875rem', margin: 0 }}>
+                          ผู้ว่าจ้าง (Employer)
+                        </p>
+                        <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                          ( {findPartyByRole('ผู้ว่าจ้าง')?.legal_name || '................................................'} )
+                        </p>
+                        <p style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
+                          Date: {formatDate(findPartyByRole('ผู้ว่าจ้าง')?.signed_date)}
+                        </p>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ borderBottom: '1px solid #9ca3af', width: '75%', margin: '0 auto 0.5rem', height: '3rem' }}></div>
+                        <p style={{ fontWeight: '600', fontSize: '0.875rem', margin: 0 }}>
+                          ผู้รับจ้าง (Contractor)
+                        </p>
+                        <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                          ( {findPartyByRole('ผู้รับจ้าง')?.legal_name || '................................................'} )
+                        </p>
+                        <p style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
+                          Date: {formatDate(findPartyByRole('ผู้รับจ้าง')?.signed_date)}
+                        </p>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ borderBottom: '1px solid #9ca3af', width: '75%', margin: '0 auto 0.5rem', height: '3rem' }}></div>
+                        <p style={{ fontWeight: '600', fontSize: '0.875rem', margin: 0 }}>พยาน (Witness)</p>
+                        <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                          ( {findPartyByRole('พยาน 1')?.legal_name || '................................................'} )
+                        </p>
+                        <p style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
+                          Date: {formatDate(findPartyByRole('พยาน 1')?.signed_date)}
+                        </p>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ borderBottom: '1px solid #9ca3af', width: '75%', margin: '0 auto 0.5rem', height: '3rem' }}></div>
+                        <p style={{ fontWeight: '600', fontSize: '0.875rem', margin: 0 }}>พยาน (Witness)</p>
+                        <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                          ( {findPartyByRole('พยาน 2')?.legal_name || '................................................'} )
+                        </p>
+                        <p style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
+                          Date: {formatDate(findPartyByRole('พยาน 2')?.signed_date)}
+                        </p>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* Page footer text - Fixed at bottom */}
-                <div
-                  className="absolute bottom-0 left-0 right-0 pt-2 border-t border-gray-100 text-xs text-center text-gray-400 font-sans"
-                  style={{
-                    padding: `2mm ${PADDING_MM}mm ${PADDING_MM}mm ${PADDING_MM}mm`
-                  }}
-                >
+                {/* Footer */}
+                <div style={{
+                  marginTop: '1rem',
+                  paddingTop: '1rem',
+                  borderTop: '1px solid #f3f4f6',
+                  textAlign: 'center',
+                  fontSize: '10px',
+                  color: '#9ca3af',
+                  fontFamily: 'system-ui, sans-serif'
+                }}>
                   LiKQ MUSIC - Contract ID: {contractNumber}
                 </div>
               </div>

@@ -1003,6 +1003,7 @@ export default function ContractFormPage() {
                   contractNumber={formData.contract_number || ''}
                   title={formData.title}
                   contentRef={contentRef}
+                  isActive={activeTab === 'preview'}
                   parties={formData.parties.map(p => ({
                     legal_name: getParty(p.party_id)?.legal_name || '',
                     role: p.role || '',
