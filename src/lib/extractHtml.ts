@@ -39,16 +39,29 @@ export async function extractHtmlWithStyles(
   }
 
   // Fetch and convert TH Sarabun New fonts to base64
-  const fontUrls = [
+  const sarabunFontUrls = [
     '/fonts/THSarabunNew.ttf',
     '/fonts/THSarabunNew-Bold.ttf',
     '/fonts/THSarabunNew-Italic.ttf',
     '/fonts/THSarabunNew-BoldItalic.ttf'
   ]
 
+  // Noto Sans Thai from Google Fonts (woff2)
+  const notoSansFontUrls = [
+    {
+      url: 'https://fonts.gstatic.com/s/notosansthai/v20/iJWnBXeUZi_OHPqn4wq6hQ2_hbJ1xyN9wd43SofNWcd1MKVQt_So_9CdU5RtpzF-QRvzzXg.woff2',
+      key: 'noto-sans-thai-400'
+    },
+    {
+      url: 'https://fonts.gstatic.com/s/notosansthai/v20/iJWnBXeUZi_OHPqn4wq6hQ2_hbJ1xyN9wd43SofNWcd1MKVQt_So_9CdU5RttjJ-QRvzzXg.woff2',
+      key: 'noto-sans-thai-700'
+    }
+  ]
+
   const fontBase64Map: Record<string, string> = {}
 
-  for (const fontUrl of fontUrls) {
+  // Load TH Sarabun New fonts
+  for (const fontUrl of sarabunFontUrls) {
     try {
       const response = await fetch(fontUrl)
       const blob = await response.blob()
@@ -63,6 +76,25 @@ export async function extractHtmlWithStyles(
       fontBase64Map[fontUrl] = base64
     } catch (error) {
       console.warn(`Failed to load font ${fontUrl}:`, error)
+    }
+  }
+
+  // Load Noto Sans Thai fonts
+  for (const { url, key } of notoSansFontUrls) {
+    try {
+      const response = await fetch(url)
+      const blob = await response.blob()
+      const reader = new FileReader()
+
+      const base64 = await new Promise<string>((resolve, reject) => {
+        reader.onloadend = () => resolve(reader.result as string)
+        reader.onerror = reject
+        reader.readAsDataURL(blob)
+      })
+
+      fontBase64Map[key] = base64
+    } catch (error) {
+      console.warn(`Failed to load Noto Sans Thai font:`, error)
     }
   }
 
@@ -124,19 +156,19 @@ export async function extractHtmlWithStyles(
       src: url('${fontBase64Map['/fonts/THSarabunNew-BoldItalic.ttf'] || ''}') format('truetype');
     }
     
-    /* Embed Noto Sans Thai from Google Fonts for header */
+    /* Embed Noto Sans Thai as base64 for header */
     @font-face {
       font-family: 'Noto Sans Thai';
       font-style: normal;
       font-weight: 400;
-      src: url('https://fonts.gstatic.com/s/notosansthai/v20/iJWnBXeUZi_OHPqn4wq6hQ2_hbJ1xyN9wd43SofNWcd1MKVQt_So_9CdU5RtpzF-QRvzzXg.woff2') format('woff2');
+      src: url('${fontBase64Map['noto-sans-thai-400'] || ''}') format('woff2');
     }
-    
+
     @font-face {
       font-family: 'Noto Sans Thai';
       font-style: normal;
       font-weight: 700;
-      src: url('https://fonts.gstatic.com/s/notosansthai/v20/iJWnBXeUZi_OHPqn4wq6hQ2_hbJ1xyN9wd43SofNWcd1MKVQt_So_9CdU5RttjJ-QRvzzXg.woff2') format('woff2');
+      src: url('${fontBase64Map['noto-sans-thai-700'] || ''}') format('woff2');
     }
     
     /* PDF-specific styles for paging */
