@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import Link from 'next/link'
-import { ArrowLeft, Save, Plus, Minus, X, Loader2, GripVertical } from 'lucide-react'
+import { ArrowLeft, Save, Plus, Minus, X, Loader2, GripVertical, Copy } from 'lucide-react'
 import PDFExportButton from '@/components/contracts/PDFExport'
 import QuotationPreview from '@/components/quotations/QuotationPreview'
 import ApproveQuotationButton from '@/components/quotations/ApproveQuotationButton'
@@ -69,11 +69,13 @@ interface SortableItemProps {
     value: string | number
   ) => void
   removeItem: (index: number) => void
+  duplicateItem: (index: number) => void
   setFieldErrors: React.Dispatch<
     React.SetStateAction<Record<string, string | undefined>>
   >
   itemsLength: number
   currency: string
+  descriptionInputRef?: (el: HTMLInputElement | null) => void
 }
 
 function SortableItem({
@@ -84,9 +86,11 @@ function SortableItem({
   fieldErrors,
   updateItem,
   removeItem,
+  duplicateItem,
   setFieldErrors,
   itemsLength,
-  currency
+  currency,
+  descriptionInputRef
 }: SortableItemProps) {
   const [isMounted, setIsMounted] = useState(false)
 
@@ -142,6 +146,7 @@ function SortableItem({
           Description
         </label>
         <input
+          ref={descriptionInputRef}
           type="text"
           value={item.description}
           onChange={e => {
@@ -155,9 +160,17 @@ function SortableItem({
               })
             }
           }}
-          className={`w-full px-4 py-2 bg-zinc-900 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed ${
+          onKeyDown={e => {
+            // Ctrl/Cmd + Enter to add new item
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+              e.preventDefault()
+              const addButton = document.getElementById('add-item-btn')
+              addButton?.click()
+            }
+          }}
+          className={`w-full px-4 py-2 bg-zinc-900 border rounded-lg text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
             fieldErrors[`items.${index}.description`]
-              ? 'border-red-500'
+              ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50'
               : 'border-zinc-700'
           }`}
           placeholder="Service description"
@@ -297,23 +310,34 @@ function SortableItem({
             <Plus className="h-3.5 w-3.5" />
           </Button>
         </div>
-        <p className="mt-2 text-xs text-zinc-500 text-right">
-          Line total:{' '}
-          <span className="text-zinc-300 font-medium">
+        <div className="mt-2 flex items-center justify-end gap-2">
+          <span className="text-xs text-zinc-500">Line total:</span>
+          <span className="text-sm font-semibold text-indigo-400 tabular-nums">
             {new Intl.NumberFormat('en-US', {
               style: 'currency',
               currency: safeCurrency,
               minimumFractionDigits: 2
             }).format(lineTotal)}
           </span>
-        </p>
+        </div>
         {fieldErrors[`items.${index}.price`] && (
           <p className="mt-1 text-sm text-red-400">
             {fieldErrors[`items.${index}.price`]}
           </p>
         )}
       </div>
-      <div className="col-span-12 md:col-span-1 flex md:justify-end items-start md:pt-8">
+      <div className="col-span-12 md:col-span-1 flex md:justify-end items-start gap-1">
+        {!isViewMode && (
+          <button
+            type="button"
+            onClick={() => duplicateItem(index)}
+            className="p-2 text-zinc-400 hover:text-indigo-400 transition-colors hover:bg-indigo-500/10 rounded-lg"
+            title="Duplicate item"
+            aria-label="Duplicate item"
+          >
+            <Copy size={16} />
+          </button>
+        )}
         {!isViewMode && itemsLength > 1 && (
           <button
             type="button"
@@ -660,11 +684,42 @@ export default function QuotationFormPage() {
     }
   }
 
+  // Refs for auto-focusing new items
+  const descriptionInputRefs = useRef<(HTMLInputElement | null)[]>([])
+
   const addItem = () => {
-    setFormData(prev => ({
-      ...prev,
-      items: [...prev.items, { description: '', quantity: 1, price: 0 }]
-    }))
+    setFormData(prev => {
+      const newItems = [...prev.items, { description: '', quantity: 1, price: 0 }]
+      // Schedule focus after render
+      setTimeout(() => {
+        const newIndex = newItems.length - 1
+        descriptionInputRefs.current[newIndex]?.focus()
+      }, 0)
+      return {
+        ...prev,
+        items: newItems
+      }
+    })
+  }
+
+  const duplicateItem = (index: number) => {
+    setFormData(prev => {
+      const itemToDuplicate = prev.items[index]
+      const newItems = [
+        ...prev.items.slice(0, index + 1),
+        { ...itemToDuplicate },
+        ...prev.items.slice(index + 1)
+      ]
+      // Schedule focus after render
+      setTimeout(() => {
+        const newIndex = index + 1
+        descriptionInputRefs.current[newIndex]?.focus()
+      }, 0)
+      return {
+        ...prev,
+        items: newItems
+      }
+    })
   }
 
   const removeItem = (index: number) => {
@@ -1436,16 +1491,25 @@ export default function QuotationFormPage() {
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-600 text-white font-semibold text-sm">
                   4
                 </div>
-                <h2 className="text-xl font-semibold text-white">Line Items</h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xl font-semibold text-white">Line Items</h2>
+                  <span className="px-2 py-0.5 bg-zinc-800 text-zinc-400 text-xs rounded-full font-medium">
+                    {formData.items.length}
+                  </span>
+                </div>
               </div>
               {!isViewMode && (
                 <button
+                  id="add-item-btn"
                   type="button"
                   onClick={addItem}
-                  className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors text-sm"
+                  className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors text-sm shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30"
                 >
                   <Plus size={16} />
                   Add Item
+                  <span className="hidden sm:inline text-xs text-indigo-300 ml-1">
+                    (Ctrl+Enter)
+                  </span>
                 </button>
               )}
             </div>
@@ -1455,6 +1519,30 @@ export default function QuotationFormPage() {
                 <p className="text-sm text-red-400">{fieldErrors.items}</p>
               </div>
             )}
+
+            {/* Empty State */}
+            {formData.items.length === 0 && (
+              <div className="text-center py-12 bg-zinc-950/50 rounded-lg border border-dashed border-zinc-800">
+                <div className="w-12 h-12 bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Plus className="h-6 w-6 text-zinc-500" />
+                </div>
+                <p className="text-zinc-400 mb-2">No line items yet</p>
+                <p className="text-zinc-500 text-sm mb-4">
+                  Add your first item to get started
+                </p>
+                {!isViewMode && (
+                  <button
+                    type="button"
+                    onClick={addItem}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors text-sm"
+                  >
+                    Add First Item
+                  </button>
+                )}
+              </div>
+            )}
+
+          {formData.items.length > 0 && (
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -1475,16 +1563,21 @@ export default function QuotationFormPage() {
                       fieldErrors={fieldErrors}
                       updateItem={updateItem}
                       removeItem={removeItem}
+                      duplicateItem={duplicateItem}
                       setFieldErrors={setFieldErrors}
                       itemsLength={formData.items.length}
                       currency={formData.currency || 'THB'}
+                      descriptionInputRef={(el: HTMLInputElement | null) => {
+                        descriptionInputRefs.current[index] = el
+                      }}
                     />
                   ))}
                 </div>
               </SortableContext>
             </DndContext>
+          )}
 
-            {/* Summary Section */}
+            {/* Summary Section -- always show, even with 0 items */}
             {(() => {
               const summaryCurrency =
                 formData.currency && formData.currency.trim()
@@ -1493,55 +1586,55 @@ export default function QuotationFormPage() {
               const vatAmount = (formData.total_amount * formData.vat_rate) / 100
               const grandTotal = formData.total_amount + vatAmount
               return (
-            <div className="mt-6 pt-6 border-t border-zinc-800">
-              <div className="flex flex-col gap-3">
-                {/* Subtotal Row */}
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-zinc-400">Subtotal</span>
-                  <span className="text-zinc-300 font-medium tabular-nums">
-                    {new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: summaryCurrency,
-                      minimumFractionDigits: 2
-                    }).format(formData.total_amount)}
-                  </span>
-                </div>
-                {/* VAT Row */}
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-zinc-400">
-                    VAT ({formData.vat_rate}%)
-                  </span>
-                  <span className="text-zinc-300 font-medium tabular-nums">
-                    {new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: summaryCurrency,
-                      minimumFractionDigits: 2
-                    }).format(vatAmount)}
-                  </span>
-                </div>
-                {/* Divider */}
-                <div className="border-t border-zinc-800 my-2"></div>
-                {/* Total Row - Aligned Layout */}
-                <div className="grid grid-cols-2 gap-4 items-end">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-zinc-500 mb-1">Currency</span>
-                    <span className="text-lg font-semibold text-white">
-                      {summaryCurrency}
-                    </span>
+                <div className="mt-6 pt-6 border-t border-zinc-800">
+                  <div className="flex flex-col gap-3">
+                    {/* Subtotal Row */}
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-zinc-400">Subtotal</span>
+                      <span className="text-zinc-300 font-medium tabular-nums">
+                        {new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: summaryCurrency,
+                          minimumFractionDigits: 2
+                        }).format(formData.total_amount)}
+                      </span>
+                    </div>
+                    {/* VAT Row */}
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-zinc-400">
+                        VAT ({formData.vat_rate}%)
+                      </span>
+                      <span className="text-zinc-300 font-medium tabular-nums">
+                        {new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: summaryCurrency,
+                          minimumFractionDigits: 2
+                        }).format(vatAmount)}
+                      </span>
+                    </div>
+                    {/* Divider */}
+                    <div className="border-t border-zinc-800 my-2"></div>
+                    {/* Total Row - Aligned Layout */}
+                    <div className="grid grid-cols-2 gap-4 items-end">
+                      <div className="flex flex-col">
+                        <span className="text-sm text-zinc-500 mb-1">Currency</span>
+                        <span className="text-lg font-semibold text-white">
+                          {summaryCurrency}
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className="text-sm text-zinc-500 mb-1">Total Amount</span>
+                        <span className="text-2xl font-bold text-white tabular-nums">
+                          {new Intl.NumberFormat('en-US', {
+                            style: 'currency',
+                            currency: summaryCurrency,
+                            minimumFractionDigits: 2
+                          }).format(grandTotal)}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-sm text-zinc-500 mb-1">Total Amount</span>
-                    <span className="text-2xl font-bold text-white tabular-nums">
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: summaryCurrency,
-                        minimumFractionDigits: 2
-                      }).format(grandTotal)}
-                    </span>
-                  </div>
                 </div>
-              </div>
-            </div>
               )
             })()}
           </div>
