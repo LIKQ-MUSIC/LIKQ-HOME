@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useLayoutEffect, useState, useRef } from 'react'
+import { formatDateThaiBuddhist } from '@/utils/date'
 
 interface Party {
   id: string
@@ -62,22 +63,6 @@ export default function QuotationPreview({
   const contactPerson = getParty(formData.contact_person_id)
 
   // Formatting helpers
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return '-'
-    try {
-      const date = new Date(dateString)
-      // Use Thai Buddhist calendar (adds 543 years to Gregorian year)
-      const day = date.getDate()
-      const month = date.getMonth() + 1
-      const buddhistYear = date.getFullYear() + 543
-
-      // Format as DD/MM/YYYY (Buddhist Era)
-      return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${buddhistYear}`
-    } catch {
-      return dateString
-    }
-  }
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -352,7 +337,7 @@ export default function QuotationPreview({
                             Date (วันที่):
                           </span>
                           <span className="font-sans">
-                            {formatDate(formData.issued_date)}
+                            {formatDateThaiBuddhist(formData.issued_date)}
                           </span>
                         </div>
                         <div className="flex justify-between border-b border-gray-100 pb-1">
@@ -360,7 +345,7 @@ export default function QuotationPreview({
                             Valid Until (ใช้ได้ถึง):
                           </span>
                           <span className="font-sans">
-                            {formatDate(formData.valid_until_date)}
+                            {formatDateThaiBuddhist(formData.valid_until_date)}
                           </span>
                         </div>
                       </div>
@@ -520,7 +505,7 @@ export default function QuotationPreview({
                         </p>
                         {formData.signature_date ? (
                           <p className="text-xs text-gray-600 mt-1">
-                            Date: {formatDate(formData.signature_date)}
+                            Date: {formatDateThaiBuddhist(formData.signature_date)}
                           </p>
                         ) : (
                           <p className="text-xs text-gray-500">

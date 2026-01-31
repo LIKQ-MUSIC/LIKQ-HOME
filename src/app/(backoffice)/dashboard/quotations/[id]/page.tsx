@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import Link from 'next/link'
-import { ArrowLeft, Save, Plus, X, Loader2, GripVertical } from 'lucide-react'
+import { ArrowLeft, Save, Plus, Minus, X, Loader2, GripVertical } from 'lucide-react'
 import PDFExportButton from '@/components/contracts/PDFExport'
 import QuotationPreview from '@/components/quotations/QuotationPreview'
 import ApproveQuotationButton from '@/components/quotations/ApproveQuotationButton'
@@ -34,6 +34,7 @@ import {
   type QuotationItem
 } from '../schema'
 import { ZodError } from 'zod'
+import dayjs from '@/utils/dayjs'
 import {
   Select,
   SelectContent,
@@ -43,6 +44,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
 
 const STATUS_OPTIONS = [
   'Draft',
@@ -71,6 +73,7 @@ interface SortableItemProps {
     React.SetStateAction<Record<string, string | undefined>>
   >
   itemsLength: number
+  currency: string
 }
 
 function SortableItem({
@@ -82,8 +85,15 @@ function SortableItem({
   updateItem,
   removeItem,
   setFieldErrors,
-  itemsLength
+  itemsLength,
+  currency
 }: SortableItemProps) {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
   const {
     attributes,
     listeners,
@@ -99,17 +109,26 @@ function SortableItem({
     opacity: isDragging ? 0.5 : 1
   }
 
+  const quantityValue = Number.isFinite(Number(item.quantity))
+    ? Number(item.quantity)
+    : 1
+  const normalizedQuantity = Math.max(1, Math.round(quantityValue || 1))
+  const priceValue = Number.isFinite(Number(item.price)) ? Number(item.price) : 0
+  const safePrice = Number.isFinite(priceValue) ? priceValue : 0
+  const lineTotal = normalizedQuantity * priceValue
+  const safeCurrency = currency && currency.trim() ? currency : 'THB'
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className="grid grid-cols-12 gap-4 p-4 bg-zinc-950 rounded-lg border border-zinc-800"
+      className="grid grid-cols-12 gap-4 p-4 bg-zinc-950 rounded-lg border border-zinc-800 hover:border-zinc-700 transition-colors"
     >
       {!isViewMode && (
         <div
           className="col-span-1 flex items-center justify-center cursor-grab active:cursor-grabbing self-center"
-          {...attributes}
-          {...listeners}
+          {...(isMounted ? attributes : {})}
+          {...(isMounted ? listeners : {})}
         >
           <GripVertical className="h-5 w-5 text-zinc-400 hover:text-zinc-300" />
         </div>
@@ -150,79 +169,158 @@ function SortableItem({
           </p>
         )}
       </div>
-      <div className="col-span-6 md:col-span-2">
+      <div className="col-span-12 md:col-span-3">
         <label className="block text-sm font-medium text-zinc-300 mb-2">
           Quantity
         </label>
-        <input
-          type="number"
-          min="0"
-          step="0.01"
-          value={item.quantity}
-          onChange={e => {
-            updateItem(index, 'quantity', parseFloat(e.target.value) || 0)
-            const errorKey = `items.${index}.quantity`
-            if (fieldErrors[errorKey]) {
-              setFieldErrors(prev => {
-                const next = { ...prev }
-                delete next[errorKey]
-                return next
-              })
+        <div className="flex items-center gap-1">
+          <Button
+            variant="outline"
+            size="icon"
+            type="button"
+            onClick={() =>
+              updateItem(index, 'quantity', Math.max(1, normalizedQuantity - 1))
             }
-          }}
-          className={`w-full px-4 py-2 bg-zinc-900 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed ${
-            fieldErrors[`items.${index}.quantity`]
-              ? 'border-red-500'
-              : 'border-zinc-700'
-          }`}
-          disabled={isViewMode}
-        />
+            className="h-9 w-9 shrink-0 text-zinc-300 hover:text-white border-zinc-700 bg-zinc-900"
+            disabled={isViewMode || normalizedQuantity <= 1}
+            aria-label="Decrease quantity"
+          >
+            <Minus className="h-3.5 w-3.5" />
+          </Button>
+          <input
+            type="number"
+            min="1"
+            step="1"
+            value={normalizedQuantity}
+            inputMode="numeric"
+            pattern="[0-9]*"
+            onChange={e => {
+              const nextValue = Math.max(
+                1,
+                Math.round(Number(e.target.value) || 1)
+              )
+              updateItem(index, 'quantity', nextValue)
+              const errorKey = `items.${index}.quantity`
+              if (fieldErrors[errorKey]) {
+                setFieldErrors(prev => {
+                  const next = { ...prev }
+                  delete next[errorKey]
+                  return next
+                })
+              }
+            }}
+            onKeyDown={e => {
+              if (['.', ',', 'e', 'E', '+', '-'].includes(e.key)) {
+                e.preventDefault()
+              }
+            }}
+            onBlur={() => {
+              updateItem(index, 'quantity', normalizedQuantity)
+            }}
+            className={`flex-1 min-w-0 px-2 py-2 bg-zinc-900 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-center tabular-nums appearance-none ${
+              fieldErrors[`items.${index}.quantity`]
+                ? 'border-red-500'
+                : 'border-zinc-700'
+            }`}
+            disabled={isViewMode}
+          />
+          <Button
+            variant="outline"
+            size="icon"
+            type="button"
+            onClick={() => updateItem(index, 'quantity', normalizedQuantity + 1)}
+            className="h-9 w-9 shrink-0 text-zinc-300 hover:text-white border-zinc-700 bg-zinc-900"
+            disabled={isViewMode}
+            aria-label="Increase quantity"
+          >
+            <Plus className="h-3.5 w-3.5" />
+          </Button>
+        </div>
         {fieldErrors[`items.${index}.quantity`] && (
           <p className="mt-1 text-sm text-red-400">
             {fieldErrors[`items.${index}.quantity`]}
           </p>
         )}
       </div>
-      <div className="col-span-6 md:col-span-3">
+      <div className="col-span-12 md:col-span-3">
         <label className="block text-sm font-medium text-zinc-300 mb-2">
           Price
         </label>
-        <input
-          type="number"
-          min="0"
-          step="0.01"
-          value={item.price}
-          onChange={e => {
-            updateItem(index, 'price', parseFloat(e.target.value) || 0)
-            const errorKey = `items.${index}.price`
-            if (fieldErrors[errorKey]) {
-              setFieldErrors(prev => {
-                const next = { ...prev }
-                delete next[errorKey]
-                return next
-              })
+        <div className="flex items-center gap-1">
+          <Button
+            variant="outline"
+            size="icon"
+            type="button"
+            onClick={() =>
+              updateItem(index, 'price', Math.max(0, safePrice - 1))
             }
-          }}
-          className={`w-full px-4 py-2 bg-zinc-900 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed ${
-            fieldErrors[`items.${index}.price`]
-              ? 'border-red-500'
-              : 'border-zinc-700'
-          }`}
-          disabled={isViewMode}
-        />
+            className="h-9 w-9 shrink-0 text-zinc-300 hover:text-white border-zinc-700 bg-zinc-900"
+            disabled={isViewMode}
+            aria-label="Decrease price"
+          >
+            <Minus className="h-3.5 w-3.5" />
+          </Button>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={item.price}
+            inputMode="decimal"
+            onChange={e => {
+              const parsed = parseFloat(e.target.value)
+              updateItem(index, 'price', Number.isNaN(parsed) ? 0 : parsed)
+              const errorKey = `items.${index}.price`
+              if (fieldErrors[errorKey]) {
+                setFieldErrors(prev => {
+                  const next = { ...prev }
+                  delete next[errorKey]
+                  return next
+                })
+              }
+            }}
+            className={`flex-1 min-w-0 px-2 py-2 bg-zinc-900 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-right tabular-nums appearance-none ${
+              fieldErrors[`items.${index}.price`]
+                ? 'border-red-500'
+                : 'border-zinc-700'
+            }`}
+            disabled={isViewMode}
+          />
+          <Button
+            variant="outline"
+            size="icon"
+            type="button"
+            onClick={() => updateItem(index, 'price', safePrice + 1)}
+            className="h-9 w-9 shrink-0 text-zinc-300 hover:text-white border-zinc-700 bg-zinc-900"
+            disabled={isViewMode}
+            aria-label="Increase price"
+          >
+            <Plus className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+        <p className="mt-2 text-xs text-zinc-500 text-right">
+          Line total:{' '}
+          <span className="text-zinc-300 font-medium">
+            {new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: safeCurrency,
+              minimumFractionDigits: 2
+            }).format(lineTotal)}
+          </span>
+        </p>
         {fieldErrors[`items.${index}.price`] && (
           <p className="mt-1 text-sm text-red-400">
             {fieldErrors[`items.${index}.price`]}
           </p>
         )}
       </div>
-      <div className="col-span-12 md:col-span-2 flex justify-end">
+      <div className="col-span-12 md:col-span-1 flex md:justify-end items-start md:pt-8">
         {!isViewMode && itemsLength > 1 && (
           <button
             type="button"
             onClick={() => removeItem(index)}
-            className="p-2 text-red-400 hover:text-red-300 transition-colors"
+            className="p-2 text-red-400 hover:text-red-300 transition-colors hover:bg-red-500/10 rounded-lg"
             title="Remove item"
+            aria-label="Remove item"
           >
             <X size={18} />
           </button>
@@ -240,32 +338,14 @@ export default function QuotationFormPage() {
   const contentRef = useRef<HTMLDivElement>(null)
   const [showPreview, setShowPreview] = useState(false)
 
-  // Helper function to get default dates for new quotations
-  const getDefaultDates = () => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-
-    const validUntil = new Date(today)
-    validUntil.setDate(validUntil.getDate() + 30) // 30 days from today
-
-    return {
-      issued_date: today.toISOString(),
-      valid_until_date: validUntil.toISOString()
-    }
-  }
-
-  const defaultDates = isNew
-    ? getDefaultDates()
-    : { issued_date: '', valid_until_date: '' }
-
   const [formData, setFormData] = useState<QuotationFormData>({
     quotation_number: '',
     contact_person_id: '',
     bill_to_party_id: '',
     approver_id: '',
     customer_signatory_id: '',
-    issued_date: defaultDates.issued_date,
-    valid_until_date: defaultDates.valid_until_date,
+    issued_date: '',
+    valid_until_date: '',
     approved_date: '',
     accepted_date: '',
     signature_date: '',
@@ -282,6 +362,17 @@ export default function QuotationFormPage() {
   const [fieldErrors, setFieldErrors] = useState<
     Record<string, string | undefined>
   >({})
+
+  useEffect(() => {
+    if (!isNew) return
+    const issuedDate = dayjs.utc().startOf('day')
+    const validUntilDate = issuedDate.add(30, 'day')
+    setFormData(prev => ({
+      ...prev,
+      issued_date: issuedDate.toISOString(),
+      valid_until_date: validUntilDate.toISOString()
+    }))
+  }, [isNew])
 
   // Drag and drop sensors
   const sensors = useSensors(
@@ -1364,11 +1455,11 @@ export default function QuotationFormPage() {
                 <p className="text-sm text-red-400">{fieldErrors.items}</p>
               </div>
             )}
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
               <SortableContext
                 items={formData.items.map((_, index) => index)}
                 strategy={verticalListSortingStrategy}
@@ -1386,6 +1477,7 @@ export default function QuotationFormPage() {
                       removeItem={removeItem}
                       setFieldErrors={setFieldErrors}
                       itemsLength={formData.items.length}
+                      currency={formData.currency || 'THB'}
                     />
                   ))}
                 </div>
@@ -1393,51 +1485,65 @@ export default function QuotationFormPage() {
             </DndContext>
 
             {/* Summary Section */}
-            <div className="mt-6 pt-6 border-t border-zinc-800 space-y-3">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-zinc-400">Subtotal</span>
-                <span className="text-zinc-300 font-medium">
-                  {new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: formData.currency || 'THB',
-                    minimumFractionDigits: 2
-                  }).format(formData.total_amount)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-zinc-400">
-                  VAT ({formData.vat_rate}%)
-                </span>
-                <span className="text-zinc-300 font-medium">
-                  {new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: formData.currency || 'THB',
-                    minimumFractionDigits: 2
-                  }).format((formData.total_amount * formData.vat_rate) / 100)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center pt-3 border-t border-zinc-800">
-                <div>
-                  <p className="text-sm text-zinc-400">Currency</p>
-                  <p className="text-lg font-semibold text-white mt-1">
-                    {formData.currency || 'THB'}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-zinc-400">Total Amount</p>
-                  <p className="text-2xl font-bold text-white mt-1">
+            {(() => {
+              const summaryCurrency =
+                formData.currency && formData.currency.trim()
+                  ? formData.currency
+                  : 'THB'
+              const vatAmount = (formData.total_amount * formData.vat_rate) / 100
+              const grandTotal = formData.total_amount + vatAmount
+              return (
+            <div className="mt-6 pt-6 border-t border-zinc-800">
+              <div className="flex flex-col gap-3">
+                {/* Subtotal Row */}
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-zinc-400">Subtotal</span>
+                  <span className="text-zinc-300 font-medium tabular-nums">
                     {new Intl.NumberFormat('en-US', {
                       style: 'currency',
-                      currency: formData.currency || 'THB',
+                      currency: summaryCurrency,
                       minimumFractionDigits: 2
-                    }).format(
-                      formData.total_amount +
-                        (formData.total_amount * formData.vat_rate) / 100
-                    )}
-                  </p>
+                    }).format(formData.total_amount)}
+                  </span>
+                </div>
+                {/* VAT Row */}
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-zinc-400">
+                    VAT ({formData.vat_rate}%)
+                  </span>
+                  <span className="text-zinc-300 font-medium tabular-nums">
+                    {new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: summaryCurrency,
+                      minimumFractionDigits: 2
+                    }).format(vatAmount)}
+                  </span>
+                </div>
+                {/* Divider */}
+                <div className="border-t border-zinc-800 my-2"></div>
+                {/* Total Row - Aligned Layout */}
+                <div className="grid grid-cols-2 gap-4 items-end">
+                  <div className="flex flex-col">
+                    <span className="text-sm text-zinc-500 mb-1">Currency</span>
+                    <span className="text-lg font-semibold text-white">
+                      {summaryCurrency}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-sm text-zinc-500 mb-1">Total Amount</span>
+                    <span className="text-2xl font-bold text-white tabular-nums">
+                      {new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: summaryCurrency,
+                        minimumFractionDigits: 2
+                      }).format(grandTotal)}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
+              )
+            })()}
           </div>
 
           {!isViewMode && (

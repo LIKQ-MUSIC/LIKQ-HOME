@@ -21,6 +21,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
+import { formatDateShort } from '@/utils/date'
 
 interface QuotationItem {
   description: string
@@ -69,19 +70,6 @@ const getStatusColor = (status: string) => {
       return 'bg-red-500/20 text-red-300 border-red-500/20'
     default:
       return 'bg-zinc-500/20 text-zinc-300 border-zinc-500/20'
-  }
-}
-
-const formatDate = (dateString: string | null | undefined) => {
-  if (!dateString) return '-'
-  try {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    })
-  } catch {
-    return dateString
   }
 }
 
@@ -265,11 +253,11 @@ export default function QuotationsPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 text-zinc-400">
-                        {formatDate(quotation.issued_date)}
-                      </td>
-                      <td className="px-6 py-4 text-zinc-400">
-                        {formatDate(quotation.valid_until_date)}
-                      </td>
+                      {formatDateShort(quotation.issued_date ?? undefined)}
+                    </td>
+                    <td className="px-6 py-4 text-zinc-400">
+                      {formatDateShort(quotation.valid_until_date ?? undefined)}
+                    </td>
                       <td className="px-6 py-4 text-right">
                         {(() => {
                           const actions = [

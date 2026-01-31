@@ -23,6 +23,7 @@ import ContractPreview from '@/components/contracts/ContractPreview'
 import ApproveContractButton from '@/components/contracts/ApproveContractButton'
 import { usePdfGeneration } from '@/hooks/usePdfGeneration'
 import { extractHtmlWithStyles } from '@/lib/extractHtml'
+import { formatDateTimeShort } from '@/utils/date'
 
 // Dynamic import to avoid SSR issues with TipTap
 const TipTapEditor = dynamic(
@@ -1041,7 +1042,7 @@ export default function ContractFormPage() {
                         )}
                       </div>
                       <div className="text-xs text-zinc-500 mb-2">
-                        {new Date(version.created_at).toLocaleString()}
+                        {formatDateTimeShort(version.created_at)}
                       </div>
 
                       {/* Download Button */}

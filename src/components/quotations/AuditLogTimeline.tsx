@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import { Clock, User, FileText } from 'lucide-react'
+import { formatDateTimeShort } from '@/utils/date'
 
 interface AuditLog {
   id: string
@@ -31,17 +32,6 @@ export default function AuditLogTimeline({
       return res.data as AuditLog[]
     }
   })
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date)
-  }
 
   const getActionLabel = (action: string) => {
     const labels: Record<string, string> = {
@@ -127,7 +117,7 @@ export default function AuditLogTimeline({
                     </p>
                   </div>
                   <span className="text-xs text-zinc-500">
-                    {formatDate(log.created_at)}
+                    {formatDateTimeShort(log.created_at)}
                   </span>
                 </div>
 

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useLayoutEffect, useState, useRef, useEffect, useCallback } from 'react'
+import { formatDateThaiLong } from '@/utils/date'
 
 interface ContractPreviewProps {
   content: string
@@ -29,29 +30,20 @@ export default function ContractPreview({
     { content: string; hasSignature: boolean }[]
   >([])
   const [isReady, setIsReady] = useState(false)
+  const [todayISO, setTodayISO] = useState('')
 
   // A4 dimensions in pixels (approx. 210mm x 297mm at 96dpi)
   const A4_HEIGHT_PX = 1123
   const PADDING_PX = 75.6 // 20mm
   const USABLE_HEIGHT_PX = A4_HEIGHT_PX - 2 * PADDING_PX
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return '..../..../....'
-    try {
-      const date = new Date(dateString)
-      return date.toLocaleDateString('th-TH', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-    } catch {
-      return dateString
-    }
-  }
-
   const findPartyByRole = (role: string) => {
     return parties.find(party => party.role === role)
   }
+
+  useEffect(() => {
+    setTodayISO(new Date().toISOString())
+  }, [])
 
   // Measurement function - can be called manually
   const measureAndPaginate = useCallback(() => {
@@ -304,7 +296,7 @@ export default function ContractPreview({
                       <span style={{ color: '#6b7280', display: 'block' }}>
                         Date (วันที่):
                       </span>
-                      <span>{formatDate(new Date().toISOString())}</span>
+                      <span>{todayISO ? formatDateThaiLong(todayISO, '—') : '—'}</span>
                     </div>
                   </div>
                 )}
@@ -342,7 +334,7 @@ export default function ContractPreview({
                           ( {findPartyByRole('ผู้ว่าจ้าง')?.legal_name || '................................................'} )
                         </p>
                         <p style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
-                          Date: {formatDate(findPartyByRole('ผู้ว่าจ้าง')?.signed_date)}
+                          Date: {formatDateThaiLong(findPartyByRole('ผู้ว่าจ้าง')?.signed_date, '..../..../....')}
                         </p>
                       </div>
                       <div style={{ textAlign: 'center' }}>
@@ -354,7 +346,7 @@ export default function ContractPreview({
                           ( {findPartyByRole('ผู้รับจ้าง')?.legal_name || '................................................'} )
                         </p>
                         <p style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
-                          Date: {formatDate(findPartyByRole('ผู้รับจ้าง')?.signed_date)}
+                          Date: {formatDateThaiLong(findPartyByRole('ผู้รับจ้าง')?.signed_date, '..../..../....')}
                         </p>
                       </div>
                       <div style={{ textAlign: 'center' }}>
@@ -364,7 +356,7 @@ export default function ContractPreview({
                           ( {findPartyByRole('พยาน 1')?.legal_name || '................................................'} )
                         </p>
                         <p style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
-                          Date: {formatDate(findPartyByRole('พยาน 1')?.signed_date)}
+                          Date: {formatDateThaiLong(findPartyByRole('พยาน 1')?.signed_date, '..../..../....')}
                         </p>
                       </div>
                       <div style={{ textAlign: 'center' }}>
@@ -374,7 +366,7 @@ export default function ContractPreview({
                           ( {findPartyByRole('พยาน 2')?.legal_name || '................................................'} )
                         </p>
                         <p style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
-                          Date: {formatDate(findPartyByRole('พยาน 2')?.signed_date)}
+                          Date: {formatDateThaiLong(findPartyByRole('พยาน 2')?.signed_date, '..../..../....')}
                         </p>
                       </div>
                     </div>

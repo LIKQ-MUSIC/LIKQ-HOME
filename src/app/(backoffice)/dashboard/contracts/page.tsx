@@ -13,6 +13,7 @@ import {
   ChevronRight
 } from 'lucide-react'
 import { usePagination } from '@/hooks/use-pagination'
+import { formatDateShort } from '@/utils/date'
 
 interface Contract {
   id: string
@@ -231,7 +232,7 @@ export default function ContractsPage() {
                   </td>
                   <td className="px-6 py-4 text-zinc-300">{contract.origin}</td>
                   <td className="px-6 py-4 text-zinc-400 text-sm">
-                    {new Date(contract.created_at).toLocaleDateString()}
+                    {formatDateShort(contract.created_at)}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">

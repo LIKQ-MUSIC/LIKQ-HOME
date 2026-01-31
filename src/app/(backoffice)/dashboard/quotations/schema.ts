@@ -6,7 +6,7 @@ export const quotationItemSchema = z.object({
   quantity: z
     .union([z.number(), z.string()])
     .transform(val => (typeof val === 'string' ? parseFloat(val) || 0 : val))
-    .pipe(z.number().min(0.01, 'Quantity must be greater than 0')),
+    .pipe(z.number().int().min(1, 'Quantity must be at least 1')),
   price: z
     .union([z.number(), z.string()])
     .transform(val => (typeof val === 'string' ? parseFloat(val) || 0 : val))
@@ -19,7 +19,7 @@ const formItemSchema = z.object({
   quantity: z
     .union([z.number(), z.string()])
     .transform(val => (typeof val === 'string' ? parseFloat(val) || 0 : val))
-    .pipe(z.number()),
+    .pipe(z.number().int().min(0)),
   price: z
     .union([z.number(), z.string()])
     .transform(val => (typeof val === 'string' ? parseFloat(val) || 0 : val))
@@ -58,15 +58,15 @@ export const quotationFormSchema = z.object({
     .min(1, 'At least one line item is required')
     .refine(
       items => {
-        // Filter out empty items and validate at least one is complete
+        // Filter out empty items and validate all described items
         const validItems = items.filter(
           item => item.description && item.description.trim() !== ''
         )
         if (validItems.length === 0) {
           return false
         }
-        // Check that at least one valid item passes the full validation
-        return validItems.some(item => {
+        // Every described item must pass full validation
+        return validItems.every(item => {
           try {
             quotationItemSchema.parse(item)
             return true
@@ -76,8 +76,7 @@ export const quotationFormSchema = z.object({
         })
       },
       {
-        message:
-          'At least one complete item (with description, quantity > 0, and price) is required'
+        message: 'All described items must have quantity ≥ 1 and price'
       }
     )
 })
