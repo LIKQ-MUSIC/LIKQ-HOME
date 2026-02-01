@@ -4,17 +4,15 @@ import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import Button from '@/ui/Button'
-import { Plus, Shield, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Plus, Shield, Loader2 } from 'lucide-react'
 import { User, CreateUserDTO } from '@/services/user-service'
 import { createUserAction, assignRolesAction } from '@/actions/users'
 import { usePagination } from '@/hooks/use-pagination'
-
-interface PaginationMeta {
-  total: number
-  page: number
-  limit: number
-  totalPages: number
-}
+import {
+  DataTable,
+  Column,
+  PaginationMeta
+} from '@/components/dashboard/DataTable'
 
 interface UsersResponse {
   data: User[]
@@ -31,7 +29,7 @@ export default function UserList() {
     email: '',
     name: '',
     password: '',
-    roleId: 2 // Default to general_user (assuming 1 is admin)
+    roleId: 2
   })
   const [selectedRole, setSelectedRole] = useState(2)
 
@@ -52,10 +50,8 @@ export default function UserList() {
   const users = response?.data || []
   const meta = response?.meta
 
-  // We can also wrap the Server Actions in useMutation for better state management
   const createUserMutation = useMutation({
     mutationFn: async (data: CreateUserDTO) => {
-      // We can call the server action here
       const result = await createUserAction(data)
       if (!result.success) throw new Error(result.error)
       return result
@@ -101,149 +97,73 @@ export default function UserList() {
     assignRoleMutation.mutate()
   }
 
-  const toggleUserSelection = (id: string) => {
-    setSelectedUserIds(prev =>
-      prev.includes(id) ? prev.filter(uid => uid !== id) : [...prev, id]
-    )
-  }
+  const columns: Column<User>[] = [
+    {
+      header: 'Name',
+      accessorKey: 'name',
+      className: 'text-white font-medium'
+    },
+    {
+      header: 'Email',
+      accessorKey: 'email',
+      className: 'text-zinc-400'
+    },
+    {
+      header: 'Roles',
+      cell: item => (
+        <div className="flex gap-1 flex-wrap">
+          {item.roles.map(role => (
+            <span
+              key={role.id}
+              className="px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
+            >
+              {role.name}
+            </span>
+          ))}
+        </div>
+      )
+    }
+  ]
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center p-12">
-        <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
-      </div>
-    )
-  }
-
-  if (isError) {
-    return <div className="text-red-400 p-8">Failed to load users</div>
-  }
+  const headerActions = (
+    <>
+      {selectedUserIds.length > 0 && (
+        <Button
+          onClick={() => setIsRoleModalOpen(true)}
+          variant="secondary"
+          size="md"
+        >
+          <Shield className="mr-2 h-4 w-4" />
+          Assign Role ({selectedUserIds.length})
+        </Button>
+      )}
+      <Button onClick={() => setIsCreateModalOpen(true)} size="md">
+        <Plus className="mr-2 h-4 w-4" />
+        Create User
+      </Button>
+    </>
+  )
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-          Manage Users
-        </h1>
-        <div className="flex gap-2">
-          {selectedUserIds.length > 0 && (
-            <Button
-              onClick={() => setIsRoleModalOpen(true)}
-              className="bg-zinc-700 hover:bg-zinc-600"
-            >
-              <Shield className="mr-2 h-4 w-4" />
-              Assign Role ({selectedUserIds.length})
-            </Button>
-          )}
-          <Button onClick={() => setIsCreateModalOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Create User
-          </Button>
-        </div>
-      </div>
-
-      <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden flex flex-col">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-white/10 text-gray-400 font-medium">
-                <th className="p-4 w-8">
-                  <input
-                    type="checkbox"
-                    onChange={e => {
-                      if (e.target.checked) {
-                        setSelectedUserIds(users.map(u => u.id))
-                      } else {
-                        setSelectedUserIds([])
-                      }
-                    }}
-                    checked={
-                      users.length > 0 &&
-                      selectedUserIds.length === users.length
-                    }
-                    className="rounded border-gray-600 bg-zinc-800 text-indigo-500 focus:ring-indigo-500"
-                  />
-                </th>
-                <th className="p-4">Name</th>
-                <th className="p-4">Email</th>
-                <th className="p-4">Roles</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {users.map(user => (
-                <tr
-                  key={user.id}
-                  className="hover:bg-white/5 transition-colors duration-200"
-                >
-                  <td className="p-4">
-                    <input
-                      type="checkbox"
-                      checked={selectedUserIds.includes(user.id)}
-                      onChange={() => toggleUserSelection(user.id)}
-                      className="rounded border-gray-600 bg-zinc-800 text-indigo-500 focus:ring-indigo-500"
-                    />
-                  </td>
-                  <td className="p-4 text-white font-medium">{user.name}</td>
-                  <td className="p-4 text-gray-400">{user.email}</td>
-                  <td className="p-4">
-                    <div className="flex gap-1">
-                      {user.roles.map(role => (
-                        <span
-                          key={role.id}
-                          className="px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
-                        >
-                          {role.name}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {users.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="p-8 text-center text-zinc-500">
-                    No users found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination Controls */}
-        {meta && (
-          <div className="flex items-center justify-between border-t border-white/10 px-4 py-3 sm:px-6">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-zinc-400">
-                Page <span className="font-medium text-white">{meta.page}</span>{' '}
-                of{' '}
-                <span className="font-medium text-white">
-                  {meta.totalPages}
-                </span>
-              </span>
-              <span className="text-sm text-zinc-500">
-                ({meta.total} total)
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                onClick={prevPage}
-                disabled={page <= 1}
-                className="px-3 py-1 text-sm bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                onClick={nextPage}
-                disabled={page >= meta.totalPages}
-                className="px-3 py-1 text-sm bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
+    <>
+      <DataTable
+        data={users}
+        columns={columns}
+        keyExtractor={item => item.id}
+        isLoading={isLoading}
+        error={isError}
+        emptyMessage="No users found."
+        errorMessage="Failed to load users"
+        title="Manage Users"
+        headerActions={headerActions}
+        pagination={meta}
+        currentPage={page}
+        onNextPage={nextPage}
+        onPrevPage={prevPage}
+        selectable
+        selectedIds={selectedUserIds}
+        onSelectionChange={setSelectedUserIds}
+      />
 
       {/* Create User Modal */}
       {isCreateModalOpen && (
@@ -316,7 +236,7 @@ export default function UserList() {
                 >
                   Cancel
                 </button>
-                <Button disabled={createUserMutation.isPending}>
+                <Button disabled={createUserMutation.isPending} size="md">
                   {createUserMutation.isPending ? 'Creating...' : 'Create'}
                 </Button>
               </div>
@@ -354,6 +274,7 @@ export default function UserList() {
               <Button
                 onClick={handleAssignRole}
                 disabled={assignRoleMutation.isPending}
+                size="md"
               >
                 {assignRoleMutation.isPending ? 'Assigning...' : 'Assign'}
               </Button>
@@ -361,6 +282,6 @@ export default function UserList() {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }

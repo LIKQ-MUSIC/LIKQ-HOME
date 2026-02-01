@@ -1,27 +1,20 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import Link from 'next/link'
-import {
-  PlusCircle,
-  Pencil,
-  Trash2,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  Book
-} from 'lucide-react'
+import { PlusCircle, Pencil, Trash2, Search, Book } from 'lucide-react'
 import { usePagination } from '@/hooks/use-pagination'
 import { revalidateQuotations } from './actions'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui/tooltip'
 import { formatDateShort } from '@/utils/date'
+import {
+  DataTable,
+  Column,
+  StatusBadge,
+  ActionButton,
+  PaginationMeta
+} from '@/components/dashboard/DataTable'
 
 interface QuotationItem {
   description: string
@@ -50,27 +43,15 @@ interface Quotation {
 
 interface PaginatedResponse<T> {
   data: T[]
-  meta: {
-    total: number
-    page: number
-    limit: number
-    totalPages: number
-  }
+  meta: PaginationMeta
 }
 
-const getStatusColor = (status: string) => {
-  switch (status?.toLowerCase()) {
-    case 'draft':
-      return 'bg-gray-500/20 text-gray-300 border-gray-500/20'
-    case 'sent':
-      return 'bg-blue-500/20 text-blue-300 border-blue-500/20'
-    case 'accepted':
-      return 'bg-green-500/20 text-green-300 border-green-500/20'
-    case 'rejected':
-      return 'bg-red-500/20 text-red-300 border-red-500/20'
-    default:
-      return 'bg-zinc-500/20 text-zinc-300 border-zinc-500/20'
-  }
+const statusColors: Record<string, string> = {
+  draft: 'bg-gray-500/20 text-gray-300',
+  sent: 'bg-blue-500/20 text-blue-300',
+  accepted: 'bg-green-500/20 text-green-300',
+  approved: 'bg-green-500/20 text-green-300',
+  rejected: 'bg-red-500/20 text-red-300'
 }
 
 const formatCurrency = (amount: number, currency: string = 'THB') => {
@@ -81,20 +62,19 @@ const formatCurrency = (amount: number, currency: string = 'THB') => {
       minimumFractionDigits: 2
     }).format(amount)
   } catch {
-    // Fallback if currency code is invalid
     return `${currency} ${amount.toFixed(2)}`
   }
 }
 
 export default function QuotationsPage() {
   const queryClient = useQueryClient()
-  const { page, limit, setPage, nextPage, prevPage } = usePagination()
+  const { page, limit, nextPage, prevPage } = usePagination()
   const [searchQuery, setSearchQuery] = useState('')
 
   const {
     data: paginatedResult,
     isLoading,
-    error
+    isError
   } = useQuery({
     queryKey: ['quotations', page, limit, searchQuery],
     queryFn: async () => {
@@ -109,7 +89,7 @@ export default function QuotationsPage() {
   })
 
   const quotations = paginatedResult?.data || []
-  const totalPages = paginatedResult?.meta?.totalPages || 1
+  const meta = paginatedResult?.meta
 
   const { mutate: deleteQuotation } = useMutation({
     mutationFn: async (id: string) => {
@@ -130,224 +110,118 @@ export default function QuotationsPage() {
     }
   }
 
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Quotations</h1>
-          <p className="text-zinc-400 mt-1">Manage quotations</p>
-        </div>
-        <div className="flex gap-2">
-          <Link
-            href="/dashboard/quotations/docs"
-            className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors border border-zinc-700"
-          >
-            <Book size={20} />
-            <span>API Docs</span>
-          </Link>
-          <Link
-            href="/dashboard/quotations/new"
-            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
-          >
-            <PlusCircle size={20} />
-            <span>Create Quotation</span>
-          </Link>
-        </div>
-      </div>
-
-      {/* Search Filter */}
-      <div className="relative max-w-md">
-        <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
-          size={18}
+  const columns: Column<Quotation>[] = [
+    {
+      header: 'Quotation Number',
+      accessorKey: 'quotation_number',
+      className: 'text-white font-medium'
+    },
+    {
+      header: 'Status',
+      cell: item => (
+        <StatusBadge
+          status={item.status || 'Draft'}
+          colorMap={statusColors}
         />
-        <input
-          type="text"
-          placeholder="Search by quotation number..."
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-zinc-300 placeholder:text-zinc-500 focus:outline-none focus:border-indigo-500"
-        />
-      </div>
-
-      <TooltipProvider>
-        <div className="bg-zinc-900 rounded-lg border border-zinc-800 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-zinc-800 bg-zinc-950">
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
-                    Quotation Number
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
-                    Total Amount
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
-                    Issued Date
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-300">
-                    Valid Until
-                  </th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-zinc-300">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {isLoading ? (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="px-6 py-12 text-center text-zinc-500"
-                    >
-                      <div className="flex items-center justify-center gap-2">
-                        <div className="h-4 w-4 border-2 border-zinc-600 border-t-indigo-500 rounded-full animate-spin"></div>
-                        <span>Loading...</span>
-                      </div>
-                    </td>
-                  </tr>
-                ) : error ? (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="px-6 py-12 text-center text-red-500"
-                    >
-                      Failed to load quotations. Please try again.
-                    </td>
-                  </tr>
-                ) : !quotations || quotations.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="px-6 py-12 text-center text-zinc-500"
-                    >
-                      No quotations found. Create your first quotation to get
-                      started.
-                    </td>
-                  </tr>
-                ) : (
-                  quotations.map(quotation => (
-                    <tr
-                      key={quotation.id}
-                      className="border-b border-zinc-800 hover:bg-zinc-850/50"
-                    >
-                      <td className="px-6 py-4 text-white font-medium">
-                        {quotation.quotation_number}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
-                            quotation.status
-                          )}`}
-                        >
-                          {quotation.status || 'Draft'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-zinc-300">
-                        {formatCurrency(
-                          quotation.total_amount,
-                          quotation.currency
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-zinc-400">
-                      {formatDateShort(quotation.issued_date ?? undefined)}
-                    </td>
-                    <td className="px-6 py-4 text-zinc-400">
-                      {formatDateShort(quotation.valid_until_date ?? undefined)}
-                    </td>
-                      <td className="px-6 py-4 text-right">
-                        {(() => {
-                          const actions = [
-                            {
-                              component: (
-                                <Tooltip key="edit">
-                                  <TooltipTrigger asChild>
-                                    <Link
-                                      href={`/dashboard/quotations/${quotation.id}`}
-                                      className="p-2 text-zinc-400 hover:text-indigo-400 transition-colors"
-                                    >
-                                      <Pencil size={16} />
-                                    </Link>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>View/Edit</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              )
-                            },
-                            {
-                              component: (
-                                <Tooltip key="delete">
-                                  <TooltipTrigger asChild>
-                                    <button
-                                      onClick={() => handleDelete(quotation.id)}
-                                      className="p-2 text-zinc-400 hover:text-red-400 transition-colors"
-                                    >
-                                      <Trash2 size={16} />
-                                    </button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>Delete</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              )
-                            }
-                          ]
-
-                          const showSeparator = actions.length > 2
-
-                          return (
-                            <div className="flex justify-end items-center gap-2">
-                              {actions.map((action, index) => (
-                                <React.Fragment key={index}>
-                                  {action.component}
-                                  {showSeparator &&
-                                    index < actions.length - 1 && (
-                                      <span className="text-zinc-600">:</span>
-                                    )}
-                                </React.Fragment>
-                              ))}
-                            </div>
-                          )
-                        })()}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+      )
+    },
+    {
+      header: 'Total Amount',
+      cell: item => (
+        <span className="text-zinc-300">
+          {formatCurrency(item.total_amount, item.currency)}
+        </span>
+      )
+    },
+    {
+      header: 'Issued Date',
+      cell: item => (
+        <span className="text-zinc-400">
+          {formatDateShort(item.issued_date ?? undefined)}
+        </span>
+      )
+    },
+    {
+      header: 'Valid Until',
+      cell: item => (
+        <span className="text-zinc-400">
+          {formatDateShort(item.valid_until_date ?? undefined)}
+        </span>
+      )
+    },
+    {
+      header: 'Actions',
+      align: 'right',
+      cell: item => (
+        <div className="flex justify-end gap-1">
+          <ActionButton
+            href={`/dashboard/quotations/${item.id}`}
+            icon={<Pencil size={16} />}
+            title="View/Edit"
+          />
+          <ActionButton
+            onClick={() => handleDelete(item.id)}
+            icon={<Trash2 size={16} />}
+            variant="danger"
+            title="Delete"
+          />
         </div>
-      </TooltipProvider>
+      )
+    }
+  ]
 
-      {/* Pagination Controls */}
-      {quotations && quotations.length > 0 && (
-        <div className="flex items-center justify-between px-4 py-3 bg-zinc-900 rounded-lg border border-zinc-800">
-          <div className="text-sm text-zinc-400">
-            Page <span className="font-medium text-white">{page}</span> of{' '}
-            <span className="font-medium text-white">{totalPages}</span>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={prevPage}
-              disabled={page === 1}
-              className="p-2 rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <button
-              onClick={nextPage}
-              disabled={page >= totalPages}
-              className="p-2 rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
-      )}
+  const headerActions = (
+    <>
+      <Link
+        href="/dashboard/quotations/docs"
+        className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors border border-zinc-700"
+      >
+        <Book size={20} />
+        <span>API Docs</span>
+      </Link>
+      <Link
+        href="/dashboard/quotations/new"
+        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+      >
+        <PlusCircle size={20} />
+        <span>Create Quotation</span>
+      </Link>
+    </>
+  )
+
+  const searchSlot = (
+    <div className="relative max-w-md">
+      <Search
+        className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+        size={18}
+      />
+      <input
+        type="text"
+        placeholder="Search by quotation number..."
+        value={searchQuery}
+        onChange={e => setSearchQuery(e.target.value)}
+        className="w-full pl-10 pr-4 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-zinc-300 placeholder:text-zinc-500 focus:outline-none focus:border-indigo-500"
+      />
     </div>
+  )
+
+  return (
+    <DataTable
+      data={quotations}
+      columns={columns}
+      keyExtractor={item => item.id}
+      isLoading={isLoading}
+      error={isError}
+      emptyMessage="No quotations found. Create your first quotation to get started."
+      errorMessage="Failed to load quotations. Please try again."
+      title="Quotations"
+      subtitle="Manage quotations"
+      headerActions={headerActions}
+      searchSlot={searchSlot}
+      pagination={meta}
+      currentPage={page}
+      onNextPage={nextPage}
+      onPrevPage={prevPage}
+    />
   )
 }
