@@ -19,6 +19,7 @@ interface ContractPreviewProps {
     role: string
     signed_date?: string
     sign_label?: string
+    signature_url?: string
   }>
   isActive?: boolean // New prop to trigger measurement when tab becomes active
 }
@@ -44,7 +45,34 @@ export default function ContractPreview({
   const USABLE_HEIGHT_PX = A4_HEIGHT_PX - 2 * PADDING_PX
 
   const findPartyByRole = (role: string) => {
-    return parties.find(party => party.role === role)
+    // 1. Try exact match (Thai or English)
+    const exact = parties.find(party => party.role === role)
+    if (exact) return exact
+
+    // 2. Try loose match
+    // If we are looking for 'พยาน 1', try finding 'witness_1' or 'Witness 1'
+    if (role === 'พยาน 1') {
+      return parties.find(p =>
+        ['witness_1', 'witness 1', 'พยาน 1'].includes(p.role?.toLowerCase())
+      )
+    }
+    if (role === 'พยาน 2') {
+      return parties.find(p =>
+        ['witness_2', 'witness 2', 'พยาน 2'].includes(p.role?.toLowerCase())
+      )
+    }
+    if (role === 'ผู้ว่าจ้าง') {
+      return parties.find(p =>
+        ['party_a', 'employer', 'ผู้ว่าจ้าง'].includes(p.role?.toLowerCase())
+      )
+    }
+    if (role === 'ผู้รับจ้าง') {
+      return parties.find(p =>
+        ['party_b', 'contractor', 'ผู้รับจ้าง'].includes(p.role?.toLowerCase())
+      )
+    }
+
+    return undefined
   }
 
   useEffect(() => {
@@ -447,9 +475,26 @@ export default function ContractPreview({
                             borderBottom: '1px solid #9ca3af',
                             width: '75%',
                             margin: '0 auto 0.5rem',
-                            height: '3rem'
+                            height: '3rem',
+                            position: 'relative',
+                            display: 'flex',
+                            alignItems: 'flex-end',
+                            justifyContent: 'center'
                           }}
-                        ></div>
+                        >
+                          {findPartyByRole('ผู้ว่าจ้าง')?.signature_url && (
+                            <img
+                              src={findPartyByRole('ผู้ว่าจ้าง')?.signature_url}
+                              alt="Signature"
+                              style={{
+                                maxHeight: '100%',
+                                maxWidth: '100%',
+                                objectFit: 'contain',
+                                paddingBottom: '2px'
+                              }}
+                            />
+                          )}
+                        </div>
                         <p
                           style={{
                             fontWeight: '600',
@@ -485,9 +530,26 @@ export default function ContractPreview({
                             borderBottom: '1px solid #9ca3af',
                             width: '75%',
                             margin: '0 auto 0.5rem',
-                            height: '3rem'
+                            height: '3rem',
+                            position: 'relative',
+                            display: 'flex',
+                            alignItems: 'flex-end',
+                            justifyContent: 'center'
                           }}
-                        ></div>
+                        >
+                          {findPartyByRole('ผู้รับจ้าง')?.signature_url && (
+                            <img
+                              src={findPartyByRole('ผู้รับจ้าง')?.signature_url}
+                              alt="Signature"
+                              style={{
+                                maxHeight: '100%',
+                                maxWidth: '100%',
+                                objectFit: 'contain',
+                                paddingBottom: '2px'
+                              }}
+                            />
+                          )}
+                        </div>
                         <p
                           style={{
                             fontWeight: '600',
@@ -523,9 +585,26 @@ export default function ContractPreview({
                             borderBottom: '1px solid #9ca3af',
                             width: '75%',
                             margin: '0 auto 0.5rem',
-                            height: '3rem'
+                            height: '3rem',
+                            position: 'relative',
+                            display: 'flex',
+                            alignItems: 'flex-end',
+                            justifyContent: 'center'
                           }}
-                        ></div>
+                        >
+                          {findPartyByRole('พยาน 1')?.signature_url && (
+                            <img
+                              src={findPartyByRole('พยาน 1')?.signature_url}
+                              alt="Signature"
+                              style={{
+                                maxHeight: '100%',
+                                maxWidth: '100%',
+                                objectFit: 'contain',
+                                paddingBottom: '2px'
+                              }}
+                            />
+                          )}
+                        </div>
                         <p
                           style={{
                             fontWeight: '600',
@@ -561,9 +640,26 @@ export default function ContractPreview({
                             borderBottom: '1px solid #9ca3af',
                             width: '75%',
                             margin: '0 auto 0.5rem',
-                            height: '3rem'
+                            height: '3rem',
+                            position: 'relative',
+                            display: 'flex',
+                            alignItems: 'flex-end',
+                            justifyContent: 'center'
                           }}
-                        ></div>
+                        >
+                          {findPartyByRole('พยาน 2')?.signature_url && (
+                            <img
+                              src={findPartyByRole('พยาน 2')?.signature_url}
+                              alt="Signature"
+                              style={{
+                                maxHeight: '100%',
+                                maxWidth: '100%',
+                                objectFit: 'contain',
+                                paddingBottom: '2px'
+                              }}
+                            />
+                          )}
+                        </div>
                         <p
                           style={{
                             fontWeight: '600',

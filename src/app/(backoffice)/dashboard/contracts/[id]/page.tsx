@@ -75,6 +75,11 @@ interface ContractDetail {
   latest_version?: {
     content_text: string
   }
+  party_signatures?: Array<{
+    role: string
+    signed_date: string
+    signature_url: string
+  }>
 }
 
 interface ContractVersion {
@@ -462,12 +467,47 @@ export default function ContractFormPage() {
     current_status: formData.current_status,
     parties: formData.parties.map(p => {
       const partyObj = getParty(p.party_id)
+
+      // Find signature from contract detail if available
+      let signatureUrl = undefined
+      if (contractDetail?.party_signatures) {
+        // Map Thai roles to signature roles (party_a, party_b, etc)
+        // Also handle cases where role might already be in English (legacy/API data)
+        let signatureRole = ''
+        const lowerRole = p.role?.toLowerCase()?.trim() || ''
+
+        if (['ผู้ว่าจ้าง', 'employer', 'party_a', 'partya'].includes(lowerRole))
+          signatureRole = 'party_a'
+        else if (
+          ['ผู้รับจ้าง', 'contractor', 'party_b', 'partyb'].includes(lowerRole)
+        )
+          signatureRole = 'party_b'
+        else if (
+          ['พยาน 1', 'witness 1', 'witness_1', 'witness1'].includes(lowerRole)
+        )
+          signatureRole = 'witness_1'
+        else if (
+          ['พยาน 2', 'witness 2', 'witness_2', 'witness2'].includes(lowerRole)
+        )
+          signatureRole = 'witness_2'
+
+        console.log(`[DEBUG] Role mapping: "${p.role}" -> "${signatureRole}"`)
+
+        const sig = contractDetail.party_signatures.find(
+          s => s.role === signatureRole
+        )
+        if (sig) {
+          signatureUrl = sig.signature_url
+        }
+      }
+
       return {
         legal_name: partyObj?.legal_name || '...',
         display_name: partyObj?.display_name || undefined,
         role: p.role,
         sign_label: p.sign_label,
-        signed_date: p.signed_date
+        signed_date: p.signed_date,
+        signature_url: signatureUrl
       }
     }),
     latest_version: {
@@ -1005,11 +1045,7 @@ export default function ContractFormPage() {
                   title={formData.title}
                   contentRef={contentRef}
                   isActive={activeTab === 'preview'}
-                  parties={formData.parties.map(p => ({
-                    legal_name: getParty(p.party_id)?.legal_name || '',
-                    role: p.role || '',
-                    signed_date: p.signed_date
-                  }))}
+                  parties={previewContract.parties}
                 />
               </div>
             </div>
