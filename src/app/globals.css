@@ -283,3 +283,257 @@ body {
 .pdf-page-gap {
   gap: 2rem;
 }
+
+/* ============================================
+   Dashboard Theme System
+   Light mode first, dark mode via dark: prefix
+   ============================================ */
+
+@layer components {
+  /* ---- Text Colors ---- */
+
+  /* Primary text - headings, important content */
+  .text-heading {
+    @apply text-neutral-900 dark:text-white;
+  }
+
+  /* Secondary text - body text, descriptions */
+  .text-body {
+    @apply text-neutral-700 dark:text-neutral-200;
+  }
+
+  /* Muted text - less important info, placeholders */
+  .text-muted {
+    @apply text-neutral-500 dark:text-neutral-400;
+  }
+
+  /* Subtle text - timestamps, hints */
+  .text-subtle {
+    @apply text-neutral-400 dark:text-neutral-500;
+  }
+
+  /* ---- Background Colors ---- */
+
+  /* Page background */
+  .bg-page {
+    @apply bg-neutral-50 dark:bg-zinc-950;
+  }
+
+  /* Card/surface background */
+  .bg-surface {
+    @apply bg-white dark:bg-zinc-900;
+  }
+
+  /* Elevated surface (header rows, etc.) */
+  .bg-surface-elevated {
+    @apply bg-neutral-100 dark:bg-zinc-950;
+  }
+
+  /* Hover state background */
+  .bg-surface-hover {
+    @apply bg-neutral-100 dark:bg-zinc-800/50;
+  }
+
+  /* ---- Border Colors ---- */
+
+  /* Default border */
+  .border-default {
+    @apply border-neutral-200 dark:border-zinc-800;
+  }
+
+  /* Subtle border */
+  .border-subtle {
+    @apply border-neutral-100 dark:border-zinc-900;
+  }
+
+  /* ---- Input/Form Styling ---- */
+
+  .input-base {
+    @apply w-full rounded-lg px-3 py-2
+           bg-white dark:bg-zinc-800
+           border border-neutral-300 dark:border-zinc-700
+           text-neutral-900 dark:text-white
+           placeholder:text-neutral-400 dark:placeholder:text-zinc-500
+           focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary;
+  }
+
+  .select-base {
+    @apply rounded-lg px-4 py-2
+           bg-white dark:bg-zinc-900
+           border border-neutral-300 dark:border-zinc-700
+           text-neutral-700 dark:text-zinc-300
+           focus:outline-none focus:border-primary;
+  }
+
+  /* ---- Button Variants (Supplementary) ---- */
+
+  .btn-action-default {
+    @apply text-neutral-500 dark:text-zinc-400
+           hover:text-primary dark:hover:text-primary-light;
+  }
+
+  .btn-action-danger {
+    @apply text-neutral-500 dark:text-zinc-400
+           hover:text-danger dark:hover:text-red-400;
+  }
+
+  /* ---- Card/Panel Styling ---- */
+
+  .card-base {
+    @apply rounded-xl bg-surface border border-default shadow-sm;
+  }
+
+  .card-interactive {
+    @apply card-base hover:bg-surface-hover transition-colors cursor-pointer;
+  }
+
+  /* ---- Sidebar/Navigation ---- */
+
+  .sidebar-bg {
+    @apply bg-white dark:bg-zinc-950 border-r border-default;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 rounded-lg px-3 py-2
+           text-neutral-600 dark:text-zinc-400
+           hover:bg-neutral-100 dark:hover:bg-zinc-900
+           hover:text-neutral-900 dark:hover:text-white
+           transition-colors;
+  }
+
+  .sidebar-section-title {
+    @apply text-xs font-semibold uppercase tracking-wider pl-3
+           text-neutral-400 dark:text-zinc-500;
+  }
+
+  /* ---- Table Styling ---- */
+
+  .table-header-row {
+    @apply border-b border-default bg-surface-elevated;
+  }
+
+  .table-header-cell {
+    @apply px-6 py-4 text-sm font-semibold text-neutral-600 dark:text-zinc-300;
+  }
+
+  .table-row {
+    @apply border-b border-default hover:bg-surface-hover transition-colors;
+  }
+
+  .table-cell {
+    @apply px-6 py-4;
+  }
+
+  /* ---- Status Badge Variants ---- */
+
+  .badge-default {
+    @apply bg-neutral-100 dark:bg-zinc-500/20 text-neutral-600 dark:text-zinc-300;
+  }
+
+  .badge-success {
+    @apply bg-success/10 text-success dark:bg-green-500/20 dark:text-green-300;
+  }
+
+  .badge-warning {
+    @apply bg-warning/10 text-warning dark:bg-orange-500/20 dark:text-orange-300;
+  }
+
+  .badge-danger {
+    @apply bg-danger/10 text-danger dark:bg-red-500/20 dark:text-red-300;
+  }
+
+  .badge-info {
+    @apply bg-primary/10 text-primary dark:bg-blue-500/20 dark:text-blue-300;
+  }
+
+  /* ---- Modal/Dialog Styling ---- */
+
+  .modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center
+           bg-black/30 dark:bg-black/50 backdrop-blur-sm p-4;
+  }
+
+  .modal-content {
+    @apply w-full bg-white dark:bg-zinc-900
+           border border-default rounded-xl p-6 space-y-4 shadow-xl;
+  }
+
+  /* ---- Stats Card ---- */
+
+  .stats-card {
+    @apply card-base p-6;
+  }
+
+  .stats-icon-wrapper {
+    @apply rounded-lg p-3;
+  }
+
+  /* ---- Pagination ---- */
+
+  .pagination-btn {
+    @apply p-2 rounded-lg transition-colors
+           bg-neutral-100 dark:bg-zinc-800
+           text-neutral-600 dark:text-zinc-300
+           hover:bg-neutral-200 dark:hover:bg-zinc-700
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* ---- Accent Colors (For icon wrappers etc.) ---- */
+
+  .accent-primary {
+    @apply bg-primary/10 text-primary;
+  }
+
+  .accent-success {
+    @apply bg-success/10 text-success;
+  }
+
+  .accent-warning {
+    @apply bg-warning/10 text-warning;
+  }
+
+  .accent-danger {
+    @apply bg-danger/10 text-danger;
+  }
+
+  /* ---- Mobile Responsive ---- */
+
+  /* Mobile-friendly table cells */
+  @screen lg {
+    .table-header-cell {
+      @apply px-6 py-4;
+    }
+    .table-cell {
+      @apply px-6 py-4;
+    }
+  }
+
+  /* Mobile page header */
+  .page-header {
+    @apply flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between;
+  }
+
+  .page-title {
+    @apply text-2xl lg:text-3xl font-bold text-heading;
+  }
+
+  /* Mobile-friendly search/filter bar */
+  .filter-bar {
+    @apply flex flex-col gap-3 sm:flex-row sm:gap-4;
+  }
+
+  /* Mobile card grid */
+  .stats-grid {
+    @apply grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4;
+  }
+
+  /* Mobile action buttons */
+  .action-group {
+    @apply flex flex-wrap gap-2;
+  }
+
+  /* Touch-friendly button size */
+  .btn-touch {
+    @apply min-h-[44px] min-w-[44px];
+  }
+}

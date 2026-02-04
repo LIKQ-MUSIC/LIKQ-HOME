@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import Button from '@/ui/Button'
-import { Plus, Shield, Loader2 } from 'lucide-react'
+import { Plus, Shield } from 'lucide-react'
 import { User, CreateUserDTO } from '@/services/user-service'
 import { createUserAction, assignRolesAction } from '@/actions/users'
 import { usePagination } from '@/hooks/use-pagination'
@@ -101,12 +101,12 @@ export default function UserList() {
     {
       header: 'Name',
       accessorKey: 'name',
-      className: 'text-white font-medium'
+      className: 'text-heading font-medium'
     },
     {
       header: 'Email',
       accessorKey: 'email',
-      className: 'text-zinc-400'
+      className: 'text-muted'
     },
     {
       header: 'Roles',
@@ -115,7 +115,7 @@ export default function UserList() {
           {item.roles.map(role => (
             <span
               key={role.id}
-              className="px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
+              className="px-2 py-0.5 rounded-full text-xs font-medium badge-info border border-primary/20"
             >
               {role.name}
             </span>
@@ -167,12 +167,12 @@ export default function UserList() {
 
       {/* Create User Modal */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
-            <h2 className="text-xl font-bold text-white">Create User</h2>
+        <div className="modal-overlay">
+          <div className="modal-content max-w-md">
+            <h2 className="text-xl font-bold text-heading">Create User</h2>
             <form onSubmit={handleCreateUser} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">
+                <label className="block text-sm font-medium text-muted mb-1">
                   Name
                 </label>
                 <input
@@ -182,11 +182,11 @@ export default function UserList() {
                   onChange={e =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="input-base"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">
+                <label className="block text-sm font-medium text-muted mb-1">
                   Email
                 </label>
                 <input
@@ -196,11 +196,11 @@ export default function UserList() {
                   onChange={e =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="input-base"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">
+                <label className="block text-sm font-medium text-muted mb-1">
                   Password
                 </label>
                 <input
@@ -210,11 +210,11 @@ export default function UserList() {
                   onChange={e =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  className="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="input-base"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">
+                <label className="block text-sm font-medium text-muted mb-1">
                   Role
                 </label>
                 <select
@@ -222,7 +222,7 @@ export default function UserList() {
                   onChange={e =>
                     setFormData({ ...formData, roleId: Number(e.target.value) })
                   }
-                  className="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="input-base"
                 >
                   <option value={1}>Admin</option>
                   <option value={2}>General User</option>
@@ -232,7 +232,7 @@ export default function UserList() {
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 text-sm text-zinc-400 hover:text-white"
+                  className="px-4 py-2 text-sm text-muted hover:text-heading transition-colors"
                 >
                   Cancel
                 </button>
@@ -247,17 +247,17 @@ export default function UserList() {
 
       {/* Assign Role Modal */}
       {isRoleModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
-            <h2 className="text-xl font-bold text-white">Assign Role</h2>
+        <div className="modal-overlay">
+          <div className="modal-content max-w-sm">
+            <h2 className="text-xl font-bold text-heading">Assign Role</h2>
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1">
+              <label className="block text-sm font-medium text-muted mb-1">
                 Select Role
               </label>
               <select
                 value={selectedRole}
                 onChange={e => setSelectedRole(Number(e.target.value))}
-                className="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="input-base"
               >
                 <option value={1}>Admin</option>
                 <option value={2}>General User</option>
@@ -267,7 +267,7 @@ export default function UserList() {
               <button
                 type="button"
                 onClick={() => setIsRoleModalOpen(false)}
-                className="px-4 py-2 text-sm text-zinc-400 hover:text-white"
+                className="px-4 py-2 text-sm text-muted hover:text-heading transition-colors"
               >
                 Cancel
               </button>

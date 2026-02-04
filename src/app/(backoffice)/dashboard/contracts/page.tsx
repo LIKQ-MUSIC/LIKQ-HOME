@@ -30,10 +30,10 @@ interface PaginatedResponse<T> {
 }
 
 const statusColors: Record<string, string> = {
-  Draft: 'bg-gray-500/20 text-gray-300',
-  Active: 'bg-green-500/20 text-green-300',
-  Expired: 'bg-orange-500/20 text-orange-300',
-  Terminated: 'bg-red-500/20 text-red-300'
+  Draft: 'badge-default',
+  Active: 'badge-success',
+  Expired: 'badge-warning',
+  Terminated: 'badge-danger'
 }
 
 export default function ContractsPage() {
@@ -87,12 +87,12 @@ export default function ContractsPage() {
     {
       header: 'Contract #',
       accessorKey: 'contract_number',
-      className: 'text-indigo-400 font-mono font-medium'
+      className: 'text-primary font-mono font-medium'
     },
     {
       header: 'Title',
       accessorKey: 'title',
-      className: 'text-white'
+      className: 'text-heading'
     },
     {
       header: 'Status',
@@ -102,12 +102,12 @@ export default function ContractsPage() {
     },
     {
       header: 'Origin',
-      cell: item => <span className="text-zinc-300">{item.origin}</span>
+      cell: item => <span className="text-body">{item.origin}</span>
     },
     {
       header: 'Created',
       cell: item => (
-        <span className="text-zinc-400 text-sm">
+        <span className="text-muted text-sm">
           {formatDateShort(item.created_at)}
         </span>
       )
@@ -136,7 +136,7 @@ export default function ContractsPage() {
   const headerActions = (
     <Link
       href="/dashboard/contracts/new"
-      className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+      className="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors w-full sm:w-auto"
     >
       <PlusCircle size={20} />
       <span>New Contract</span>
@@ -144,10 +144,10 @@ export default function ContractsPage() {
   )
 
   const searchSlot = (
-    <div className="flex gap-4">
-      <div className="relative flex-1 max-w-md">
+    <>
+      <div className="relative flex-1 w-full lg:max-w-md">
         <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
           size={18}
         />
         <input
@@ -155,32 +155,34 @@ export default function ContractsPage() {
           placeholder="Search by contract number or title..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-zinc-300 placeholder:text-zinc-500 focus:outline-none focus:border-indigo-500"
+          className="input-base pl-10"
         />
       </div>
 
-      <select
-        value={filterStatus}
-        onChange={e => setFilterStatus(e.target.value)}
-        className="px-4 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-zinc-300 focus:outline-none focus:border-indigo-500"
-      >
-        <option value="">All Statuses</option>
-        <option value="Draft">Draft</option>
-        <option value="Active">Active</option>
-        <option value="Expired">Expired</option>
-        <option value="Terminated">Terminated</option>
-      </select>
+      <div className="flex gap-2 w-full sm:w-auto">
+        <select
+          value={filterStatus}
+          onChange={e => setFilterStatus(e.target.value)}
+          className="select-base flex-1 sm:flex-none"
+        >
+          <option value="">All Statuses</option>
+          <option value="Draft">Draft</option>
+          <option value="Active">Active</option>
+          <option value="Expired">Expired</option>
+          <option value="Terminated">Terminated</option>
+        </select>
 
-      <select
-        value={filterOrigin}
-        onChange={e => setFilterOrigin(e.target.value)}
-        className="px-4 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-zinc-300 focus:outline-none focus:border-indigo-500"
-      >
-        <option value="">All Origins</option>
-        <option value="Internal">Internal</option>
-        <option value="External">External</option>
-      </select>
-    </div>
+        <select
+          value={filterOrigin}
+          onChange={e => setFilterOrigin(e.target.value)}
+          className="select-base flex-1 sm:flex-none"
+        >
+          <option value="">All Origins</option>
+          <option value="Internal">Internal</option>
+          <option value="External">External</option>
+        </select>
+      </div>
+    </>
   )
 
   return (

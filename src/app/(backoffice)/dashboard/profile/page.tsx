@@ -74,35 +74,35 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     )
   }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 p-6">
-      <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6">
-        <h1 className="text-2xl font-bold text-white mb-6">Profile Settings</h1>
+      <div className="card-base p-6">
+        <h1 className="text-2xl font-bold text-heading mb-6">Profile Settings</h1>
 
         {/* User Info */}
         <div className="space-y-4 mb-8">
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
+            <label className="block text-sm font-medium text-body mb-2">
               Name
             </label>
-            <p className="text-white">{profile?.name || 'N/A'}</p>
+            <p className="text-heading">{profile?.name || 'N/A'}</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
+            <label className="block text-sm font-medium text-body mb-2">
               Email
             </label>
-            <p className="text-white">{profile?.email || 'N/A'}</p>
+            <p className="text-heading">{profile?.email || 'N/A'}</p>
           </div>
         </div>
 
         {/* Signature Section */}
-        <div className="border-t border-zinc-800 pt-6">
-          <h2 className="text-xl font-semibold text-white mb-4">
+        <div className="border-t border-default pt-6">
+          <h2 className="text-xl font-semibold text-heading mb-4">
             Digital Signature
           </h2>
 
@@ -120,7 +120,7 @@ export default function ProfilePage() {
               <div>
                 <button
                   onClick={() => setShowSignaturePad(true)}
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors flex items-center gap-2"
                 >
                   <Upload size={18} />
                   Update Signature
@@ -129,13 +129,13 @@ export default function ProfilePage() {
             </div>
           ) : !showSignaturePad ? (
             <div>
-              <p className="text-zinc-400 mb-4">
+              <p className="text-muted mb-4">
                 You haven't created a digital signature yet. Create one to use
                 for approving documents.
               </p>
               <button
                 onClick={() => setShowSignaturePad(true)}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors flex items-center gap-2"
               >
                 <Upload size={18} />
                 Create Signature
@@ -145,7 +145,7 @@ export default function ProfilePage() {
 
           {showSignaturePad && (
             <div className="space-y-4">
-              <p className="text-zinc-400 text-sm">
+              <p className="text-muted text-sm">
                 Draw your signature below. This will be used when you approve
                 documents.
               </p>
@@ -171,20 +171,20 @@ export default function ProfilePage() {
                     <button
                       onClick={handleUploadSignature}
                       disabled={isUploading}
-                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
+                      className="px-4 py-2 bg-success hover:bg-success-hover text-white rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
                     >
                       <Save size={18} />
                       {isUploading ? 'Uploading...' : 'Confirm & Upload'}
                     </button>
                     <button
                       onClick={() => setSignaturePreview(null)}
-                      className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg transition-colors"
+                      className="px-4 py-2 bg-neutral-200 dark:bg-zinc-700 hover:bg-neutral-300 dark:hover:bg-zinc-600 text-heading rounded-lg transition-colors"
                     >
                       Redraw
                     </button>
                     <button
                       onClick={handleCancelSignature}
-                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                      className="px-4 py-2 bg-danger hover:bg-danger-hover text-white rounded-lg transition-colors flex items-center gap-2"
                     >
                       <X size={18} />
                       Cancel

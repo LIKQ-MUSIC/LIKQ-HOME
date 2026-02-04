@@ -30,8 +30,8 @@ interface PaginatedResponse<T> {
 }
 
 const partyTypeColors: Record<string, string> = {
-  Individual: 'bg-blue-500/20 text-blue-300',
-  Legal: 'bg-purple-500/20 text-purple-300'
+  Individual: 'badge-info',
+  Legal: 'bg-secondary/20 text-secondary-dark dark:bg-purple-500/20 dark:text-purple-300'
 }
 
 export default function PartiesPage() {
@@ -87,18 +87,18 @@ export default function PartiesPage() {
     {
       header: 'Legal Name',
       accessorKey: 'legal_name',
-      className: 'text-white font-medium'
+      className: 'text-heading font-medium'
     },
     {
       header: 'Display Name',
       cell: item => (
-        <span className="text-zinc-300">{item.display_name || '-'}</span>
+        <span className="text-body">{item.display_name || '-'}</span>
       )
     },
     {
       header: 'Tax ID',
       cell: item => (
-        <span className="text-zinc-400 font-mono text-sm">
+        <span className="text-muted font-mono text-sm">
           {item.tax_id || '-'}
         </span>
       )
@@ -128,14 +128,14 @@ export default function PartiesPage() {
     <>
       <Link
         href="/dashboard/parties/docs"
-        className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors border border-zinc-700"
+        className="hidden sm:flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-hover text-body rounded-lg transition-colors border border-default"
       >
         <Book size={20} />
         <span>API Docs</span>
       </Link>
       <Link
         href="/dashboard/parties/new"
-        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+        className="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors w-full sm:w-auto"
       >
         <PlusCircle size={20} />
         <span>Add Party</span>
@@ -144,9 +144,9 @@ export default function PartiesPage() {
   )
 
   const searchSlot = (
-    <div className="relative max-w-md">
+    <div className="relative w-full lg:max-w-md">
       <Search
-        className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
         size={18}
       />
       <input
@@ -154,7 +154,7 @@ export default function PartiesPage() {
         placeholder="Search by legal name, display name, or tax ID..."
         value={searchQuery}
         onChange={e => setSearchQuery(e.target.value)}
-        className="w-full pl-10 pr-4 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-zinc-300 placeholder:text-zinc-500 focus:outline-none focus:border-indigo-500"
+        className="input-base pl-10"
       />
     </div>
   )

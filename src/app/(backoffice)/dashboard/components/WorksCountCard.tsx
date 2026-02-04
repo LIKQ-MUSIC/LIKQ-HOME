@@ -39,9 +39,9 @@ export default async function WorksCountCard() {
       href="/works"
       className="block transition-transform hover:scale-[1.02]"
     >
-      <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6 shadow-sm hover:border-zinc-700 cursor-pointer">
+      <div className="stats-card hover:border-neutral-300 dark:hover:border-zinc-700 cursor-pointer">
         <div className="flex items-center gap-4">
-          <div className="rounded-lg bg-purple-500/10 p-3 text-purple-400">
+          <div className="stats-icon-wrapper bg-secondary/20 text-secondary-dark dark:bg-purple-500/10 dark:text-purple-400">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -60,8 +60,8 @@ export default async function WorksCountCard() {
             </svg>
           </div>
           <div>
-            <p className="text-sm font-medium text-zinc-400">Works</p>
-            <p className="text-2xl font-bold text-white">{worksCount}</p>
+            <p className="text-sm font-medium text-muted">Works</p>
+            <p className="text-2xl font-bold text-heading">{worksCount}</p>
           </div>
         </div>
       </div>

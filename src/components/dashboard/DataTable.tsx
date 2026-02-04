@@ -10,6 +10,9 @@ export interface Column<T> {
   className?: string
   headerClassName?: string
   align?: 'left' | 'center' | 'right'
+  // For mobile card view
+  hideOnMobile?: boolean
+  mobileLabel?: string
 }
 
 export interface PaginationMeta {
@@ -85,44 +88,49 @@ export function DataTable<T>({
 
   const allSelected = data.length > 0 && selectedIds.length === data.length
 
+  // Get cell content helper
+  const getCellContent = (item: T, col: Column<T>) => {
+    if (col.cell) return col.cell(item)
+    if (col.accessorKey) return item[col.accessorKey] as React.ReactNode
+    return null
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 lg:space-y-6">
       {/* Header */}
       {(title || headerActions) && (
-        <div className="flex justify-between items-center">
+        <div className="page-header">
           <div>
-            {title && (
-              <h1 className="text-3xl font-bold text-white">{title}</h1>
-            )}
-            {subtitle && <p className="text-zinc-400 mt-1">{subtitle}</p>}
+            {title && <h1 className="page-title">{title}</h1>}
+            {subtitle && <p className="text-muted mt-1 text-sm lg:text-base">{subtitle}</p>}
           </div>
-          {headerActions && <div className="flex gap-2">{headerActions}</div>}
+          {headerActions && <div className="action-group">{headerActions}</div>}
         </div>
       )}
 
       {/* Search Slot */}
-      {searchSlot}
+      {searchSlot && <div className="filter-bar">{searchSlot}</div>}
 
-      {/* Table Container */}
-      <div className="bg-zinc-900 rounded-lg border border-zinc-800 overflow-hidden">
+      {/* Desktop Table View */}
+      <div className="hidden lg:block card-base overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-zinc-800 bg-zinc-950">
+              <tr className="table-header-row">
                 {selectable && (
                   <th className="px-6 py-4 w-12">
                     <input
                       type="checkbox"
                       checked={allSelected}
                       onChange={e => handleSelectAll(e.target.checked)}
-                      className="rounded border-zinc-600 bg-zinc-800 text-indigo-500 focus:ring-indigo-500"
+                      className="rounded border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-primary focus:ring-primary"
                     />
                   </th>
                 )}
                 {columns.map((col, idx) => (
                   <th
                     key={idx}
-                    className={`px-6 py-4 text-sm font-semibold text-zinc-300 ${col.headerClassName || ''}`}
+                    className={`table-header-cell ${col.headerClassName || ''}`}
                     style={{ textAlign: col.align || 'left' }}
                   >
                     {col.header}
@@ -135,10 +143,10 @@ export function DataTable<T>({
                 <tr>
                   <td
                     colSpan={columns.length + (selectable ? 1 : 0)}
-                    className="px-6 py-12 text-center text-zinc-500"
+                    className="px-6 py-12 text-center text-muted"
                   >
                     <div className="flex items-center justify-center gap-2">
-                      <div className="h-4 w-4 border-2 border-zinc-600 border-t-indigo-500 rounded-full animate-spin" />
+                      <div className="h-4 w-4 border-2 border-neutral-300 dark:border-zinc-600 border-t-primary rounded-full animate-spin" />
                       <span>Loading...</span>
                     </div>
                   </td>
@@ -147,7 +155,7 @@ export function DataTable<T>({
                 <tr>
                   <td
                     colSpan={columns.length + (selectable ? 1 : 0)}
-                    className="px-6 py-12 text-center text-red-500"
+                    className="px-6 py-12 text-center text-danger"
                   >
                     {errorMessage}
                   </td>
@@ -156,7 +164,7 @@ export function DataTable<T>({
                 <tr>
                   <td
                     colSpan={columns.length + (selectable ? 1 : 0)}
-                    className="px-6 py-12 text-center text-zinc-500"
+                    className="px-6 py-12 text-center text-muted"
                   >
                     {emptyMessage}
                   </td>
@@ -169,9 +177,9 @@ export function DataTable<T>({
                     <tr
                       key={key}
                       onClick={() => onRowClick?.(item)}
-                      className={`border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors ${
+                      className={`table-row ${
                         onRowClick ? 'cursor-pointer' : ''
-                      } ${isSelected ? 'bg-zinc-800/30' : ''}`}
+                      } ${isSelected ? 'bg-primary/5 dark:bg-zinc-800/30' : ''}`}
                     >
                       {selectable && (
                         <td className="px-6 py-4">
@@ -180,21 +188,17 @@ export function DataTable<T>({
                             checked={isSelected}
                             onChange={() => handleSelectOne(String(key))}
                             onClick={e => e.stopPropagation()}
-                            className="rounded border-zinc-600 bg-zinc-800 text-indigo-500 focus:ring-indigo-500"
+                            className="rounded border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-primary focus:ring-primary"
                           />
                         </td>
                       )}
                       {columns.map((col, idx) => (
                         <td
                           key={idx}
-                          className={`px-6 py-4 ${col.className || ''}`}
+                          className={`table-cell ${col.className || ''}`}
                           style={{ textAlign: col.align || 'left' }}
                         >
-                          {col.cell
-                            ? col.cell(item)
-                            : col.accessorKey
-                              ? (item[col.accessorKey] as React.ReactNode)
-                              : null}
+                          {getCellContent(item, col)}
                         </td>
                       ))}
                     </tr>
@@ -205,18 +209,18 @@ export function DataTable<T>({
           </table>
         </div>
 
-        {/* Pagination */}
+        {/* Desktop Pagination */}
         {pagination && (
-          <div className="flex items-center justify-between border-t border-zinc-800 px-6 py-3 bg-zinc-900">
-            <div className="text-sm text-zinc-400">
+          <div className="flex items-center justify-between border-t border-default px-6 py-3 bg-surface">
+            <div className="text-sm text-muted">
               Page{' '}
-              <span className="font-medium text-white">{pagination.page}</span>{' '}
+              <span className="font-medium text-heading">{pagination.page}</span>{' '}
               of{' '}
-              <span className="font-medium text-white">
+              <span className="font-medium text-heading">
                 {pagination.totalPages}
               </span>
               {pagination.total > 0 && (
-                <span className="text-zinc-500 ml-2">
+                <span className="text-subtle ml-2">
                   ({pagination.total} total)
                 </span>
               )}
@@ -225,16 +229,122 @@ export function DataTable<T>({
               <button
                 onClick={onPrevPage}
                 disabled={currentPage <= 1}
-                className="p-2 rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="pagination-btn"
               >
                 <ChevronLeft size={16} />
               </button>
               <button
                 onClick={onNextPage}
                 disabled={currentPage >= pagination.totalPages}
-                className="p-2 rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="pagination-btn"
               >
                 <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="lg:hidden space-y-3">
+        {isLoading ? (
+          <div className="card-base p-8 text-center text-muted">
+            <div className="flex items-center justify-center gap-2">
+              <div className="h-4 w-4 border-2 border-neutral-300 dark:border-zinc-600 border-t-primary rounded-full animate-spin" />
+              <span>Loading...</span>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="card-base p-8 text-center text-danger">
+            {errorMessage}
+          </div>
+        ) : data.length === 0 ? (
+          <div className="card-base p-8 text-center text-muted">
+            {emptyMessage}
+          </div>
+        ) : (
+          data.map(item => {
+            const key = keyExtractor(item)
+            const isSelected = selectedIds.includes(String(key))
+            return (
+              <div
+                key={key}
+                onClick={() => onRowClick?.(item)}
+                className={`card-base p-4 ${
+                  onRowClick ? 'cursor-pointer active:bg-surface-hover' : ''
+                } ${isSelected ? 'ring-2 ring-primary/50' : ''}`}
+              >
+                <div className="flex items-start gap-3">
+                  {selectable && (
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => handleSelectOne(String(key))}
+                      onClick={e => e.stopPropagation()}
+                      className="mt-1 rounded border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-primary focus:ring-primary"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0 space-y-2">
+                    {columns
+                      .filter(col => !col.hideOnMobile)
+                      .map((col, idx) => {
+                        const content = getCellContent(item, col)
+                        // First column is typically the main identifier
+                        if (idx === 0) {
+                          return (
+                            <div key={idx} className={`font-medium ${col.className || 'text-heading'}`}>
+                              {content}
+                            </div>
+                          )
+                        }
+                        // Check if it's an actions column (usually last)
+                        if (col.header === 'Actions') {
+                          return (
+                            <div key={idx} className="flex justify-end pt-2 border-t border-default mt-3">
+                              {content}
+                            </div>
+                          )
+                        }
+                        return (
+                          <div key={idx} className="flex items-center justify-between text-sm">
+                            <span className="text-muted">
+                              {col.mobileLabel || col.header}
+                            </span>
+                            <span className={col.className || 'text-body'}>
+                              {content}
+                            </span>
+                          </div>
+                        )
+                      })}
+                  </div>
+                </div>
+              </div>
+            )
+          })
+        )}
+
+        {/* Mobile Pagination */}
+        {pagination && data.length > 0 && (
+          <div className="flex items-center justify-between card-base px-4 py-3">
+            <div className="text-sm text-muted">
+              <span className="font-medium text-heading">{pagination.page}</span>
+              {' / '}
+              <span className="font-medium text-heading">{pagination.totalPages}</span>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={onPrevPage}
+                disabled={currentPage <= 1}
+                className="pagination-btn btn-touch"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                onClick={onNextPage}
+                disabled={currentPage >= pagination.totalPages}
+                className="pagination-btn btn-touch"
+              >
+                <ChevronRight size={20} />
               </button>
             </div>
           </div>
@@ -252,17 +362,17 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, variant, colorMap }: StatusBadgeProps) {
-  let colorClass = 'bg-zinc-500/20 text-zinc-300'
+  let colorClass = 'badge-default'
 
   if (colorMap && colorMap[status]) {
     colorClass = colorMap[status]
   } else if (variant) {
     const variantColors = {
-      default: 'bg-zinc-500/20 text-zinc-300',
-      success: 'bg-green-500/20 text-green-300',
-      warning: 'bg-orange-500/20 text-orange-300',
-      danger: 'bg-red-500/20 text-red-300',
-      info: 'bg-blue-500/20 text-blue-300'
+      default: 'badge-default',
+      success: 'badge-success',
+      warning: 'badge-warning',
+      danger: 'badge-danger',
+      info: 'badge-info'
     }
     colorClass = variantColors[variant]
   }
@@ -292,12 +402,9 @@ export function ActionButton({
   variant = 'default',
   title
 }: ActionButtonProps) {
-  const baseClass =
-    'p-2 transition-colors'
+  const baseClass = 'p-2 transition-colors rounded-lg'
   const variantClass =
-    variant === 'danger'
-      ? 'text-zinc-400 hover:text-red-400'
-      : 'text-zinc-400 hover:text-indigo-400'
+    variant === 'danger' ? 'btn-action-danger hover:bg-danger/10' : 'btn-action-default hover:bg-primary/10'
 
   if (href) {
     const Link = require('next/link').default

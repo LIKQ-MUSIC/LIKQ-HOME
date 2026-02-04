@@ -47,11 +47,11 @@ interface PaginatedResponse<T> {
 }
 
 const statusColors: Record<string, string> = {
-  draft: 'bg-gray-500/20 text-gray-300',
-  sent: 'bg-blue-500/20 text-blue-300',
-  accepted: 'bg-green-500/20 text-green-300',
-  approved: 'bg-green-500/20 text-green-300',
-  rejected: 'bg-red-500/20 text-red-300'
+  draft: 'badge-default',
+  sent: 'badge-info',
+  accepted: 'badge-success',
+  approved: 'badge-success',
+  rejected: 'badge-danger'
 }
 
 const formatCurrency = (amount: number, currency: string = 'THB') => {
@@ -114,7 +114,7 @@ export default function QuotationsPage() {
     {
       header: 'Quotation Number',
       accessorKey: 'quotation_number',
-      className: 'text-white font-medium'
+      className: 'text-heading font-medium'
     },
     {
       header: 'Status',
@@ -128,7 +128,7 @@ export default function QuotationsPage() {
     {
       header: 'Total Amount',
       cell: item => (
-        <span className="text-zinc-300">
+        <span className="text-body">
           {formatCurrency(item.total_amount, item.currency)}
         </span>
       )
@@ -136,7 +136,7 @@ export default function QuotationsPage() {
     {
       header: 'Issued Date',
       cell: item => (
-        <span className="text-zinc-400">
+        <span className="text-muted">
           {formatDateShort(item.issued_date ?? undefined)}
         </span>
       )
@@ -144,7 +144,7 @@ export default function QuotationsPage() {
     {
       header: 'Valid Until',
       cell: item => (
-        <span className="text-zinc-400">
+        <span className="text-muted">
           {formatDateShort(item.valid_until_date ?? undefined)}
         </span>
       )
@@ -174,14 +174,14 @@ export default function QuotationsPage() {
     <>
       <Link
         href="/dashboard/quotations/docs"
-        className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors border border-zinc-700"
+        className="hidden sm:flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-hover text-body rounded-lg transition-colors border border-default"
       >
         <Book size={20} />
         <span>API Docs</span>
       </Link>
       <Link
         href="/dashboard/quotations/new"
-        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+        className="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors w-full sm:w-auto"
       >
         <PlusCircle size={20} />
         <span>Create Quotation</span>
@@ -190,9 +190,9 @@ export default function QuotationsPage() {
   )
 
   const searchSlot = (
-    <div className="relative max-w-md">
+    <div className="relative w-full lg:max-w-md">
       <Search
-        className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
         size={18}
       />
       <input
@@ -200,7 +200,7 @@ export default function QuotationsPage() {
         placeholder="Search by quotation number..."
         value={searchQuery}
         onChange={e => setSearchQuery(e.target.value)}
-        className="w-full pl-10 pr-4 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-zinc-300 placeholder:text-zinc-500 focus:outline-none focus:border-indigo-500"
+        className="input-base pl-10"
       />
     </div>
   )
