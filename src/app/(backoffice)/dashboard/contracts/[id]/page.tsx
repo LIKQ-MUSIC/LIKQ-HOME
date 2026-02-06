@@ -20,7 +20,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { NativeSelect } from '@/components/ui/native-select'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import PDFExportButton from '@/components/contracts/PDFExport'
 import ContractPreview from '@/components/contracts/ContractPreview'
 import ApproveContractButton from '@/components/contracts/ApproveContractButton'
@@ -596,19 +596,24 @@ export default function ContractFormPage() {
               <Label>
                 Origin *
               </Label>
-              <NativeSelect
+              <Select
                 value={formData.origin}
-                onChange={e =>
+                onValueChange={value =>
                   setFormData({
                     ...formData,
-                    origin: e.target.value as 'Internal' | 'External'
+                    origin: value as 'Internal' | 'External'
                   })
                 }
                 required
               >
-                <option value="Internal">Internal</option>
-                <option value="External">External</option>
-              </NativeSelect>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select origin" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Internal">Internal</SelectItem>
+                  <SelectItem value="External">External</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -630,20 +635,25 @@ export default function ContractFormPage() {
             <Label>
               Status
             </Label>
-            <NativeSelect
+            <Select
               value={formData.current_status}
-              onChange={e =>
+              onValueChange={value =>
                 setFormData({
                   ...formData,
-                  current_status: e.target.value as any
+                  current_status: value as any
                 })
               }
             >
-              <option value="Draft">Draft</option>
-              <option value="Active">Active</option>
-              <option value="Expired">Expired</option>
-              <option value="Terminated">Terminated</option>
-            </NativeSelect>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Draft">Draft</SelectItem>
+                <SelectItem value="Active">Active</SelectItem>
+                <SelectItem value="Expired">Expired</SelectItem>
+                <SelectItem value="Terminated">Terminated</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -661,20 +671,24 @@ export default function ContractFormPage() {
                       key={index}
                       className="flex gap-2 p-2 bg-white border border-indigo-500/50 rounded-lg"
                     >
-                      <NativeSelect
-                        value={newParty.party_id}
-                        onChange={e =>
-                          setNewParty({ ...newParty, party_id: e.target.value })
+                      <Select
+                        value={newParty.party_id || 'none'}
+                        onValueChange={value =>
+                          setNewParty({ ...newParty, party_id: value === 'none' ? '' : value })
                         }
-                        className="flex-1 px-3 py-1.5 text-sm"
                       >
-                        <option value="">Select Party</option>
-                        {availableParties.map(p => (
-                          <option key={p.id} value={p.id}>
-                            {p.display_name || p.legal_name}
-                          </option>
-                        ))}
-                      </NativeSelect>
+                        <SelectTrigger className="flex-1 px-3 py-1.5 text-sm">
+                          <SelectValue placeholder="Select Party" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">Select Party</SelectItem>
+                          {availableParties.map(p => (
+                            <SelectItem key={p.id} value={p.id}>
+                              {p.display_name || p.legal_name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
 
                       <Input
                         type="text"
@@ -689,23 +703,23 @@ export default function ContractFormPage() {
                         className="px-3 py-1.5 text-sm w-32"
                       />
 
-                      <NativeSelect
-                        value={newParty.role}
-                        onChange={e =>
-                          setNewParty({ ...newParty, role: e.target.value })
+                      <Select
+                        value={newParty.role || 'none'}
+                        onValueChange={value =>
+                          setNewParty({ ...newParty, role: value === 'none' ? '' : value })
                         }
-                        className="flex-1 px-3 py-1.5 text-sm"
                       >
-                        <option value="">Select Role</option>
-                        <option value="ผู้ว่าจ้าง">
-                          ผู้ว่าจ้าง (Employer)
-                        </option>
-                        <option value="ผู้รับจ้าง">
-                          ผู้รับจ้าง (Contractor)
-                        </option>
-                        <option value="พยาน 1">พยาน 1 (Witness 1)</option>
-                        <option value="พยาน 2">พยาน 2 (Witness 2)</option>
-                      </NativeSelect>
+                        <SelectTrigger className="flex-1 px-3 py-1.5 text-sm">
+                          <SelectValue placeholder="Select Role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">Select Role</SelectItem>
+                          <SelectItem value="ผู้ว่าจ้าง">ผู้ว่าจ้าง (Employer)</SelectItem>
+                          <SelectItem value="ผู้รับจ้าง">ผู้รับจ้าง (Contractor)</SelectItem>
+                          <SelectItem value="พยาน 1">พยาน 1 (Witness 1)</SelectItem>
+                          <SelectItem value="พยาน 2">พยาน 2 (Witness 2)</SelectItem>
+                        </SelectContent>
+                      </Select>
 
                       <Input
                         type="date"
@@ -799,20 +813,24 @@ export default function ContractFormPage() {
           {/* Add Party Form (Hidden when editing) */}
           {editingPartyIndex === null && (
             <div className="flex gap-2">
-              <NativeSelect
-                value={newParty.party_id}
-                onChange={e =>
-                  setNewParty({ ...newParty, party_id: e.target.value })
+              <Select
+                value={newParty.party_id || 'none'}
+                onValueChange={value =>
+                  setNewParty({ ...newParty, party_id: value === 'none' ? '' : value })
                 }
-                className="flex-1"
               >
-                <option value="">Select Party</option>
-                {availableParties.map(party => (
-                  <option key={party.id} value={party.id}>
-                    {party.display_name || party.legal_name}
-                  </option>
-                ))}
-              </NativeSelect>
+                <SelectTrigger className="flex-1">
+                  <SelectValue placeholder="Select Party" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Select Party</SelectItem>
+                  {availableParties.map(party => (
+                    <SelectItem key={party.id} value={party.id}>
+                      {party.display_name || party.legal_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
               <Input
                 type="text"
@@ -824,19 +842,23 @@ export default function ContractFormPage() {
                 className="w-48"
               />
 
-              <NativeSelect
-                value={newParty.role}
-                onChange={e =>
-                  setNewParty({ ...newParty, role: e.target.value })
+              <Select
+                value={newParty.role || 'none'}
+                onValueChange={value =>
+                  setNewParty({ ...newParty, role: value === 'none' ? '' : value })
                 }
-                className="flex-1"
               >
-                <option value="">Select Role</option>
-                <option value="ผู้ว่าจ้าง">ผู้ว่าจ้าง (Employer)</option>
-                <option value="ผู้รับจ้าง">ผู้รับจ้าง (Contractor)</option>
-                <option value="พยาน 1">พยาน 1 (Witness 1)</option>
-                <option value="พยาน 2">พยาน 2 (Witness 2)</option>
-              </NativeSelect>
+                <SelectTrigger className="flex-1">
+                  <SelectValue placeholder="Select Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Select Role</SelectItem>
+                  <SelectItem value="ผู้ว่าจ้าง">ผู้ว่าจ้าง (Employer)</SelectItem>
+                  <SelectItem value="ผู้รับจ้าง">ผู้รับจ้าง (Contractor)</SelectItem>
+                  <SelectItem value="พยาน 1">พยาน 1 (Witness 1)</SelectItem>
+                  <SelectItem value="พยาน 2">พยาน 2 (Witness 2)</SelectItem>
+                </SelectContent>
+              </Select>
 
               <Input
                 type="date"

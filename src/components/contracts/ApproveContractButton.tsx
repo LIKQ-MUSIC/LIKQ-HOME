@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import { CheckCircle } from 'lucide-react'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 
 interface ApproveContractButtonProps {
   contractId: string
@@ -50,33 +51,37 @@ export default function ApproveContractButton({
   })
 
   return (
-    <div className="flex flex-col gap-3 bg-green-900/20 border border-green-700 rounded-lg p-4">
-      <h3 className="text-sm font-semibold text-green-400">Sign Contract</h3>
+    <div className="flex flex-col gap-3 bg-success/5 border border-success/30 rounded-lg p-4">
+      <h3 className="text-sm font-semibold text-success">Sign Contract</h3>
 
       <div>
-        <label className="block text-sm font-medium text-zinc-300 mb-2">
+        <label className="block text-sm font-medium text-neutral-600 mb-2">
           Select Your Role
         </label>
-        <select
+        <Select
           value={selectedRole}
-          onChange={e => setSelectedRole(e.target.value)}
-          className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+          onValueChange={value => setSelectedRole(value)}
         >
-          {CONTRACT_ROLES.map(role => (
-            <option key={role.value} value={role.value}>
-              {role.label}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select your role" />
+          </SelectTrigger>
+          <SelectContent>
+            {CONTRACT_ROLES.map(role => (
+              <SelectItem key={role.value} value={role.value}>
+                {role.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {profile?.signature_url && (
-        <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
+        <label className="flex items-center gap-2 text-sm text-neutral-600 cursor-pointer">
           <input
             type="checkbox"
             checked={applySignature}
             onChange={e => setApplySignature(e.target.checked)}
-            className="w-4 h-4 rounded border-zinc-600 bg-zinc-800 text-indigo-600 focus:ring-indigo-500"
+            className="w-4 h-4 rounded border-[#e0e4ea] bg-white text-primary focus:ring-primary"
           />
           <span>ลงลายเซ็น (Apply Digital Signature)</span>
         </label>
