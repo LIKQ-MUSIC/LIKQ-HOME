@@ -6,6 +6,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import Link from 'next/link'
 import { ArrowLeft, Save } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
 
 interface PartyFormData {
   party_type: 'Individual' | 'Legal'
@@ -80,7 +83,7 @@ export default function PartyFormPage() {
   if (!isNew && isLoadingParty) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-zinc-400">Loading...</div>
+        <div className="text-neutral-500">Loading...</div>
       </div>
     )
   }
@@ -90,15 +93,15 @@ export default function PartyFormPage() {
       <div className="flex items-center gap-4">
         <Link
           href="/dashboard/parties"
-          className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+          className="p-2 hover:bg-[#f0f2f6] rounded-lg transition-colors"
         >
-          <ArrowLeft size={20} className="text-zinc-400" />
+          <ArrowLeft size={20} className="text-neutral-500" />
         </Link>
         <div>
-          <h1 className="text-3xl font-bold text-white">
+          <h1 className="text-3xl font-bold text-neutral-900">
             {isNew ? 'New Party' : 'Edit Party'}
           </h1>
-          <p className="text-zinc-400 mt-1">
+          <p className="text-neutral-500 mt-1">
             {isNew ? 'Create a new party' : 'Update party details'}
           </p>
         </div>
@@ -111,11 +114,11 @@ export default function PartyFormPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
-        <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-6">
+        <div className="bg-white rounded-lg border border-[#e5e8ed] p-6 space-y-6">
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
+            <Label>
               Party Type
-            </label>
+            </Label>
             <div className="flex gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -129,9 +132,9 @@ export default function PartyFormPage() {
                       party_type: e.target.value as 'Individual' | 'Legal'
                     })
                   }
-                  className="text-indigo-600 focus:ring-indigo-500 bg-zinc-950 border-zinc-700"
+                  className="text-indigo-600 focus:ring-indigo-500 bg-[#f8f9fb] border-[#e0e4ea]"
                 />
-                <span className="text-white">Individual</span>
+                <span className="text-neutral-900">Individual</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -145,24 +148,23 @@ export default function PartyFormPage() {
                       party_type: e.target.value as 'Individual' | 'Legal'
                     })
                   }
-                  className="text-indigo-600 focus:ring-indigo-500 bg-zinc-950 border-zinc-700"
+                  className="text-indigo-600 focus:ring-indigo-500 bg-[#f8f9fb] border-[#e0e4ea]"
                 />
-                <span className="text-white">Legal Entity</span>
+                <span className="text-neutral-900">Legal Entity</span>
               </label>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
+            <Label>
               Legal Name *
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               value={formData.legal_name}
               onChange={e =>
                 setFormData({ ...formData, legal_name: e.target.value })
               }
-              className="w-full px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
               placeholder={
                 formData.party_type === 'Individual'
                   ? 'e.g. John Doe'
@@ -173,45 +175,43 @@ export default function PartyFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
+            <Label>
               Display Name
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               value={formData.display_name}
               onChange={e =>
                 setFormData({ ...formData, display_name: e.target.value })
               }
-              className="w-full px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
               placeholder="e.g. Artist Name or Trading Name"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
+            <Label>
               Tax ID
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               value={formData.tax_id}
               onChange={e =>
                 setFormData({ ...formData, tax_id: e.target.value })
               }
-              className="w-full px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
               placeholder="Tax Identification Number"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
+            <Label>
               Address
-            </label>
-            <textarea
+            </Label>
+            <Textarea
+              className="min-h-[100px]"
               value={formData.address}
               onChange={e =>
                 setFormData({ ...formData, address: e.target.value })
               }
-              className="w-full px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500 min-h-[100px]"
               placeholder="Full physical address"
             />
           </div>
@@ -220,7 +220,7 @@ export default function PartyFormPage() {
         <div className="flex justify-end gap-3">
           <Link
             href="/dashboard/parties"
-            className="px-6 py-2 border border-zinc-700 text-zinc-400 rounded-lg hover:bg-zinc-800 transition-colors"
+            className="px-6 py-2 border border-[#e0e4ea] text-neutral-500 rounded-lg hover:bg-[#f0f2f6] transition-colors"
           >
             Cancel
           </Link>

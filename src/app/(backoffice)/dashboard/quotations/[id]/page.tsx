@@ -45,6 +45,10 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { NativeSelect } from '@/components/ui/native-select'
 
 const STATUS_OPTIONS = [
   'Draft',
@@ -126,7 +130,7 @@ function SortableItem({
     <div
       ref={setNodeRef}
       style={style}
-      className="grid grid-cols-12 gap-4 p-4 bg-zinc-950 rounded-lg border border-zinc-800 hover:border-zinc-700 transition-colors"
+      className="grid grid-cols-12 gap-4 p-4 bg-[#f8f9fb] rounded-lg border border-[#e5e8ed] hover:border-[#dce4ed] transition-colors"
     >
       {!isViewMode && (
         <div
@@ -134,7 +138,7 @@ function SortableItem({
           {...(isMounted ? attributes : {})}
           {...(isMounted ? listeners : {})}
         >
-          <GripVertical className="h-5 w-5 text-zinc-400 hover:text-zinc-300" />
+          <GripVertical className="h-5 w-5 text-neutral-500 hover:text-neutral-600" />
         </div>
       )}
       <div
@@ -142,10 +146,10 @@ function SortableItem({
           isViewMode ? 'col-span-12 md:col-span-5' : 'col-span-11 md:col-span-4'
         }
       >
-        <label className="block text-sm font-medium text-zinc-300 mb-2">
+        <Label>
           Description
-        </label>
-        <input
+        </Label>
+        <Input
           ref={descriptionInputRef}
           type="text"
           value={item.description}
@@ -168,11 +172,7 @@ function SortableItem({
               addButton?.click()
             }
           }}
-          className={`w-full px-4 py-2 bg-zinc-900 border rounded-lg text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
-            fieldErrors[`items.${index}.description`]
-              ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50'
-              : 'border-zinc-700'
-          }`}
+          error={!!fieldErrors[`items.${index}.description`]}
           placeholder="Service description"
           disabled={isViewMode}
         />
@@ -183,9 +183,9 @@ function SortableItem({
         )}
       </div>
       <div className="col-span-12 md:col-span-3">
-        <label className="block text-sm font-medium text-zinc-300 mb-2">
+        <Label>
           Quantity
-        </label>
+        </Label>
         <div className="flex items-center gap-1">
           <Button
             variant="outline"
@@ -194,13 +194,13 @@ function SortableItem({
             onClick={() =>
               updateItem(index, 'quantity', Math.max(1, normalizedQuantity - 1))
             }
-            className="h-9 w-9 shrink-0 text-zinc-300 hover:text-white border-zinc-700 bg-zinc-900"
+            className="h-9 w-9 shrink-0 text-neutral-600 hover:text-neutral-900 border-[#e0e4ea] bg-white"
             disabled={isViewMode || normalizedQuantity <= 1}
             aria-label="Decrease quantity"
           >
             <Minus className="h-3.5 w-3.5" />
           </Button>
-          <input
+          <Input
             type="number"
             min="1"
             step="1"
@@ -230,11 +230,8 @@ function SortableItem({
             onBlur={() => {
               updateItem(index, 'quantity', normalizedQuantity)
             }}
-            className={`flex-1 min-w-0 px-2 py-2 bg-zinc-900 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-center tabular-nums appearance-none ${
-              fieldErrors[`items.${index}.quantity`]
-                ? 'border-red-500'
-                : 'border-zinc-700'
-            }`}
+            className="flex-1 min-w-0 px-2 py-2 text-center tabular-nums appearance-none"
+            error={!!fieldErrors[`items.${index}.quantity`]}
             disabled={isViewMode}
           />
           <Button
@@ -242,7 +239,7 @@ function SortableItem({
             size="icon"
             type="button"
             onClick={() => updateItem(index, 'quantity', normalizedQuantity + 1)}
-            className="h-9 w-9 shrink-0 text-zinc-300 hover:text-white border-zinc-700 bg-zinc-900"
+            className="h-9 w-9 shrink-0 text-neutral-600 hover:text-neutral-900 border-[#e0e4ea] bg-white"
             disabled={isViewMode}
             aria-label="Increase quantity"
           >
@@ -256,9 +253,9 @@ function SortableItem({
         )}
       </div>
       <div className="col-span-12 md:col-span-3">
-        <label className="block text-sm font-medium text-zinc-300 mb-2">
+        <Label>
           Price
-        </label>
+        </Label>
         <div className="flex items-center gap-1">
           <Button
             variant="outline"
@@ -267,13 +264,13 @@ function SortableItem({
             onClick={() =>
               updateItem(index, 'price', Math.max(0, safePrice - 1))
             }
-            className="h-9 w-9 shrink-0 text-zinc-300 hover:text-white border-zinc-700 bg-zinc-900"
+            className="h-9 w-9 shrink-0 text-neutral-600 hover:text-neutral-900 border-[#e0e4ea] bg-white"
             disabled={isViewMode}
             aria-label="Decrease price"
           >
             <Minus className="h-3.5 w-3.5" />
           </Button>
-          <input
+          <Input
             type="number"
             min="0"
             step="0.01"
@@ -291,11 +288,8 @@ function SortableItem({
                 })
               }
             }}
-            className={`flex-1 min-w-0 px-2 py-2 bg-zinc-900 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-right tabular-nums appearance-none ${
-              fieldErrors[`items.${index}.price`]
-                ? 'border-red-500'
-                : 'border-zinc-700'
-            }`}
+            className="flex-1 min-w-0 px-2 py-2 text-right tabular-nums appearance-none"
+            error={!!fieldErrors[`items.${index}.price`]}
             disabled={isViewMode}
           />
           <Button
@@ -303,7 +297,7 @@ function SortableItem({
             size="icon"
             type="button"
             onClick={() => updateItem(index, 'price', safePrice + 1)}
-            className="h-9 w-9 shrink-0 text-zinc-300 hover:text-white border-zinc-700 bg-zinc-900"
+            className="h-9 w-9 shrink-0 text-neutral-600 hover:text-neutral-900 border-[#e0e4ea] bg-white"
             disabled={isViewMode}
             aria-label="Increase price"
           >
@@ -311,8 +305,8 @@ function SortableItem({
           </Button>
         </div>
         <div className="mt-2 flex items-center justify-end gap-2">
-          <span className="text-xs text-zinc-500">Line total:</span>
-          <span className="text-sm font-semibold text-indigo-400 tabular-nums">
+          <span className="text-xs text-neutral-400">Line total:</span>
+          <span className="text-sm font-semibold text-indigo-600 tabular-nums">
             {new Intl.NumberFormat('en-US', {
               style: 'currency',
               currency: safeCurrency,
@@ -331,7 +325,7 @@ function SortableItem({
           <button
             type="button"
             onClick={() => duplicateItem(index)}
-            className="p-2 text-zinc-400 hover:text-indigo-400 transition-colors hover:bg-indigo-500/10 rounded-lg"
+            className="p-2 text-neutral-500 hover:text-indigo-600 transition-colors hover:bg-indigo-500/10 rounded-lg"
             title="Duplicate item"
             aria-label="Duplicate item"
           >
@@ -745,7 +739,7 @@ export default function QuotationFormPage() {
   if (!isNew && isLoadingQuotation) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-white" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -756,12 +750,12 @@ export default function QuotationFormPage() {
         <div className="flex items-center gap-4">
           <Link
             href="/dashboard/quotations"
-            className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-[#f0f2f6] rounded-lg transition-colors"
           >
-            <ArrowLeft size={20} className="text-zinc-400" />
+            <ArrowLeft size={20} className="text-neutral-500" />
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-white">
+            <h1 className="text-3xl font-bold text-neutral-900">
               {showPreview
                 ? 'Print Preview'
                 : isNew
@@ -770,7 +764,7 @@ export default function QuotationFormPage() {
                     ? 'View Quotation'
                     : 'Edit Quotation'}
             </h1>
-            <p className="text-zinc-400 mt-1">
+            <p className="text-neutral-500 mt-1">
               {showPreview
                 ? 'Review layout before export'
                 : isNew
@@ -789,7 +783,7 @@ export default function QuotationFormPage() {
 
           <button
             onClick={() => setShowPreview(!showPreview)}
-            className={`px-4 py-2 text-sm transition-colors rounded-lg flex items-center gap-2 ${showPreview ? 'bg-indigo-600 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-800 border border-zinc-700'}`}
+            className={`px-4 py-2 text-sm transition-colors rounded-lg flex items-center gap-2 ${showPreview ? 'bg-indigo-600 text-white' : 'text-neutral-500 hover:text-neutral-900 hover:bg-[#f0f2f6] border border-[#e0e4ea]'}`}
           >
             {showPreview ? 'Back to Form' : 'A4 Preview'}
           </button>
@@ -800,7 +794,7 @@ export default function QuotationFormPage() {
             formData.status !== 'Approved' && (
               <button
                 onClick={() => setIsViewMode(true)}
-                className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+                className="px-4 py-2 text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
               >
                 View Mode
               </button>
@@ -808,7 +802,7 @@ export default function QuotationFormPage() {
           {isViewMode && !showPreview && formData.status !== 'Approved' && (
             <button
               onClick={() => setIsViewMode(false)}
-              className="px-4 py-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
+              className="px-4 py-2 text-sm text-indigo-600 hover:text-indigo-300 transition-colors"
             >
               Edit Mode
             </button>
@@ -859,28 +853,28 @@ export default function QuotationFormPage() {
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto">
           {/* Step 1: Basic Information */}
-          <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-6">
+          <div className="bg-white rounded-lg border border-[#e5e8ed] p-6 space-y-6">
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-600 text-white font-semibold text-sm">
                 1
               </div>
-              <h2 className="text-xl font-semibold text-white">
+              <h2 className="text-xl font-semibold text-neutral-900">
                 Basic Information
               </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   Quotation Number
                   {isNew && (
-                    <span className="ml-2 text-xs text-indigo-400">
+                    <span className="ml-2 text-xs text-indigo-600">
                       (Auto-generated)
                     </span>
                   )}
                   {!isNew && ' *'}
-                </label>
-                <input
+                </Label>
+                <Input
                   type="text"
                   value={formData.quotation_number || ''}
                   onChange={e => {
@@ -897,11 +891,7 @@ export default function QuotationFormPage() {
                       })
                     }
                   }}
-                  className={`w-full px-4 py-2 bg-zinc-950 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed ${
-                    fieldErrors.quotation_number
-                      ? 'border-red-500'
-                      : 'border-zinc-700'
-                  }`}
+                  error={!!fieldErrors.quotation_number}
                   placeholder={
                     isNew
                       ? 'Auto-generated (QT-YYYYMM-XXXX)'
@@ -918,10 +908,10 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   Status
-                </label>
-                <select
+                </Label>
+                <NativeSelect
                   value={formData.status}
                   onChange={e => {
                     const value = e.target.value
@@ -947,7 +937,6 @@ export default function QuotationFormPage() {
                       setFormData(newFormData)
                     }
                   }}
-                  className="w-full px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={isViewMode && formData.status !== 'Approved'} // Allow editing if status is Approved even in view mode
                 >
                   {STATUS_OPTIONS.map(status => (
@@ -955,16 +944,16 @@ export default function QuotationFormPage() {
                       {status}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   Currency
-                </label>
-                <input
+                </Label>
+                <Input
                   type="text"
                   value={formData.currency}
                   onChange={e => {
@@ -977,9 +966,7 @@ export default function QuotationFormPage() {
                       })
                     }
                   }}
-                  className={`w-full px-4 py-2 bg-zinc-950 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed ${
-                    fieldErrors.currency ? 'border-red-500' : 'border-zinc-700'
-                  }`}
+                  error={!!fieldErrors.currency}
                   placeholder="THB"
                   disabled={true}
                 />
@@ -991,10 +978,10 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   VAT Rate (%)
-                </label>
-                <input
+                </Label>
+                <Input
                   type="number"
                   min="0"
                   max="100"
@@ -1006,20 +993,19 @@ export default function QuotationFormPage() {
                       setFormData(prev => ({ ...prev, vat_rate: value }))
                     }
                   }}
-                  className="w-full px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="7"
                   disabled={isViewMode}
                 />
-                <p className="text-xs text-zinc-500 mt-1">
+                <p className="text-xs text-neutral-400 mt-1">
                   Value Added Tax percentage
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   Payment Method
-                </label>
-                <textarea
+                </Label>
+                <Textarea
                   rows={3}
                   value={formData.payment_method || ''}
                   onChange={e => {
@@ -1032,11 +1018,8 @@ export default function QuotationFormPage() {
                       })
                     }
                   }}
-                  className={`w-full px-4 py-2 bg-zinc-950 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed resize-y ${
-                    fieldErrors.payment_method
-                      ? 'border-red-500'
-                      : 'border-zinc-700'
-                  }`}
+                  error={!!fieldErrors.payment_method}
+                  className="resize-y"
                   placeholder="e.g. Bank Transfer to Account: 123-456-789&#10;Bank: SCB&#10;Account Name: LiKQ MUSIC"
                   disabled={isViewMode}
                 />
@@ -1048,10 +1031,10 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   Signature Date
-                </label>
-                <input
+                </Label>
+                <Input
                   type="date"
                   value={
                     formData.signature_date
@@ -1071,11 +1054,7 @@ export default function QuotationFormPage() {
                       })
                     }
                   }}
-                  className={`w-full px-4 py-2 bg-zinc-950 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed ${
-                    fieldErrors.signature_date
-                      ? 'border-red-500'
-                      : 'border-zinc-700'
-                  }`}
+                  error={!!fieldErrors.signature_date}
                   disabled={isViewMode}
                 />
                 {fieldErrors.signature_date && (
@@ -1088,21 +1067,21 @@ export default function QuotationFormPage() {
           </div>
 
           {/* Step 2: Party & User References */}
-          <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-6">
+          <div className="bg-white rounded-lg border border-[#e5e8ed] p-6 space-y-6">
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-600 text-white font-semibold text-sm">
                 2
               </div>
-              <h2 className="text-xl font-semibold text-white">
+              <h2 className="text-xl font-semibold text-neutral-900">
                 Party & User References
               </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   Contact Person
-                </label>
+                </Label>
                 <Select
                   value={
                     formData.contact_person_id
@@ -1146,9 +1125,9 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   Bill To Party
-                </label>
+                </Label>
                 <Select
                   value={
                     formData.bill_to_party_id
@@ -1192,9 +1171,9 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   Approver
-                </label>
+                </Label>
                 <Select
                   value={formData.approver_id ? formData.approver_id : 'none'}
                   onValueChange={value => {
@@ -1253,9 +1232,9 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   Customer Signatory
-                </label>
+                </Label>
                 <Select
                   value={
                     formData.customer_signatory_id
@@ -1301,20 +1280,20 @@ export default function QuotationFormPage() {
           </div>
 
           {/* Step 3: Dates */}
-          <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-6">
+          <div className="bg-white rounded-lg border border-[#e5e8ed] p-6 space-y-6">
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-600 text-white font-semibold text-sm">
                 3
               </div>
-              <h2 className="text-xl font-semibold text-white">Dates</h2>
+              <h2 className="text-xl font-semibold text-neutral-900">Dates</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   Issued Date
-                </label>
-                <input
+                </Label>
+                <Input
                   type="date"
                   value={
                     formData.issued_date
@@ -1339,11 +1318,7 @@ export default function QuotationFormPage() {
                       })
                     }
                   }}
-                  className={`w-full px-4 py-2 bg-zinc-950 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:invert ${
-                    fieldErrors.issued_date
-                      ? 'border-red-500'
-                      : 'border-zinc-700'
-                  }`}
+                  error={!!fieldErrors.issued_date}
                   disabled={isViewMode}
                 />
                 {fieldErrors.issued_date && (
@@ -1354,10 +1329,10 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   Valid Until Date
-                </label>
-                <input
+                </Label>
+                <Input
                   type="date"
                   value={
                     formData.valid_until_date
@@ -1382,11 +1357,7 @@ export default function QuotationFormPage() {
                       })
                     }
                   }}
-                  className={`w-full px-4 py-2 bg-zinc-950 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:invert ${
-                    fieldErrors.valid_until_date
-                      ? 'border-red-500'
-                      : 'border-zinc-700'
-                  }`}
+                  error={!!fieldErrors.valid_until_date}
                   disabled={isViewMode}
                 />
                 {fieldErrors.valid_until_date && (
@@ -1397,10 +1368,10 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   Approved Date
-                </label>
-                <input
+                </Label>
+                <Input
                   type="date"
                   value={
                     formData.approved_date
@@ -1425,11 +1396,7 @@ export default function QuotationFormPage() {
                       })
                     }
                   }}
-                  className={`w-full px-4 py-2 bg-zinc-950 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:invert ${
-                    fieldErrors.approved_date
-                      ? 'border-red-500'
-                      : 'border-zinc-700'
-                  }`}
+                  error={!!fieldErrors.approved_date}
                   disabled={isViewMode}
                 />
                 {fieldErrors.approved_date && (
@@ -1440,10 +1407,10 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label>
                   Accepted Date
-                </label>
-                <input
+                </Label>
+                <Input
                   type="date"
                   value={
                     formData.accepted_date
@@ -1468,11 +1435,7 @@ export default function QuotationFormPage() {
                       })
                     }
                   }}
-                  className={`w-full px-4 py-2 bg-zinc-950 border rounded-lg text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:brightness-0 [&::-webkit-calendar-picker-indicator]:invert ${
-                    fieldErrors.accepted_date
-                      ? 'border-red-500'
-                      : 'border-zinc-700'
-                  }`}
+                  error={!!fieldErrors.accepted_date}
                   disabled={isViewMode}
                 />
                 {fieldErrors.accepted_date && (
@@ -1485,15 +1448,15 @@ export default function QuotationFormPage() {
           </div>
 
           {/* Step 4: Line Items */}
-          <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-6">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
+          <div className="bg-white rounded-lg border border-[#e5e8ed] p-6 space-y-6">
+            <div className="flex items-center justify-between border-b border-[#e5e8ed] pb-2">
               <div className="flex items-center gap-3">
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-600 text-white font-semibold text-sm">
                   4
                 </div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-semibold text-white">Line Items</h2>
-                  <span className="px-2 py-0.5 bg-zinc-800 text-zinc-400 text-xs rounded-full font-medium">
+                  <h2 className="text-xl font-semibold text-neutral-900">Line Items</h2>
+                  <span className="px-2 py-0.5 bg-[#f3f5f8] text-neutral-500 text-xs rounded-full font-medium">
                     {formData.items.length}
                   </span>
                 </div>
@@ -1522,12 +1485,12 @@ export default function QuotationFormPage() {
 
             {/* Empty State */}
             {formData.items.length === 0 && (
-              <div className="text-center py-12 bg-zinc-950/50 rounded-lg border border-dashed border-zinc-800">
-                <div className="w-12 h-12 bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Plus className="h-6 w-6 text-zinc-500" />
+              <div className="text-center py-12 bg-[#f3f5f8] rounded-lg border border-dashed border-[#e5e8ed]">
+                <div className="w-12 h-12 bg-[#f3f5f8] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Plus className="h-6 w-6 text-neutral-400" />
                 </div>
-                <p className="text-zinc-400 mb-2">No line items yet</p>
-                <p className="text-zinc-500 text-sm mb-4">
+                <p className="text-neutral-500 mb-2">No line items yet</p>
+                <p className="text-neutral-400 text-sm mb-4">
                   Add your first item to get started
                 </p>
                 {!isViewMode && (
@@ -1586,12 +1549,12 @@ export default function QuotationFormPage() {
               const vatAmount = (formData.total_amount * formData.vat_rate) / 100
               const grandTotal = formData.total_amount + vatAmount
               return (
-                <div className="mt-6 pt-6 border-t border-zinc-800">
+                <div className="mt-6 pt-6 border-t border-[#e5e8ed]">
                   <div className="flex flex-col gap-3">
                     {/* Subtotal Row */}
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-zinc-400">Subtotal</span>
-                      <span className="text-zinc-300 font-medium tabular-nums">
+                      <span className="text-neutral-500">Subtotal</span>
+                      <span className="text-neutral-600 font-medium tabular-nums">
                         {new Intl.NumberFormat('en-US', {
                           style: 'currency',
                           currency: summaryCurrency,
@@ -1601,10 +1564,10 @@ export default function QuotationFormPage() {
                     </div>
                     {/* VAT Row */}
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-zinc-400">
+                      <span className="text-neutral-500">
                         VAT ({formData.vat_rate}%)
                       </span>
-                      <span className="text-zinc-300 font-medium tabular-nums">
+                      <span className="text-neutral-600 font-medium tabular-nums">
                         {new Intl.NumberFormat('en-US', {
                           style: 'currency',
                           currency: summaryCurrency,
@@ -1613,18 +1576,18 @@ export default function QuotationFormPage() {
                       </span>
                     </div>
                     {/* Divider */}
-                    <div className="border-t border-zinc-800 my-2"></div>
+                    <div className="border-t border-[#e5e8ed] my-2"></div>
                     {/* Total Row - Aligned Layout */}
                     <div className="grid grid-cols-2 gap-4 items-end">
                       <div className="flex flex-col">
-                        <span className="text-sm text-zinc-500 mb-1">Currency</span>
-                        <span className="text-lg font-semibold text-white">
+                        <span className="text-sm text-neutral-400 mb-1">Currency</span>
+                        <span className="text-lg font-semibold text-neutral-900">
                           {summaryCurrency}
                         </span>
                       </div>
                       <div className="flex flex-col items-end">
-                        <span className="text-sm text-zinc-500 mb-1">Total Amount</span>
-                        <span className="text-2xl font-bold text-white tabular-nums">
+                        <span className="text-sm text-neutral-400 mb-1">Total Amount</span>
+                        <span className="text-2xl font-bold text-neutral-900 tabular-nums">
                           {new Intl.NumberFormat('en-US', {
                             style: 'currency',
                             currency: summaryCurrency,
@@ -1643,7 +1606,7 @@ export default function QuotationFormPage() {
             <div className="flex justify-end gap-3">
               <Link
                 href="/dashboard/quotations"
-                className="px-6 py-2 border border-zinc-700 text-zinc-400 rounded-lg hover:bg-zinc-800 transition-colors"
+                className="px-6 py-2 border border-[#e0e4ea] text-neutral-500 rounded-lg hover:bg-[#f0f2f6] transition-colors"
               >
                 Cancel
               </Link>

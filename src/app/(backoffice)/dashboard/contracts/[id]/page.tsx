@@ -18,6 +18,9 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { NativeSelect } from '@/components/ui/native-select'
 import PDFExportButton from '@/components/contracts/PDFExport'
 import ContractPreview from '@/components/contracts/ContractPreview'
 import ApproveContractButton from '@/components/contracts/ApproveContractButton'
@@ -30,7 +33,7 @@ const TipTapEditor = dynamic(
   () => import('@/components/contracts/TipTapEditor'),
   {
     ssr: false,
-    loading: () => <div className="p-4 text-zinc-400">Loading editor...</div>
+    loading: () => <div className="p-4 text-neutral-500">Loading editor...</div>
   }
 )
 
@@ -521,15 +524,15 @@ export default function ContractFormPage() {
         <div className="flex items-center gap-4">
           <Link
             href="/dashboard/contracts"
-            className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-[#f0f2f6] rounded-lg transition-colors"
           >
-            <ArrowLeft size={20} className="text-zinc-400" />
+            <ArrowLeft size={20} className="text-neutral-500" />
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-white">
+            <h1 className="text-3xl font-bold text-neutral-900">
               {isNew ? 'Create Contract' : 'Edit Contract'}
             </h1>
-            <p className="text-zinc-400 mt-1">
+            <p className="text-neutral-500 mt-1">
               {isNew ? 'Create a new contract' : 'Update contract details'}
             </p>
           </div>
@@ -564,26 +567,25 @@ export default function ContractFormPage() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
-        <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-6">
-          <h2 className="text-xl font-semibold text-white">
+        <div className="bg-white rounded-lg border border-[#e5e8ed] p-6 space-y-6">
+          <h2 className="text-xl font-semibold text-neutral-900">
             Basic Information
           </h2>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">
+              <Label>
                 Contract Number *
-              </label>
-              <input
+              </Label>
+              <Input
                 type="text"
                 value={
                   formData.contract_number || 'Auto-generated (CTR-YYYYMM-XXXX)'
                 }
-                className="w-full px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
                 disabled
               />
               {isNew && (
-                <p className="text-xs text-zinc-500 mt-1">
+                <p className="text-xs text-neutral-400 mt-1">
                   Contract number will be auto-generated in format:
                   CTR-YYYYMM-XXXX
                 </p>
@@ -591,10 +593,10 @@ export default function ContractFormPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">
+              <Label>
                 Origin *
-              </label>
-              <select
+              </Label>
+              <NativeSelect
                 value={formData.origin}
                 onChange={e =>
                   setFormData({
@@ -602,35 +604,33 @@ export default function ContractFormPage() {
                     origin: e.target.value as 'Internal' | 'External'
                   })
                 }
-                className="w-full px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
                 required
               >
                 <option value="Internal">Internal</option>
                 <option value="External">External</option>
-              </select>
+              </NativeSelect>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
+            <Label>
               Title *
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               value={formData.title}
               onChange={e =>
                 setFormData({ ...formData, title: e.target.value })
               }
-              className="w-full px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
+            <Label>
               Status
-            </label>
-            <select
+            </Label>
+            <NativeSelect
               value={formData.current_status}
               onChange={e =>
                 setFormData({
@@ -638,19 +638,18 @@ export default function ContractFormPage() {
                   current_status: e.target.value as any
                 })
               }
-              className="w-full px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
             >
               <option value="Draft">Draft</option>
               <option value="Active">Active</option>
               <option value="Expired">Expired</option>
               <option value="Terminated">Terminated</option>
-            </select>
+            </NativeSelect>
           </div>
         </div>
 
         {/* Parties */}
-        <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-4">
-          <h2 className="text-xl font-semibold text-white">Parties</h2>
+        <div className="bg-white rounded-lg border border-[#e5e8ed] p-6 space-y-4">
+          <h2 className="text-xl font-semibold text-neutral-900">Parties</h2>
 
           {/* Existing Parties */}
           {formData.parties.length > 0 && (
@@ -660,14 +659,14 @@ export default function ContractFormPage() {
                   return (
                     <div
                       key={index}
-                      className="flex gap-2 p-2 bg-zinc-900 border border-indigo-500/50 rounded-lg"
+                      className="flex gap-2 p-2 bg-white border border-indigo-500/50 rounded-lg"
                     >
-                      <select
+                      <NativeSelect
                         value={newParty.party_id}
                         onChange={e =>
                           setNewParty({ ...newParty, party_id: e.target.value })
                         }
-                        className="flex-1 px-3 py-1.5 bg-zinc-950 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500"
+                        className="flex-1 px-3 py-1.5 text-sm"
                       >
                         <option value="">Select Party</option>
                         {availableParties.map(p => (
@@ -675,9 +674,9 @@ export default function ContractFormPage() {
                             {p.display_name || p.legal_name}
                           </option>
                         ))}
-                      </select>
+                      </NativeSelect>
 
-                      <input
+                      <Input
                         type="text"
                         value={newParty.sign_label || ''}
                         onChange={e =>
@@ -687,15 +686,15 @@ export default function ContractFormPage() {
                           })
                         }
                         placeholder="Label"
-                        className="px-3 py-1.5 bg-zinc-950 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500 w-32"
+                        className="px-3 py-1.5 text-sm w-32"
                       />
 
-                      <select
+                      <NativeSelect
                         value={newParty.role}
                         onChange={e =>
                           setNewParty({ ...newParty, role: e.target.value })
                         }
-                        className="flex-1 px-3 py-1.5 bg-zinc-950 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500"
+                        className="flex-1 px-3 py-1.5 text-sm"
                       >
                         <option value="">Select Role</option>
                         <option value="ผู้ว่าจ้าง">
@@ -706,9 +705,9 @@ export default function ContractFormPage() {
                         </option>
                         <option value="พยาน 1">พยาน 1 (Witness 1)</option>
                         <option value="พยาน 2">พยาน 2 (Witness 2)</option>
-                      </select>
+                      </NativeSelect>
 
-                      <input
+                      <Input
                         type="date"
                         value={newParty.signed_date || ''}
                         onChange={e =>
@@ -717,7 +716,7 @@ export default function ContractFormPage() {
                             signed_date: e.target.value
                           })
                         }
-                        className="px-3 py-1.5 bg-zinc-950 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500 w-36"
+                        className="px-3 py-1.5 text-sm w-36"
                       />
 
                       <button
@@ -739,7 +738,7 @@ export default function ContractFormPage() {
                             signed_date: ''
                           })
                         }}
-                        className="p-1.5 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg transition-colors"
+                        className="p-1.5 bg-[#e0e4ea] hover:bg-[#dce4ed] text-neutral-900 rounded-lg transition-colors"
                         title="Cancel Edit"
                       >
                         <X size={16} />
@@ -751,24 +750,24 @@ export default function ContractFormPage() {
                 return (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-3 bg-zinc-950 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-[#f8f9fb] rounded-lg"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-white font-medium">
+                      <span className="text-neutral-900 font-medium">
                         {getPartyName(party.party_id)}
                       </span>
                       {party.sign_label && (
-                        <span className="text-zinc-400 text-sm bg-zinc-900 px-2 py-0.5 rounded">
+                        <span className="text-neutral-500 text-sm bg-white px-2 py-0.5 rounded">
                           {party.sign_label}
                         </span>
                       )}
                       {party.role && (
-                        <span className="text-indigo-400 text-sm">
+                        <span className="text-indigo-600 text-sm">
                           {party.role}
                         </span>
                       )}
                       {party.signed_date && (
-                        <span className="text-zinc-500 text-xs">
+                        <span className="text-neutral-400 text-xs">
                           ({party.signed_date})
                         </span>
                       )}
@@ -777,7 +776,7 @@ export default function ContractFormPage() {
                       <button
                         type="button"
                         onClick={() => editParty(index)}
-                        className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded transition-colors"
+                        className="p-1.5 text-neutral-500 hover:text-neutral-900 hover:bg-[#f0f2f6] rounded transition-colors"
                         title="Edit Party"
                       >
                         <Pencil size={14} />
@@ -785,7 +784,7 @@ export default function ContractFormPage() {
                       <button
                         type="button"
                         onClick={() => removeParty(index)}
-                        className="p-1.5 text-zinc-400 hover:text-red-400 hover:bg-zinc-800 rounded transition-colors"
+                        className="p-1.5 text-neutral-500 hover:text-red-400 hover:bg-[#f0f2f6] rounded transition-colors"
                         title="Remove Party"
                       >
                         <X size={14} />
@@ -800,12 +799,12 @@ export default function ContractFormPage() {
           {/* Add Party Form (Hidden when editing) */}
           {editingPartyIndex === null && (
             <div className="flex gap-2">
-              <select
+              <NativeSelect
                 value={newParty.party_id}
                 onChange={e =>
                   setNewParty({ ...newParty, party_id: e.target.value })
                 }
-                className="flex-1 px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                className="flex-1"
               >
                 <option value="">Select Party</option>
                 {availableParties.map(party => (
@@ -813,39 +812,39 @@ export default function ContractFormPage() {
                     {party.display_name || party.legal_name}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
 
-              <input
+              <Input
                 type="text"
                 value={newParty.sign_label || ''}
                 onChange={e =>
                   setNewParty({ ...newParty, sign_label: e.target.value })
                 }
                 placeholder="Label"
-                className="px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500 w-48"
+                className="w-48"
               />
 
-              <select
+              <NativeSelect
                 value={newParty.role}
                 onChange={e =>
                   setNewParty({ ...newParty, role: e.target.value })
                 }
-                className="flex-1 px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                className="flex-1"
               >
                 <option value="">Select Role</option>
                 <option value="ผู้ว่าจ้าง">ผู้ว่าจ้าง (Employer)</option>
                 <option value="ผู้รับจ้าง">ผู้รับจ้าง (Contractor)</option>
                 <option value="พยาน 1">พยาน 1 (Witness 1)</option>
                 <option value="พยาน 2">พยาน 2 (Witness 2)</option>
-              </select>
+              </NativeSelect>
 
-              <input
+              <Input
                 type="date"
                 value={newParty.signed_date || ''}
                 onChange={e =>
                   setNewParty({ ...newParty, signed_date: e.target.value })
                 }
-                className="px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500 w-40"
+                className="w-40"
               />
 
               <button
@@ -860,9 +859,9 @@ export default function ContractFormPage() {
         </div>
 
         {/* Rules & Purpose */}
-        <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-4">
-          <h2 className="text-xl font-semibold text-white">Rules & Purpose</h2>
-          <p className="text-sm text-zinc-400">
+        <div className="bg-white rounded-lg border border-[#e5e8ed] p-6 space-y-4">
+          <h2 className="text-xl font-semibold text-neutral-900">Rules & Purpose</h2>
+          <p className="text-sm text-neutral-500">
             Define the purpose and specific constraints for this contract. These
             rules will be stored and used for AI generation.
           </p>
@@ -870,7 +869,7 @@ export default function ContractFormPage() {
           <div>
             {editingRuleIndex === null && (
               <div className="flex gap-2 mb-3">
-                <input
+                <Input
                   type="text"
                   value={newRule}
                   onChange={e => setNewRule(e.target.value)}
@@ -878,12 +877,12 @@ export default function ContractFormPage() {
                     e.key === 'Enter' && (e.preventDefault(), handleAddRule())
                   }
                   placeholder="Add a rule (e.g. 'Must include NDA clause')"
-                  className="flex-1 px-4 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                  className="flex-1"
                 />
                 <button
                   onClick={handleAddRule}
                   type="button"
-                  className="p-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors"
+                  className="p-2 bg-[#f3f5f8] hover:bg-[#e5e8ed] text-neutral-900 rounded-lg transition-colors"
                 >
                   <Plus size={20} />
                 </button>
@@ -896,7 +895,7 @@ export default function ContractFormPage() {
                     return (
                       <div
                         key={idx}
-                        className="flex items-center gap-2 bg-zinc-950 border border-indigo-500/50 rounded-full pl-3 pr-1 py-1"
+                        className="flex items-center gap-2 bg-[#f8f9fb] border border-indigo-500/50 rounded-full pl-3 pr-1 py-1"
                       >
                         <input
                           type="text"
@@ -906,7 +905,7 @@ export default function ContractFormPage() {
                             e.key === 'Enter' &&
                             (e.preventDefault(), handleAddRule())
                           }
-                          className="bg-transparent border-none text-white text-sm focus:outline-none w-48"
+                          className="bg-transparent border-none text-neutral-900 text-sm focus:outline-none w-48"
                           autoFocus
                         />
                         <button
@@ -923,7 +922,7 @@ export default function ContractFormPage() {
                             setEditingRuleIndex(null)
                             setNewRule('')
                           }}
-                          className="p-0.5 text-zinc-500 hover:text-white transition-colors"
+                          className="p-0.5 text-neutral-400 hover:text-neutral-900 transition-colors"
                           title="Cancel Edit"
                         >
                           <X size={16} />
@@ -934,14 +933,14 @@ export default function ContractFormPage() {
                   return (
                     <span
                       key={idx}
-                      className="flex items-center gap-1.5 px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-sm group transition-all"
+                      className="flex items-center gap-1.5 px-3 py-1 bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 rounded-full text-sm group transition-all"
                     >
                       {rule}
-                      <div className="flex items-center gap-1 border-l border-zinc-700/50 ml-1 pl-1">
+                      <div className="flex items-center gap-1 border-l border-[#e5e8ed] ml-1 pl-1">
                         <button
                           type="button"
                           onClick={() => editRule(idx)}
-                          className="hover:text-white transition-colors p-0.5"
+                          className="hover:text-neutral-900 transition-colors p-0.5"
                           title="Edit Rule"
                         >
                           <Pencil size={12} />
@@ -968,13 +967,13 @@ export default function ContractFormPage() {
           <div className="lg:col-span-3 space-y-4">
             {/* AI Rules & Generation */}
             {/* AI Generation Trigger */}
-            <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="bg-white rounded-lg border border-[#e5e8ed] p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                  <Sparkles className="text-indigo-400" size={20} />
+                <h2 className="text-xl font-semibold text-neutral-900 flex items-center gap-2">
+                  <Sparkles className="text-indigo-600" size={20} />
                   AI Assistant
                 </h2>
-                <p className="text-sm text-zinc-400 mt-1">
+                <p className="text-sm text-neutral-500 mt-1">
                   Generate content using the Parties and Rules defined above.
                 </p>
               </div>
@@ -996,19 +995,19 @@ export default function ContractFormPage() {
               </button>
             </div>
 
-            <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-4">
+            <div className="bg-white rounded-lg border border-[#e5e8ed] p-6 space-y-4">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-white">
+                <h2 className="text-xl font-semibold text-neutral-900">
                   Contract Content
                 </h2>
-                <div className="flex bg-zinc-950 p-1 rounded-lg border border-zinc-800">
+                <div className="flex bg-[#f8f9fb] p-1 rounded-lg border border-[#e5e8ed]">
                   <button
                     type="button"
                     onClick={() => setActiveTab('edit')}
                     className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${
                       activeTab === 'edit'
                         ? 'bg-indigo-600 text-white shadow'
-                        : 'text-zinc-400 hover:text-white'
+                        : 'text-neutral-500 hover:text-neutral-900'
                     }`}
                   >
                     Edit Content
@@ -1019,7 +1018,7 @@ export default function ContractFormPage() {
                     className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${
                       activeTab === 'preview'
                         ? 'bg-indigo-600 text-white shadow'
-                        : 'text-zinc-400 hover:text-white'
+                        : 'text-neutral-500 hover:text-neutral-900'
                     }`}
                   >
                     Preview & Print
@@ -1029,7 +1028,7 @@ export default function ContractFormPage() {
 
               {/* Edit Mode */}
               <div className={activeTab === 'edit' ? 'block' : 'hidden'}>
-                <div className="bg-white rounded-lg text-black p-4 min-h-[500px] border border-zinc-700">
+                <div className="bg-white rounded-lg text-black p-4 min-h-[500px] border border-[#e0e4ea]">
                   <TipTapEditor
                     content={formData.content}
                     onChange={content => setFormData({ ...formData, content })}
@@ -1053,22 +1052,22 @@ export default function ContractFormPage() {
 
           {/* Version History Sidebar */}
           {!isNew && (
-            <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 space-y-4 h-fit">
-              <h2 className="text-xl font-semibold text-white">
+            <div className="bg-white rounded-lg border border-[#e5e8ed] p-6 space-y-4 h-fit">
+              <h2 className="text-xl font-semibold text-neutral-900">
                 Version History
               </h2>
               <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
                 {versions.length === 0 ? (
-                  <p className="text-zinc-500 text-sm">No versions yet.</p>
+                  <p className="text-neutral-400 text-sm">No versions yet.</p>
                 ) : (
                   versions.map(version => (
                     <div
                       key={version.id}
-                      className="p-3 bg-zinc-950 rounded-lg border border-zinc-800 hover:border-zinc-700 transition-colors cursor-pointer group"
+                      className="p-3 bg-[#f8f9fb] rounded-lg border border-[#e5e8ed] hover:border-[#dce4ed] transition-colors cursor-pointer group"
                       onClick={() => loadVersion(version)}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-indigo-400 font-medium text-sm">
+                        <span className="text-indigo-600 font-medium text-sm">
                           v{version.version_number}
                         </span>
                         {version.is_final && (
@@ -1077,7 +1076,7 @@ export default function ContractFormPage() {
                           </span>
                         )}
                       </div>
-                      <div className="text-xs text-zinc-500 mb-2">
+                      <div className="text-xs text-neutral-400 mb-2">
                         {formatDateTimeShort(version.created_at)}
                       </div>
 
@@ -1087,7 +1086,7 @@ export default function ContractFormPage() {
                           href={version.file_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white transition-colors p-1.5 bg-zinc-900 rounded border border-zinc-800 hover:border-zinc-700 w-fit"
+                          className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-900 transition-colors p-1.5 bg-white rounded border border-[#e5e8ed] hover:border-[#dce4ed] w-fit"
                           onClick={e => e.stopPropagation()}
                         >
                           <Download size={12} />
@@ -1106,7 +1105,7 @@ export default function ContractFormPage() {
         <div className="flex justify-end gap-3">
           <Link
             href="/dashboard/contracts"
-            className="px-6 py-2 border border-zinc-700 text-zinc-400 rounded-lg hover:bg-zinc-800 transition-colors"
+            className="px-6 py-2 border border-[#e0e4ea] text-neutral-500 rounded-lg hover:bg-[#f0f2f6] transition-colors"
           >
             Cancel
           </Link>

@@ -5,20 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/utils/cn"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-zinc-950 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-zinc-950 dark:focus-visible:ring-zinc-300",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         default:
-          "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-600 dark:text-white dark:hover:bg-indigo-700",
+          "bg-indigo-600 text-white hover:bg-indigo-700",
         destructive:
-          "bg-red-500 text-white hover:bg-red-600 dark:bg-red-900 dark:text-red-50 dark:hover:bg-red-900",
+          "bg-red-500 text-white hover:bg-red-600",
         outline:
-          "border border-zinc-700 bg-zinc-950 text-zinc-50 hover:bg-zinc-800 hover:text-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-zinc-800",
+          "border border-[#e0e4ea] bg-white text-neutral-700 hover:bg-[#f3f5f8] hover:text-neutral-900",
         secondary:
-          "bg-zinc-800 text-zinc-50 hover:bg-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-700",
-        ghost: "hover:bg-zinc-800 hover:text-zinc-50 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",
-        link: "text-indigo-400 underline-offset-4 hover:underline dark:text-indigo-400",
+          "bg-[#f3f5f8] text-neutral-700 hover:bg-[#e5e8ed]",
+        ghost: "hover:bg-[#f0f2f6] hover:text-neutral-900",
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",

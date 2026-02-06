@@ -132,13 +132,14 @@ export default function UserList() {
           onClick={() => setIsRoleModalOpen(true)}
           variant="secondary"
           size="md"
+          className="!rounded-lg gap-2"
         >
-          <Shield className="mr-2 h-4 w-4" />
+          <Shield size={20} />
           Assign Role ({selectedUserIds.length})
         </Button>
       )}
-      <Button onClick={() => setIsCreateModalOpen(true)} size="md">
-        <Plus className="mr-2 h-4 w-4" />
+      <Button onClick={() => setIsCreateModalOpen(true)} size="md" className="!rounded-lg gap-2">
+        <Plus size={20} />
         Create User
       </Button>
     </>
@@ -229,14 +230,15 @@ export default function UserList() {
                 </select>
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
+                  size="md"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 text-sm text-muted hover:text-heading transition-colors"
+                  className="!rounded-lg"
                 >
                   Cancel
-                </button>
-                <Button disabled={createUserMutation.isPending} size="md">
+                </Button>
+                <Button disabled={createUserMutation.isPending} size="md" className="!rounded-lg">
                   {createUserMutation.isPending ? 'Creating...' : 'Create'}
                 </Button>
               </div>
@@ -264,17 +266,19 @@ export default function UserList() {
               </select>
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="md"
                 onClick={() => setIsRoleModalOpen(false)}
-                className="px-4 py-2 text-sm text-muted hover:text-heading transition-colors"
+                className="!rounded-lg"
               >
                 Cancel
-              </button>
+              </Button>
               <Button
                 onClick={handleAssignRole}
                 disabled={assignRoleMutation.isPending}
                 size="md"
+                className="!rounded-lg"
               >
                 {assignRoleMutation.isPending ? 'Assigning...' : 'Assign'}
               </Button>

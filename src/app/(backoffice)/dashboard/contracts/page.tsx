@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import Link from 'next/link'
 import { PlusCircle, Pencil, Trash2, Search } from 'lucide-react'
+import Button from '@/ui/Button'
 import { usePagination } from '@/hooks/use-pagination'
 import { formatDateShort } from '@/utils/date'
 import {
@@ -134,12 +135,11 @@ export default function ContractsPage() {
   ]
 
   const headerActions = (
-    <Link
-      href="/dashboard/contracts/new"
-      className="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors w-full sm:w-auto"
-    >
-      <PlusCircle size={20} />
-      <span>New Contract</span>
+    <Link href="/dashboard/contracts/new">
+      <Button variant="primary" size="md" className="!rounded-lg gap-2 w-full sm:w-auto">
+        <PlusCircle size={20} />
+        <span>New Contract</span>
+      </Button>
     </Link>
   )
 

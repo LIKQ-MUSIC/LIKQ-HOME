@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import Link from 'next/link'
 import { PlusCircle, Pencil, Trash2, Search, Book } from 'lucide-react'
+import Button from '@/ui/Button'
 import { usePagination } from '@/hooks/use-pagination'
 import {
   DataTable,
@@ -126,19 +127,17 @@ export default function PartiesPage() {
 
   const headerActions = (
     <>
-      <Link
-        href="/dashboard/parties/docs"
-        className="hidden sm:flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-hover text-body rounded-lg transition-colors border border-default"
-      >
-        <Book size={20} />
-        <span>API Docs</span>
+      <Link href="/dashboard/parties/docs" className="hidden sm:block">
+        <Button variant="outline" size="md" className="!rounded-lg gap-2">
+          <Book size={20} />
+          <span>API Docs</span>
+        </Button>
       </Link>
-      <Link
-        href="/dashboard/parties/new"
-        className="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors w-full sm:w-auto"
-      >
-        <PlusCircle size={20} />
-        <span>Add Party</span>
+      <Link href="/dashboard/parties/new">
+        <Button variant="primary" size="md" className="!rounded-lg gap-2 w-full sm:w-auto">
+          <PlusCircle size={20} />
+          <span>Add Party</span>
+        </Button>
       </Link>
     </>
   )

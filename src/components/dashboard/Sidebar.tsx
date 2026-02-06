@@ -111,7 +111,7 @@ export default function Sidebar({
       onClick={() => setIsMobileOpen(false)}
       className={`sidebar-link ${
         isActive(item.href)
-          ? 'bg-primary/10 text-primary dark:bg-primary-light/10 dark:text-white font-medium'
+          ? 'bg-white/15 !text-white font-medium'
           : ''
       }`}
     >
@@ -123,15 +123,14 @@ export default function Sidebar({
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className="mb-8 flex items-center gap-3">
-        <Link href="/" className="flex items-center gap-3">
+      <div className="mb-8 pb-6 border-b border-white/10">
+        <Link href="/" className="flex items-center">
           <Image
-            src="/logo.png"
-            alt="Logo"
-            width={40}
-            height={40}
+            src="/logo-default.svg"
+            alt="LIKQ"
+            width={90}
+            height={28}
           />
-          <span className="text-xl font-bold text-primary">Backoffice</span>
         </Link>
       </div>
 
@@ -152,18 +151,18 @@ export default function Sidebar({
       </nav>
 
       {/* User Section */}
-      <div className="border-t border-default pt-4 mt-4">
+      <div className="border-t border-white/10 pt-4 mt-4">
         <div className="flex items-center justify-between px-3 text-sm">
           <div className="flex flex-col min-w-0">
-            <span className="text-heading font-medium truncate">
+            <span className="text-white font-medium truncate">
               {userName || userEmail}
             </span>
-            <span className="text-subtle text-xs truncate">{role}</span>
+            <span className="text-white/50 text-xs truncate">{role}</span>
           </div>
           <form action={logoutAction}>
             <button
               type="submit"
-              className="p-2 text-muted hover:text-danger transition-colors flex-shrink-0"
+              className="p-2 text-white/50 hover:text-danger transition-colors flex-shrink-0"
               title="Sign out"
             >
               <LogOut size={18} />
@@ -177,19 +176,18 @@ export default function Sidebar({
   return (
     <>
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-surface border-b border-default px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-primary border-b-0 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center">
           <Image
-            src="/logo.png"
-            alt="Logo"
-            width={32}
-            height={32}
+            src="/logo-default.svg"
+            alt="LIKQ"
+            width={80}
+            height={24}
           />
-          <span className="text-lg font-bold text-primary">Backoffice</span>
         </div>
         <button
           onClick={() => setIsMobileOpen(!isMobileOpen)}
-          className="p-2 text-muted hover:text-heading transition-colors"
+          className="p-2 text-white/70 hover:text-white transition-colors"
           aria-label="Toggle menu"
         >
           {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -206,14 +204,14 @@ export default function Sidebar({
 
       {/* Mobile Sidebar */}
       <aside
-        className={`lg:hidden fixed top-0 left-0 z-50 h-full w-72 bg-surface border-r border-default p-6 flex flex-col transform transition-transform duration-300 ease-in-out ${
+        className={`lg:hidden fixed top-0 left-0 z-50 h-full w-72 bg-gradient-to-b from-[#153051] to-[#0f2340] border-r-0 p-6 flex flex-col transform transition-transform duration-300 ease-in-out ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Close button for mobile */}
         <button
           onClick={() => setIsMobileOpen(false)}
-          className="absolute top-4 right-4 p-2 text-muted hover:text-heading transition-colors lg:hidden"
+          className="absolute top-4 right-4 p-2 text-white/70 hover:text-white transition-colors lg:hidden"
           aria-label="Close menu"
         >
           <X size={20} />
@@ -222,7 +220,7 @@ export default function Sidebar({
       </aside>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 sidebar-bg p-6 flex-col flex-shrink-0">
+      <aside className="hidden lg:flex w-64 sidebar-bg p-6 flex-col flex-shrink-0 overflow-y-auto">
         <SidebarContent />
       </aside>
 

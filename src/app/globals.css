@@ -207,7 +207,7 @@ body {
 .ProseMirror td,
 .ProseMirror th {
   min-width: 1em;
-  border: 1px solid #525252;
+  border: 1px solid #d4d4d4;
   padding: 6px 8px;
   vertical-align: top;
   box-sizing: border-box;
@@ -217,12 +217,12 @@ body {
 .ProseMirror th {
   font-weight: bold;
   text-align: left;
-  background-color: #262626;
-  color: #e5e5e5;
+  background-color: #f5f5f5;
+  color: #153051;
 }
 
 .ProseMirror td {
-  color: #d4d4d4;
+  color: #404040;
 }
 
 /* Tiptap Typography for TH Sarabun New */
@@ -234,6 +234,7 @@ body {
   font-size: 1.25rem; /* ~20px (Approx 16pt PDF) */
   line-height: 1.5;
   margin-bottom: 0.5em;
+  color: #404040;
 }
 
 .ProseMirror h1 {
@@ -242,7 +243,7 @@ body {
   line-height: 1.2;
   margin-top: 1em;
   margin-bottom: 0.5em;
-  color: #ffffff;
+  color: #153051;
 }
 
 .ProseMirror h2 {
@@ -251,7 +252,7 @@ body {
   line-height: 1.3;
   margin-top: 0.8em;
   margin-bottom: 0.4em;
-  color: #e5e5e5;
+  color: #153051;
 }
 
 .ProseMirror h3 {
@@ -259,7 +260,7 @@ body {
   font-weight: bold;
   margin-top: 0.6em;
   margin-bottom: 0.3em;
-  color: #e5e5e5;
+  color: #153051;
 }
 
 .ProseMirror ul {
@@ -277,6 +278,7 @@ body {
 .ProseMirror li {
   font-size: 1.25rem;
   margin-bottom: 0.25em;
+  color: #404040;
 }
 
 /* PDF Preview Page Gap - for UI visual separation only */
@@ -286,7 +288,7 @@ body {
 
 /* ============================================
    Dashboard Theme System
-   Light mode first, dark mode via dark: prefix
+   Navy/Lavender Light Theme
    ============================================ */
 
 @layer components {
@@ -294,93 +296,94 @@ body {
 
   /* Primary text - headings, important content */
   .text-heading {
-    @apply text-neutral-900 dark:text-white;
+    @apply text-neutral-900;
   }
 
   /* Secondary text - body text, descriptions */
   .text-body {
-    @apply text-neutral-700 dark:text-neutral-200;
+    @apply text-neutral-700;
   }
 
   /* Muted text - less important info, placeholders */
   .text-muted {
-    @apply text-neutral-500 dark:text-neutral-400;
+    @apply text-neutral-500;
   }
 
   /* Subtle text - timestamps, hints */
   .text-subtle {
-    @apply text-neutral-400 dark:text-neutral-500;
+    @apply text-neutral-400;
   }
 
   /* ---- Background Colors ---- */
 
-  /* Page background */
+  /* Page background - blue-gray tint */
   .bg-page {
-    @apply bg-neutral-50 dark:bg-zinc-950;
+    @apply bg-[#f8f9fb];
   }
 
   /* Card/surface background */
   .bg-surface {
-    @apply bg-white dark:bg-zinc-900;
+    @apply bg-white;
   }
 
-  /* Elevated surface (header rows, etc.) */
+  /* Elevated surface (header rows, etc.) - navy-tinted */
   .bg-surface-elevated {
-    @apply bg-neutral-100 dark:bg-zinc-950;
+    @apply bg-[#f3f5f8];
   }
 
   /* Hover state background */
   .bg-surface-hover {
-    @apply bg-neutral-100 dark:bg-zinc-800/50;
+    @apply bg-[#f0f2f6];
   }
 
   /* ---- Border Colors ---- */
 
-  /* Default border */
+  /* Default border - navy-tinted */
   .border-default {
-    @apply border-neutral-200 dark:border-zinc-800;
+    @apply border-[#e5e8ed];
   }
 
   /* Subtle border */
   .border-subtle {
-    @apply border-neutral-100 dark:border-zinc-900;
+    @apply border-[#eef0f4];
   }
 
   /* ---- Input/Form Styling ---- */
 
   .input-base {
     @apply w-full rounded-lg px-3 py-2
-           bg-white dark:bg-zinc-800
-           border border-neutral-300 dark:border-zinc-700
-           text-neutral-900 dark:text-white
-           placeholder:text-neutral-400 dark:placeholder:text-zinc-500
-           focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary;
+           bg-white
+           border border-[#e0e4ea]
+           text-neutral-900
+           placeholder:text-neutral-400
+           focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary;
   }
 
   .select-base {
     @apply rounded-lg px-4 py-2
-           bg-white dark:bg-zinc-900
-           border border-neutral-300 dark:border-zinc-700
-           text-neutral-700 dark:text-zinc-300
-           focus:outline-none focus:border-primary;
+           bg-white
+           border border-[#e0e4ea]
+           text-neutral-700
+           focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary;
   }
 
   /* ---- Button Variants (Supplementary) ---- */
 
   .btn-action-default {
-    @apply text-neutral-500 dark:text-zinc-400
-           hover:text-primary dark:hover:text-primary-light;
+    @apply text-neutral-500
+           hover:text-primary;
   }
 
   .btn-action-danger {
-    @apply text-neutral-500 dark:text-zinc-400
-           hover:text-danger dark:hover:text-red-400;
+    @apply text-neutral-500
+           hover:text-danger;
   }
 
   /* ---- Card/Panel Styling ---- */
 
   .card-base {
-    @apply rounded-xl bg-surface border border-default shadow-sm;
+    @apply rounded-xl bg-surface border border-default;
+    box-shadow: 0 1px 3px rgba(21, 48, 81, 0.06), 0 1px 2px rgba(21, 48, 81, 0.04);
   }
 
   .card-interactive {
@@ -390,20 +393,19 @@ body {
   /* ---- Sidebar/Navigation ---- */
 
   .sidebar-bg {
-    @apply bg-white dark:bg-zinc-950 border-r border-default;
+    @apply bg-gradient-to-b from-[#153051] to-[#0f2340] border-r-0;
   }
 
   .sidebar-link {
     @apply flex items-center gap-3 rounded-lg px-3 py-2
-           text-neutral-600 dark:text-zinc-400
-           hover:bg-neutral-100 dark:hover:bg-zinc-900
-           hover:text-neutral-900 dark:hover:text-white
+           text-white/70
+           hover:bg-white/10 hover:text-white
            transition-colors;
   }
 
   .sidebar-section-title {
     @apply text-xs font-semibold uppercase tracking-wider pl-3
-           text-neutral-400 dark:text-zinc-500;
+           text-white/40;
   }
 
   /* ---- Table Styling ---- */
@@ -413,11 +415,11 @@ body {
   }
 
   .table-header-cell {
-    @apply px-6 py-4 text-sm font-semibold text-neutral-600 dark:text-zinc-300;
+    @apply px-6 py-4 text-xs font-semibold uppercase tracking-wider text-primary/70;
   }
 
   .table-row {
-    @apply border-b border-default hover:bg-surface-hover transition-colors;
+    @apply border-b border-[#f0f2f6] hover:bg-surface-hover transition-colors;
   }
 
   .table-cell {
@@ -427,41 +429,41 @@ body {
   /* ---- Status Badge Variants ---- */
 
   .badge-default {
-    @apply bg-neutral-100 dark:bg-zinc-500/20 text-neutral-600 dark:text-zinc-300;
+    @apply bg-neutral-100 text-neutral-600;
   }
 
   .badge-success {
-    @apply bg-success/10 text-success dark:bg-green-500/20 dark:text-green-300;
+    @apply bg-success/10 text-success;
   }
 
   .badge-warning {
-    @apply bg-warning/10 text-warning dark:bg-orange-500/20 dark:text-orange-300;
+    @apply bg-warning/10 text-warning;
   }
 
   .badge-danger {
-    @apply bg-danger/10 text-danger dark:bg-red-500/20 dark:text-red-300;
+    @apply bg-danger/10 text-danger;
   }
 
   .badge-info {
-    @apply bg-primary/10 text-primary dark:bg-blue-500/20 dark:text-blue-300;
+    @apply bg-primary/10 text-primary;
   }
 
   /* ---- Modal/Dialog Styling ---- */
 
   .modal-overlay {
     @apply fixed inset-0 z-50 flex items-center justify-center
-           bg-black/30 dark:bg-black/50 backdrop-blur-sm p-4;
+           bg-black/30 backdrop-blur-sm p-4;
   }
 
   .modal-content {
-    @apply w-full bg-white dark:bg-zinc-900
+    @apply w-full bg-white
            border border-default rounded-xl p-6 space-y-4 shadow-xl;
   }
 
   /* ---- Stats Card ---- */
 
   .stats-card {
-    @apply card-base p-6;
+    @apply card-base p-6 border-l-4 border-l-primary;
   }
 
   .stats-icon-wrapper {
@@ -472,9 +474,9 @@ body {
 
   .pagination-btn {
     @apply p-2 rounded-lg transition-colors
-           bg-neutral-100 dark:bg-zinc-800
-           text-neutral-600 dark:text-zinc-300
-           hover:bg-neutral-200 dark:hover:bg-zinc-700
+           bg-primary/5
+           text-primary
+           hover:bg-primary/10
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
 

@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Title } from '@/ui/Typography'
 
 export interface Column<T> {
   header: React.ReactNode
@@ -101,7 +102,11 @@ export function DataTable<T>({
       {(title || headerActions) && (
         <div className="page-header">
           <div>
-            {title && <h1 className="page-title">{title}</h1>}
+            {title && (
+              <Title level={3} className="!text-heading">
+                {title}
+              </Title>
+            )}
             {subtitle && <p className="text-muted mt-1 text-sm lg:text-base">{subtitle}</p>}
           </div>
           {headerActions && <div className="action-group">{headerActions}</div>}
@@ -123,7 +128,7 @@ export function DataTable<T>({
                       type="checkbox"
                       checked={allSelected}
                       onChange={e => handleSelectAll(e.target.checked)}
-                      className="rounded border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-primary focus:ring-primary"
+                      className="rounded border-[#e0e4ea] bg-white text-primary focus:ring-primary"
                     />
                   </th>
                 )}
@@ -146,7 +151,7 @@ export function DataTable<T>({
                     className="px-6 py-12 text-center text-muted"
                   >
                     <div className="flex items-center justify-center gap-2">
-                      <div className="h-4 w-4 border-2 border-neutral-300 dark:border-zinc-600 border-t-primary rounded-full animate-spin" />
+                      <div className="h-4 w-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
                       <span>Loading...</span>
                     </div>
                   </td>
@@ -179,7 +184,7 @@ export function DataTable<T>({
                       onClick={() => onRowClick?.(item)}
                       className={`table-row ${
                         onRowClick ? 'cursor-pointer' : ''
-                      } ${isSelected ? 'bg-primary/5 dark:bg-zinc-800/30' : ''}`}
+                      } ${isSelected ? 'bg-primary/5' : ''}`}
                     >
                       {selectable && (
                         <td className="px-6 py-4">
@@ -188,7 +193,7 @@ export function DataTable<T>({
                             checked={isSelected}
                             onChange={() => handleSelectOne(String(key))}
                             onClick={e => e.stopPropagation()}
-                            className="rounded border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-primary focus:ring-primary"
+                            className="rounded border-[#e0e4ea] bg-white text-primary focus:ring-primary"
                           />
                         </td>
                       )}
@@ -250,7 +255,7 @@ export function DataTable<T>({
         {isLoading ? (
           <div className="card-base p-8 text-center text-muted">
             <div className="flex items-center justify-center gap-2">
-              <div className="h-4 w-4 border-2 border-neutral-300 dark:border-zinc-600 border-t-primary rounded-full animate-spin" />
+              <div className="h-4 w-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
               <span>Loading...</span>
             </div>
           </div>

@@ -49,7 +49,7 @@ export default async function BackofficeLayout({
   const userName = user.identities?.[0]?.identity_data?.name as string | undefined
 
   return (
-    <div className="min-h-screen bg-page lg:flex">
+    <div className="min-h-screen bg-page lg:flex lg:h-screen lg:overflow-hidden">
       <Sidebar
         userEmail={user.email}
         userName={userName}

@@ -39,17 +39,17 @@ export interface ApiDocViewerProps {
 
 const MethodBadge = ({ method }: { method: string }) => {
   const colors: Record<string, string> = {
-    GET: 'bg-blue-900/30 text-blue-300 border-blue-800',
-    POST: 'bg-green-900/30 text-green-300 border-green-800',
-    PUT: 'bg-orange-900/30 text-orange-300 border-orange-800',
-    DELETE: 'bg-red-900/30 text-red-300 border-red-800',
-    PATCH: 'bg-yellow-900/30 text-yellow-300 border-yellow-800'
+    GET: 'bg-blue-50 text-blue-700 border-blue-200',
+    POST: 'bg-green-50 text-green-700 border-green-200',
+    PUT: 'bg-orange-50 text-orange-700 border-orange-200',
+    DELETE: 'bg-red-50 text-red-700 border-red-200',
+    PATCH: 'bg-amber-50 text-amber-700 border-amber-200'
   }
 
   return (
     <span
       className={`px-3 py-1 rounded-md text-sm font-bold border ${
-        colors[method] || 'bg-zinc-800 text-zinc-300 border-zinc-700'
+        colors[method] || 'bg-neutral-100 text-neutral-600 border-neutral-200'
       }`}
     >
       {method}
@@ -71,13 +71,13 @@ const JsonViewer = ({ data }: { data: any }) => {
       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           onClick={handleCopy}
-          className="p-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white border border-zinc-700"
+          className="p-1 rounded bg-neutral-200 hover:bg-neutral-300 text-neutral-500 hover:text-neutral-700 border border-neutral-300"
           title="Copy JSON"
         >
           {copied ? <Check size={14} /> : <Copy size={14} />}
         </button>
       </div>
-      <pre className="bg-zinc-950 text-zinc-300 p-4 rounded-lg overflow-x-auto text-sm font-mono custom-scrollbar border border-zinc-800">
+      <pre className="bg-primary text-neutral-200 p-4 rounded-lg overflow-x-auto text-sm font-mono custom-scrollbar border border-primary-active">
         {JSON.stringify(data, null, 2)}
       </pre>
     </div>
@@ -93,66 +93,58 @@ const EndpointItem = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const methodColors: Record<string, string> = {
-    GET: 'border-blue-900/50 hover:bg-zinc-800/50',
-    POST: 'border-green-900/50 hover:bg-zinc-800/50',
-    PUT: 'border-orange-900/50 hover:bg-zinc-800/50',
-    DELETE: 'border-red-900/50 hover:bg-zinc-800/50',
-    PATCH: 'border-yellow-900/50 hover:bg-zinc-800/50'
-  }
-
   const methodBorderColors: Record<string, string> = {
     GET: 'border-l-blue-500',
     POST: 'border-l-green-500',
     PUT: 'border-l-orange-500',
     DELETE: 'border-l-red-500',
-    PATCH: 'border-l-yellow-500'
+    PATCH: 'border-l-amber-500'
   }
 
   return (
     <div
       className={`border rounded-xl mb-4 overflow-hidden transition-all duration-200 ${
-        isOpen ? 'shadow-md border-zinc-700' : 'shadow-sm border-zinc-800'
-      } bg-zinc-900`}
+        isOpen ? 'shadow-md border-neutral-300' : 'shadow-sm border-neutral-200'
+      } bg-white`}
     >
       <div
         className={`p-4 cursor-pointer flex items-center justify-between border-l-4 ${
-          methodBorderColors[endpoint.method] || 'border-l-zinc-300'
-        } ${isOpen ? 'bg-zinc-800/50' : 'hover:bg-zinc-800/30'}`}
+          methodBorderColors[endpoint.method] || 'border-l-neutral-300'
+        } ${isOpen ? 'bg-neutral-50' : 'hover:bg-neutral-50'}`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="flex items-center gap-4 flex-1 overflow-hidden">
           <MethodBadge method={endpoint.method} />
-          <code className="text-sm font-semibold text-zinc-200 font-mono truncate">
+          <code className="text-sm font-semibold text-primary font-mono truncate">
             {endpoint.path}
           </code>
-          <span className="text-zinc-500 text-sm hidden sm:inline-block truncate">
+          <span className="text-neutral-400 text-sm hidden sm:inline-block truncate">
             - {endpoint.title}
           </span>
         </div>
-        <div className="text-zinc-400">
+        <div className="text-neutral-400">
           {isOpen ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
         </div>
       </div>
 
       {isOpen && (
-        <div className="p-6 border-t border-zinc-800 bg-zinc-900/50">
+        <div className="p-6 border-t border-neutral-200 bg-neutral-50/50">
           <div className="mb-6">
-            <h4 className="text-sm font-semibold text-white mb-2">
+            <h4 className="text-sm font-semibold text-heading mb-2">
               Description
             </h4>
-            <p className="text-zinc-400 text-sm">
+            <p className="text-muted text-sm">
               {endpoint.description || endpoint.title}
             </p>
             {endpoint.authentication && (
               <div className="mt-2 flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-900/30 text-purple-300 border border-purple-800">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/20 text-secondary-dark border border-secondary/30">
                   Authentication Required
                 </span>
                 {endpoint.permissions?.map(perm => (
                   <span
                     key={perm}
-                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-800 text-zinc-300 border border-zinc-700"
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-neutral-100 text-neutral-600 border border-neutral-200"
                   >
                     Permission: {perm}
                   </span>
@@ -160,7 +152,7 @@ const EndpointItem = ({
               </div>
             )}
             <div className="mt-2">
-              <span className="text-xs text-zinc-500 font-mono">
+              <span className="text-xs text-muted font-mono">
                 Full URL: {baseUrl}
                 {endpoint.path}
               </span>
@@ -172,7 +164,7 @@ const EndpointItem = ({
             <div className="space-y-6">
               {(endpoint.pathParams?.length ?? 0) > 0 && (
                 <div>
-                  <h4 className="text-sm font-semibold text-white mb-3 border-b border-zinc-800 pb-1">
+                  <h4 className="text-sm font-semibold text-heading mb-3 border-b border-neutral-200 pb-1">
                     Path Parameters
                   </h4>
                   <div className="space-y-2">
@@ -182,17 +174,17 @@ const EndpointItem = ({
                         className="flex flex-col sm:flex-row sm:items-baseline gap-2 text-sm"
                       >
                         <div className="min-w-[120px]">
-                          <code className="text-red-400 font-bold">
+                          <code className="text-warning font-bold">
                             {param.name}
                           </code>
                           {param.required && (
-                            <span className="text-red-500 ml-1">*</span>
+                            <span className="text-danger ml-1">*</span>
                           )}
                         </div>
-                        <div className="text-zinc-500 italic text-xs">
+                        <div className="text-neutral-400 italic text-xs">
                           {param.type}
                         </div>
-                        <div className="text-zinc-400 flex-1">
+                        <div className="text-body flex-1">
                           {param.description}
                         </div>
                       </div>
@@ -203,7 +195,7 @@ const EndpointItem = ({
 
               {(endpoint.queryParams?.length ?? 0) > 0 && (
                 <div>
-                  <h4 className="text-sm font-semibold text-white mb-3 border-b border-zinc-800 pb-1">
+                  <h4 className="text-sm font-semibold text-heading mb-3 border-b border-neutral-200 pb-1">
                     Query Parameters
                   </h4>
                   <div className="space-y-2">
@@ -213,17 +205,17 @@ const EndpointItem = ({
                         className="flex flex-col sm:flex-row sm:items-baseline gap-2 text-sm"
                       >
                         <div className="min-w-[120px]">
-                          <code className="text-blue-400 font-bold">
+                          <code className="text-primary font-bold">
                             {param.name}
                           </code>
                           {param.required && (
-                            <span className="text-red-500 ml-1">*</span>
+                            <span className="text-danger ml-1">*</span>
                           )}
                         </div>
-                        <div className="text-zinc-500 italic text-xs">
+                        <div className="text-neutral-400 italic text-xs">
                           {param.type}
                         </div>
-                        <div className="text-zinc-400 flex-1">
+                        <div className="text-body flex-1">
                           {param.description}
                         </div>
                       </div>
@@ -234,7 +226,7 @@ const EndpointItem = ({
 
               {(endpoint.bodyParams?.length ?? 0) > 0 && (
                 <div>
-                  <h4 className="text-sm font-semibold text-white mb-3 border-b border-zinc-800 pb-1">
+                  <h4 className="text-sm font-semibold text-heading mb-3 border-b border-neutral-200 pb-1">
                     Request Body
                   </h4>
                   <div className="space-y-2">
@@ -244,17 +236,17 @@ const EndpointItem = ({
                         className="flex flex-col sm:flex-row sm:items-baseline gap-2 text-sm"
                       >
                         <div className="min-w-[120px]">
-                          <code className="text-purple-400 font-bold">
+                          <code className="text-secondary-dark font-bold">
                             {param.name}
                           </code>
                           {param.required && (
-                            <span className="text-red-500 ml-1">*</span>
+                            <span className="text-danger ml-1">*</span>
                           )}
                         </div>
-                        <div className="text-zinc-500 italic text-xs">
+                        <div className="text-neutral-400 italic text-xs">
                           {param.type}
                         </div>
-                        <div className="text-zinc-400 flex-1">
+                        <div className="text-body flex-1">
                           {param.description}
                         </div>
                       </div>
@@ -266,7 +258,7 @@ const EndpointItem = ({
 
             {/* Response Section */}
             <div>
-              <h4 className="text-sm font-semibold text-white mb-3 border-b border-zinc-800 pb-1">
+              <h4 className="text-sm font-semibold text-heading mb-3 border-b border-neutral-200 pb-1">
                 Responses
               </h4>
               <div className="space-y-4">
@@ -276,15 +268,15 @@ const EndpointItem = ({
                       <span
                         className={`px-2 py-0.5 rounded text-xs font-bold ${
                           response.status >= 200 && response.status < 300
-                            ? 'bg-green-900/30 text-green-300 border border-green-800'
+                            ? 'bg-green-50 text-green-700 border border-green-200'
                             : response.status >= 400
-                              ? 'bg-red-900/30 text-red-300 border border-red-800'
-                              : 'bg-zinc-800 text-zinc-300 border border-zinc-700'
+                              ? 'bg-red-50 text-red-700 border border-red-200'
+                              : 'bg-neutral-100 text-neutral-600 border border-neutral-200'
                         }`}
                       >
                         {response.status}
                       </span>
-                      <span className="text-sm text-zinc-400">
+                      <span className="text-sm text-muted">
                         {response.description}
                       </span>
                     </div>
@@ -318,14 +310,14 @@ export default function ApiDocViewer({
 
   return (
     <div className="space-y-6">
-      <div className="bg-zinc-900 p-6 rounded-xl shadow-sm border border-zinc-800">
-        <h1 className="text-2xl font-bold text-white">{title}</h1>
+      <div className="card-base p-6">
+        <h1 className="text-2xl font-bold text-heading">{title}</h1>
         {description && (
-          <p className="mt-2 text-zinc-400 text-sm">{description}</p>
+          <p className="mt-2 text-muted text-sm">{description}</p>
         )}
-        <div className="mt-4 flex items-center gap-2 text-sm text-zinc-500">
-          <span className="font-semibold text-zinc-300">Base URL:</span>
-          <code className="bg-zinc-950 px-2 py-1 rounded text-zinc-300 border border-zinc-800">
+        <div className="mt-4 flex items-center gap-2 text-sm text-muted">
+          <span className="font-semibold text-body">Base URL:</span>
+          <code className="bg-primary/5 px-2 py-1 rounded text-primary border border-primary/10 text-xs">
             {baseUrl}
           </code>
         </div>
@@ -335,11 +327,11 @@ export default function ApiDocViewer({
         <input
           type="text"
           placeholder="Filter endpoints..."
-          className="w-full pl-4 pr-10 py-2 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-white placeholder:text-zinc-600"
+          className="input-base pl-4 pr-10"
           value={filter}
           onChange={e => setFilter(e.target.value)}
         />
-        <div className="absolute right-3 top-2.5 text-zinc-500">
+        <div className="absolute right-3 top-2.5 text-neutral-400">
           <SearchIcon />
         </div>
       </div>
@@ -354,7 +346,7 @@ export default function ApiDocViewer({
         ))}
 
         {filteredEndpoints.length === 0 && (
-          <div className="text-center py-12 text-zinc-500 bg-zinc-900 rounded-xl border border-dashed border-zinc-800">
+          <div className="text-center py-12 text-muted card-base border-dashed">
             No endpoints found matching your filter.
           </div>
         )}

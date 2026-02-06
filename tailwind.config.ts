@@ -15,12 +15,17 @@ export default {
         foreground: 'var(--foreground)',
         primary: {
           DEFAULT: '#153051',
+          50: '#f0f4f8',
+          100: '#dce4ed',
+          800: '#1a3a5c',
+          900: '#0f2340',
           hover: '#132b49',
           active: '#112641',
           light: '#E8EAEE'
         },
         secondary: {
           DEFAULT: '#BEADC4',
+          50: '#faf8fb',
           hover: '#ab9cb0',
           active: '#988a9d',
           dark: {

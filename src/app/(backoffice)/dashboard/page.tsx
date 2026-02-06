@@ -44,7 +44,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Stats Card 2 */}
-        <div className="stats-card">
+        <div className="stats-card border-l-success">
           <div className="flex items-center gap-4">
             <div className="stats-icon-wrapper accent-success">
               <svg

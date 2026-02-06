@@ -39,9 +39,9 @@ export default async function WorksCountCard() {
       href="/works"
       className="block transition-transform hover:scale-[1.02]"
     >
-      <div className="stats-card hover:border-neutral-300 dark:hover:border-zinc-700 cursor-pointer">
+      <div className="stats-card border-l-secondary cursor-pointer">
         <div className="flex items-center gap-4">
-          <div className="stats-icon-wrapper bg-secondary/20 text-secondary-dark dark:bg-purple-500/10 dark:text-purple-400">
+          <div className="stats-icon-wrapper bg-secondary/20 text-secondary-dark">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

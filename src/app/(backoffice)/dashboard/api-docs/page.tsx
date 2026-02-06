@@ -17,62 +17,66 @@ export default function ApiDocsPage() {
       title: 'Parties',
       description: 'API documentation for Parties management.',
       href: '/dashboard/parties/docs',
-      icon: <Users className="w-6 h-6 text-indigo-400" />
+      icon: <Users className="w-6 h-6" />,
+      accent: 'bg-primary/10 text-primary'
     },
     {
       title: 'Quotations',
       description: 'API documentation for Quotations management.',
       href: '/dashboard/quotations/docs',
-      icon: <FileText className="w-6 h-6 text-teal-400" />
+      icon: <FileText className="w-6 h-6" />,
+      accent: 'bg-success/10 text-success'
     },
     {
       title: 'PDF Generation',
       description: 'API documentation for PDF generation services.',
       href: '/dashboard/pdf/docs',
-      icon: <FileCode className="w-6 h-6 text-red-400" />
+      icon: <FileCode className="w-6 h-6" />,
+      accent: 'bg-warning/10 text-warning'
     },
     {
       title: 'Media Management',
       description: 'API documentation for Media upload and management.',
       href: '/dashboard/media/docs',
-      icon: <ImagePlus className="w-6 h-6 text-purple-400" />
+      icon: <ImagePlus className="w-6 h-6" />,
+      accent: 'bg-secondary/20 text-secondary-dark'
     }
   ]
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">
+        <h1 className="page-title mb-2">
           API Documentation
         </h1>
-        <p className="text-zinc-400">
+        <p className="text-muted">
           Centralized documentation for all system API domains.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {domains.map(domain => (
           <Link
             key={domain.title}
             href={domain.href}
-            className="group relative block p-6 bg-zinc-900 border border-zinc-800 rounded-xl hover:bg-zinc-800/50 hover:border-zinc-700 transition-all duration-200"
+            className="group relative block p-6 card-base hover:shadow-md hover:border-primary/20 transition-all duration-200"
           >
             <div className="flex items-center gap-4 mb-4">
-              <div className="p-3 bg-zinc-950 rounded-lg border border-zinc-800 group-hover:border-zinc-700 transition-colors">
+              <div className={`p-3 rounded-lg ${domain.accent} transition-colors`}>
                 {domain.icon}
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-white group-hover:text-indigo-400 transition-colors">
+                <h3 className="text-lg font-semibold text-heading group-hover:text-primary transition-colors">
                   {domain.title}
                 </h3>
               </div>
             </div>
 
-            <p className="text-zinc-400 text-sm mb-6 min-h-[40px]">
+            <p className="text-muted text-sm mb-6 min-h-[40px]">
               {domain.description}
             </p>
 
-            <div className="flex items-center text-sm font-medium text-zinc-500 group-hover:text-white transition-colors">
+            <div className="flex items-center text-sm font-medium text-muted group-hover:text-primary transition-colors">
               <span>View Documentation</span>
               <ChevronRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
             </div>

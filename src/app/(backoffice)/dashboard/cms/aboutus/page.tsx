@@ -36,12 +36,12 @@ const AboutUsPage = () => {
     }
   }
 
-  if (isLoading) return <div className="text-white">Loading...</div>
+  if (isLoading) return <div className="text-muted">Loading...</div>
 
   return (
-    <div className="p-8 w-full max-w-7xl mx-auto space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+    <div className="space-y-8">
+      <div className="page-header">
+        <h1 className="page-title">
           Manage About Us Images
         </h1>
         <Link href="/dashboard/cms/aboutus/add">
@@ -56,7 +56,7 @@ const AboutUsPage = () => {
         {images?.map((image: any) => (
           <div
             key={image.id}
-            className="group relative aspect-video bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden"
+            className="group relative aspect-video bg-neutral-100 border border-neutral-200 rounded-xl overflow-hidden shadow-sm"
           >
             <Image
               src={image.image_url}
@@ -64,25 +64,25 @@ const AboutUsPage = () => {
               fill
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-4">
+            <div className="absolute inset-0 bg-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-4">
               <button
                 onClick={() => handleDelete(image.id)}
-                className="p-3 bg-red-500/80 hover:bg-red-500 rounded-full text-white transition-colors"
+                className="p-3 bg-danger hover:bg-danger-hover rounded-full text-white transition-colors"
                 title="Delete"
               >
                 <Trash2 className="w-5 h-5" />
               </button>
             </div>
             {image.alt_text && (
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-primary/80 to-transparent">
                 <p className="text-white text-sm truncate">{image.alt_text}</p>
               </div>
             )}
           </div>
         ))}
         {images?.length === 0 && (
-          <div className="col-span-full p-8 text-center text-gray-500 border border-dashed border-white/10 rounded-2xl">
-            No images found. Click "Add Image" to upload one.
+          <div className="col-span-full p-8 text-center text-muted border border-dashed border-neutral-300 rounded-xl">
+            No images found. Click &quot;Add Image&quot; to upload one.
           </div>
         )}
       </div>
