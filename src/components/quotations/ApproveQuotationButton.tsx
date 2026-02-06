@@ -48,16 +48,16 @@ export default function ApproveQuotationButton({
   }
 
   return (
-    <div className="flex flex-col gap-3 bg-green-900/20 border border-green-700 rounded-lg p-4">
-      <h3 className="text-sm font-semibold text-green-400">Approval Actions</h3>
+    <div className="flex flex-col gap-3 bg-success/5 border border-success/30 rounded-lg p-4">
+      <h3 className="text-sm font-semibold text-success">Approval Actions</h3>
 
       {profile?.signature_url && (
-        <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
+        <label className="flex items-center gap-2 text-sm text-neutral-600 cursor-pointer">
           <input
             type="checkbox"
             checked={applySignature}
             onChange={e => setApplySignature(e.target.checked)}
-            className="w-4 h-4 rounded border-zinc-600 bg-zinc-800 text-indigo-600 focus:ring-indigo-500"
+            className="w-4 h-4 rounded border-[#e0e4ea] bg-white text-primary focus:ring-primary"
           />
           <span>ลงลายเซ็น (Apply Digital Signature)</span>
         </label>

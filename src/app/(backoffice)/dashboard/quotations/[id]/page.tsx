@@ -48,7 +48,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { NativeSelect } from '@/components/ui/native-select'
 
 const STATUS_OPTIONS = [
   'Draft',
@@ -911,10 +910,9 @@ export default function QuotationFormPage() {
                 <Label>
                   Status
                 </Label>
-                <NativeSelect
+                <Select
                   value={formData.status}
-                  onChange={e => {
-                    const value = e.target.value
+                  onValueChange={value => {
                     const previousStatus = formData.status
 
                     if (
@@ -939,12 +937,17 @@ export default function QuotationFormPage() {
                   }}
                   disabled={isViewMode && formData.status !== 'Approved'} // Allow editing if status is Approved even in view mode
                 >
-                  {STATUS_OPTIONS.map(status => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </NativeSelect>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {STATUS_OPTIONS.map(status => (
+                      <SelectItem key={status} value={status}>
+                        {status}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
