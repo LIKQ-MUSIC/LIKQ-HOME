@@ -18,7 +18,8 @@ import {
   ShoppingCart,
   Users,
   FileText,
-  ClipboardList
+  ClipboardList,
+  KeyRound
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -83,6 +84,7 @@ const navSections: NavSection[] = [
     title: 'Settings',
     items: [
       { href: '/dashboard/users', label: 'Users', icon: <User size={20} /> },
+      { href: '/dashboard/applications', label: 'Applications', icon: <KeyRound size={20} /> },
       { href: '/dashboard/profile', label: 'Profile', icon: <User size={20} /> },
       { href: '#', label: 'General', icon: <Settings size={20} /> }
     ]
