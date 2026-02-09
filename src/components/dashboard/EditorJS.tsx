@@ -51,8 +51,11 @@ const EditorJSComponent = ({
 
         const dataToUse = handlers.current.initialData
 
+        const holder = holderRef.current
+        if (!holder) return
+
         editorInstance = new EditorJSLib({
-          holder: holderRef.current,
+          holder: holder,
           data: dataToUse,
           placeholder: 'Start writing your blog post...',
           tools: {
