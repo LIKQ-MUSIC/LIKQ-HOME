@@ -47,6 +47,21 @@ export default function UserList() {
     }
   })
 
+  interface Role {
+    id: number
+    name: string
+  }
+
+  const { data: rolesResponse } = useQuery<{ success: boolean; data: Role[] }>({
+    queryKey: ['roles'],
+    queryFn: async () => {
+      const res = await apiClient.get('/users/roles')
+      return res.data
+    }
+  })
+
+  const roles = rolesResponse?.data || []
+
   const users = response?.data || []
   const meta = response?.meta
 
@@ -138,7 +153,11 @@ export default function UserList() {
           Assign Role ({selectedUserIds.length})
         </Button>
       )}
-      <Button onClick={() => setIsCreateModalOpen(true)} size="md" className="!rounded-lg gap-2">
+      <Button
+        onClick={() => setIsCreateModalOpen(true)}
+        size="md"
+        className="!rounded-lg gap-2"
+      >
         <Plus size={20} />
         Create User
       </Button>
@@ -221,12 +240,18 @@ export default function UserList() {
                 <select
                   value={formData.roleId}
                   onChange={e =>
-                    setFormData({ ...formData, roleId: Number(e.target.value) })
+                    setFormData({
+                      ...formData,
+                      roleId: Number(e.target.value)
+                    })
                   }
                   className="input-base"
                 >
-                  <option value={1}>Admin</option>
-                  <option value={2}>General User</option>
+                  {roles.map(role => (
+                    <option key={role.id} value={role.id}>
+                      {role.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="flex justify-end gap-2 pt-2">
@@ -238,7 +263,11 @@ export default function UserList() {
                 >
                   Cancel
                 </Button>
-                <Button disabled={createUserMutation.isPending} size="md" className="!rounded-lg">
+                <Button
+                  disabled={createUserMutation.isPending}
+                  size="md"
+                  className="!rounded-lg"
+                >
                   {createUserMutation.isPending ? 'Creating...' : 'Create'}
                 </Button>
               </div>
@@ -261,8 +290,11 @@ export default function UserList() {
                 onChange={e => setSelectedRole(Number(e.target.value))}
                 className="input-base"
               >
-                <option value={1}>Admin</option>
-                <option value={2}>General User</option>
+                {roles.map(role => (
+                  <option key={role.id} value={role.id}>
+                    {role.name}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="flex justify-end gap-2 pt-2">
