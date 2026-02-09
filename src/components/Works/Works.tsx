@@ -61,7 +61,7 @@ const Works = ({ items = [] }: WorksProps) => {
   ]
 
   return (
-    <Section id="work" className="" title="Our Works">
+    <Section id="work" className="" label="Our Works" title="ผลงานของเรา">
       <Title className="text-center" level={5}>
         ตัวอย่างผลงานของ LiKQ Music
       </Title>
@@ -85,7 +85,7 @@ const Works = ({ items = [] }: WorksProps) => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-1 mt-8 md:p-5 lg:p-10 min-h-[400px] items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-1 mt-8 md:p-5 lg:p-10 min-h-[400px] items-start w-full max-w-6xl">
         {filteredItems.map((item, index) => (
           <WorkItem
             key={`${item.title}-${index}`}

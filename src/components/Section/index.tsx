@@ -1,10 +1,10 @@
 import React from 'react'
 import { ISectionProps } from '@/components/Section/types'
-import { Title } from '@/ui/Typography'
+import { Title, Paragraph } from '@/ui/Typography'
 
 import { cn } from '@/utils'
 
-const Section = ({ id, title, children, className }: ISectionProps) => {
+const Section = ({ id, label, title, dark, children, className }: ISectionProps) => {
   return (
     <section
       id={id}
@@ -13,8 +13,14 @@ const Section = ({ id, title, children, className }: ISectionProps) => {
         className
       ])}
     >
+      {label && (
+        <Paragraph variant="label" className={cn(['mb-4', dark && 'text-white/60'])}>
+          {label}
+        </Paragraph>
+      )}
+
       {title && (
-        <Title className="text-center" level={2}>
+        <Title className={cn(['text-center', dark && '!text-white'])} level={2}>
           {title}
         </Title>
       )}

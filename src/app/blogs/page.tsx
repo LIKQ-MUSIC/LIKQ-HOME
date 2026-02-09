@@ -3,7 +3,7 @@ import Image from 'next/image'
 import dayjs from '@/utils/dayjs'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { ShoppingBag, Bell, ArrowLeft, Search } from 'lucide-react'
-import Button from '@/ui/Button'
+import { Paragraph } from '@/ui/Typography'
 
 export const revalidate = 3600
 
@@ -37,7 +37,7 @@ export default async function BlogsPage() {
               <ArrowLeft className="w-4 h-4 text-slate-600 dark:text-slate-400 group-hover:text-primary" />
             </div>
             <span className="text-sm font-medium text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors hidden sm:inline">
-              Back to Home
+              กลับหน้าแรก
             </span>
           </Link>
 
@@ -79,11 +79,14 @@ export default async function BlogsPage() {
 
       <div className="max-w-6xl mx-auto px-4 md:px-8 py-12 md:py-16">
         <div className="text-center mb-16">
+          <Paragraph variant="label" className="mb-4">
+            Our Blog
+          </Paragraph>
           <h1 className="text-4xl md:text-6xl font-bold text-slate-900 dark:text-white mb-6 tracking-tight">
-            Our Insights
+            บทความทั้งหมด
           </h1>
           <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Stories, updates, and knowledge from the LiKQ Music Production team.
+            เรื่องราว บทเรียน และแรงบันดาลใจจากทีม LiKQ Music Production
           </p>
         </div>
 
@@ -93,10 +96,10 @@ export default async function BlogsPage() {
               <Search className="w-8 h-8 text-slate-400" />
             </div>
             <p className="text-xl font-medium text-slate-900 dark:text-white mb-2">
-              No posts found
+              ยังไม่มีบทความ
             </p>
             <p className="text-slate-500 dark:text-slate-400">
-              Our writers are busy creating new content.
+              ทีมเขียนของเรากำลังเตรียมเนื้อหาใหม่ๆ อยู่
             </p>
           </div>
         ) : (
@@ -128,7 +131,7 @@ export default async function BlogsPage() {
                     {/* Date Badge */}
                     {blog.published_at && (
                       <div className="absolute top-4 right-4 bg-white/90 dark:bg-slate-950/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-sm">
-                        {dayjs(blog.published_at).format('MMM D, YYYY')}
+                        {dayjs(blog.published_at).format('D MMM YYYY')}
                       </div>
                     )}
                   </div>
@@ -147,7 +150,7 @@ export default async function BlogsPage() {
 
                     <div className="flex items-center justify-between mt-auto pt-6 border-t border-slate-100 dark:border-slate-800/50">
                       <span className="text-sm font-medium text-primary flex items-center gap-1 group/btn">
-                        Read Article
+                        อ่านบทความ
                         <ArrowLeft className="w-4 h-4 rotate-180 transition-transform group-hover/btn:translate-x-1" />
                       </span>
                     </div>

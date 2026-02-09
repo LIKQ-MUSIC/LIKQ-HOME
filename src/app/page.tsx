@@ -117,7 +117,7 @@ export default async function Home() {
 
       <AboutUs />
 
-      <Section id="services" title="Our Services">
+      <Section id="services" label="Our Services" title="บริการของเรา">
         <Title className="text-center" level={5}>
           บริการผลิตดนตรีหลากหลายรูปแบบ พร้อมทีมงานมืออาชีพมากประสบการณ์
         </Title>
@@ -131,9 +131,9 @@ export default async function Home() {
 
       <Works items={worksData} />
 
-      <Team />
-
       <BlogSection posts={latestPosts} />
+
+      <Team />
 
       <Footer />
     </main>

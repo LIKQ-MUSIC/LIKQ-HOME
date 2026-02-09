@@ -1,20 +1,18 @@
 'use client'
 import Section from '@/components/Section'
-import { Title } from '@/ui/Typography'
+
 const AboutUs = () => {
   return (
     <Section
       id="about-us"
+      label="About Us"
+      title="เกี่ยวกับเรา"
+      dark
       className="bg-[#030827] text-white py-20 overflow-hidden"
     >
       <div className="container mx-auto px-4">
         {/* Text Content - Full Width */}
         <div className="space-y-8 text-center text-lg leading-relaxed text-gray-400 max-w-4xl mx-auto">
-          <div className="mb-4">
-            <Title level={2} className="text-white">
-              About Us
-            </Title>
-          </div>
           <p className="text-xl">
             <strong className="text-white text-2xl">LiKQ Music</strong>{' '}
             คือทีมผลิตดนตรีครบวงจรที่มุ่งเน้นคุณภาพและความคิดสร้างสรรค์

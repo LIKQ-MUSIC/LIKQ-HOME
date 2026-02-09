@@ -1,16 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import SignaturePad from '@/components/signature/SignaturePad'
-import { Save, Upload, X } from 'lucide-react'
+import { Camera, Save, Upload, X, User } from 'lucide-react'
 import Image from 'next/image'
 
 export default function ProfilePage() {
   const queryClient = useQueryClient()
   const [showSignaturePad, setShowSignaturePad] = useState(false)
   const [signaturePreview, setSignaturePreview] = useState<string | null>(null)
+  const avatarInputRef = useRef<HTMLInputElement>(null)
 
   // Fetch current user profile
   const { data: profile, isLoading } = useQuery({
@@ -18,6 +19,29 @@ export default function ProfilePage() {
     queryFn: async () => {
       const res = await apiClient.get('/users/me')
       return res.data.data || res.data
+    }
+  })
+
+  // Upload avatar mutation
+  const { mutate: uploadAvatar, isPending: isUploadingAvatar } = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('folder', 'avatars')
+
+      const uploadRes = await apiClient.post('/media', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+
+      const mediaUrl =
+        uploadRes.data.data?.public_url || uploadRes.data.public_url
+
+      await apiClient.put('/users/me', { avatar_url: mediaUrl })
+
+      return mediaUrl
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] })
     }
   })
 
@@ -56,6 +80,13 @@ export default function ProfilePage() {
     }
   })
 
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      uploadAvatar(file)
+    }
+  }
+
   const handleSaveSignature = (dataUrl: string) => {
     setSignaturePreview(dataUrl)
   }
@@ -84,19 +115,59 @@ export default function ProfilePage() {
       <div className="card-base p-6">
         <h1 className="text-2xl font-bold text-heading mb-6">Profile Settings</h1>
 
-        {/* User Info */}
-        <div className="space-y-4 mb-8">
-          <div>
-            <label className="block text-sm font-medium text-body mb-2">
-              Name
-            </label>
-            <p className="text-heading">{profile?.name || 'N/A'}</p>
+        {/* Avatar & User Info */}
+        <div className="flex items-start gap-6 mb-8">
+          {/* Avatar */}
+          <div className="relative group shrink-0">
+            <div className="w-24 h-24 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 ring-2 ring-white dark:ring-slate-900 shadow-md">
+              {profile?.avatar_url ? (
+                <Image
+                  src={profile.avatar_url}
+                  alt={profile.name || 'Avatar'}
+                  width={96}
+                  height={96}
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <div className="flex items-center justify-center w-full h-full text-slate-400">
+                  <User className="w-10 h-10" />
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => avatarInputRef.current?.click()}
+              disabled={isUploadingAvatar}
+              className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer disabled:cursor-wait"
+            >
+              {isUploadingAvatar ? (
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent" />
+              ) : (
+                <Camera className="w-6 h-6 text-white" />
+              )}
+            </button>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              className="hidden"
+            />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-body mb-2">
-              Email
-            </label>
-            <p className="text-heading">{profile?.email || 'N/A'}</p>
+
+          {/* User Info */}
+          <div className="space-y-4 flex-1">
+            <div>
+              <label className="block text-sm font-medium text-body mb-1">
+                Name
+              </label>
+              <p className="text-heading text-lg font-semibold">{profile?.name || 'N/A'}</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-body mb-1">
+                Email
+              </label>
+              <p className="text-heading">{profile?.email || 'N/A'}</p>
+            </div>
           </div>
         </div>
 
