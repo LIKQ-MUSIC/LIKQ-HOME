@@ -13,6 +13,7 @@ import MixMaster from '@/ui/Icons/MixMaster'
 import WritingComposing from '@/ui/Icons/WritingComposing'
 import Arrange from '@/ui/Icons/Arrange'
 import AboutUs from '@/components/AboutUs'
+import BlogSection from '@/components/BlogSection'
 import { getAboutUsImages } from '@/services/about-us'
 
 import { apiClient } from '@/lib/api-client'
@@ -48,9 +49,25 @@ async function getWorks(): Promise<IWorkItem[]> {
   }
 }
 
+async function getLatestBlogs() {
+  const url = process.env.NEXT_PUBLIC_GATEWAY_API_URL || 'http://localhost:3002'
+  try {
+    const res = await fetch(`${url}/blogs/public?limit=3`, {
+      next: { tags: ['blogs'] }
+    })
+    if (!res.ok) return []
+    const json = await res.json()
+    return json.data || []
+  } catch (error) {
+    console.error('Failed to fetch blogs for homepage:', error)
+    return []
+  }
+}
+
 export default async function Home() {
   const worksData = await getWorks()
   const aboutUsData = await getAboutUsImages()
+  const latestPosts = await getLatestBlogs()
 
   // Map to component format or use default if empty/failed
   const aboutUsImages =
@@ -94,7 +111,7 @@ export default async function Home() {
     }
   ]
   return (
-    <>
+    <main className="min-h-screen bg-[#f8f9fb] text-neutral-900 font-sans overflow-x-hidden">
       <Navbar />
       <HeroCarousel images={aboutUsImages} />
 
@@ -116,7 +133,9 @@ export default async function Home() {
 
       <Team />
 
+      <BlogSection posts={latestPosts} />
+
       <Footer />
-    </>
+    </main>
   )
 }

@@ -8,6 +8,7 @@ import Button from '@/ui/Button'
 import { Plus, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import { revalidateAboutUs } from './actions'
+import PermissionGate from '@/components/dashboard/PermissionGate'
 
 const AboutUsPage = () => {
   const queryClient = useQueryClient()
@@ -39,6 +40,7 @@ const AboutUsPage = () => {
   if (isLoading) return <div className="text-muted">Loading...</div>
 
   return (
+    <PermissionGate>
     <div className="space-y-8">
       <div className="page-header">
         <h1 className="page-title">
@@ -87,6 +89,7 @@ const AboutUsPage = () => {
         )}
       </div>
     </div>
+    </PermissionGate>
   )
 }
 

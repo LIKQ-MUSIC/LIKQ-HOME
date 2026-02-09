@@ -69,7 +69,7 @@ const WorkDetail = ({ item }: { item: IWorkItem }) => {
       <div className="video-meta">
         <CategoriesBadge category={item.category} />
 
-        <Title level={5} className="line-clamp-2 text-primary">
+        <Title level={5} className="line-clamp-2 text-heading">
           {item.category === 'video' ? data?.title : item.title}
         </Title>
 

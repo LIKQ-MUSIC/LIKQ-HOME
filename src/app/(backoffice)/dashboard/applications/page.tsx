@@ -14,6 +14,7 @@ import {
   ActionButton,
   PaginationMeta
 } from '@/components/dashboard/DataTable'
+import PermissionGate from '@/components/dashboard/PermissionGate'
 
 interface Application {
   id: string
@@ -175,22 +176,24 @@ export default function ApplicationsPage() {
   )
 
   return (
-    <DataTable
-      data={applications}
-      columns={columns}
-      keyExtractor={item => item.id}
-      isLoading={isLoading}
-      error={isError}
-      emptyMessage="No applications found. Create your first application to get started."
-      errorMessage="Failed to load applications. Please try again."
-      title="Applications"
-      subtitle="Manage API key applications and their permissions"
-      headerActions={headerActions}
-      searchSlot={searchSlot}
-      pagination={meta}
-      currentPage={page}
-      onNextPage={nextPage}
-      onPrevPage={prevPage}
-    />
+    <PermissionGate>
+      <DataTable
+        data={applications}
+        columns={columns}
+        keyExtractor={item => item.id}
+        isLoading={isLoading}
+        error={isError}
+        emptyMessage="No applications found. Create your first application to get started."
+        errorMessage="Failed to load applications. Please try again."
+        title="Applications"
+        subtitle="Manage API key applications and their permissions"
+        headerActions={headerActions}
+        searchSlot={searchSlot}
+        pagination={meta}
+        currentPage={page}
+        onNextPage={nextPage}
+        onPrevPage={prevPage}
+      />
+    </PermissionGate>
   )
 }

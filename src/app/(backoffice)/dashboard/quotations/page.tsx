@@ -16,6 +16,7 @@ import {
   ActionButton,
   PaginationMeta
 } from '@/components/dashboard/DataTable'
+import PermissionGate from '@/components/dashboard/PermissionGate'
 
 interface QuotationItem {
   description: string
@@ -205,22 +206,24 @@ export default function QuotationsPage() {
   )
 
   return (
-    <DataTable
-      data={quotations}
-      columns={columns}
-      keyExtractor={item => item.id}
-      isLoading={isLoading}
-      error={isError}
-      emptyMessage="No quotations found. Create your first quotation to get started."
-      errorMessage="Failed to load quotations. Please try again."
-      title="Quotations"
-      subtitle="Manage quotations"
-      headerActions={headerActions}
-      searchSlot={searchSlot}
-      pagination={meta}
-      currentPage={page}
-      onNextPage={nextPage}
-      onPrevPage={prevPage}
-    />
+    <PermissionGate>
+      <DataTable
+        data={quotations}
+        columns={columns}
+        keyExtractor={item => item.id}
+        isLoading={isLoading}
+        error={isError}
+        emptyMessage="No quotations found. Create your first quotation to get started."
+        errorMessage="Failed to load quotations. Please try again."
+        title="Quotations"
+        subtitle="Manage quotations"
+        headerActions={headerActions}
+        searchSlot={searchSlot}
+        pagination={meta}
+        currentPage={page}
+        onNextPage={nextPage}
+        onPrevPage={prevPage}
+      />
+    </PermissionGate>
   )
 }

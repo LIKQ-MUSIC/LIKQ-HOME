@@ -7,6 +7,7 @@ import Link from 'next/link'
 import Button from '@/ui/Button'
 import { Plus, Edit2, Trash2 } from 'lucide-react'
 import { revalidateWorks } from './actions'
+import PermissionGate from '@/components/dashboard/PermissionGate'
 
 const WorksPage = () => {
   const queryClient = useQueryClient()
@@ -38,6 +39,7 @@ const WorksPage = () => {
   if (isLoading) return <div className="text-muted">Loading...</div>
 
   return (
+    <PermissionGate>
     <div className="p-8 w-full max-w-7xl mx-auto space-y-8">
       <div className="page-header">
         <h1 className="page-title">Manage Works</h1>
@@ -111,6 +113,7 @@ const WorksPage = () => {
         </div>
       </div>
     </div>
+    </PermissionGate>
   )
 }
 

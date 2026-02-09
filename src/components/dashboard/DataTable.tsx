@@ -107,7 +107,9 @@ export function DataTable<T>({
                 {title}
               </Title>
             )}
-            {subtitle && <p className="text-muted mt-1 text-sm lg:text-base">{subtitle}</p>}
+            {subtitle && (
+              <p className="text-muted mt-1 text-sm lg:text-base">{subtitle}</p>
+            )}
           </div>
           {headerActions && <div className="action-group">{headerActions}</div>}
         </div>
@@ -128,7 +130,7 @@ export function DataTable<T>({
                       type="checkbox"
                       checked={allSelected}
                       onChange={e => handleSelectAll(e.target.checked)}
-                      className="rounded border-[#e0e4ea] bg-white text-primary focus:ring-primary"
+                      className="rounded border-[#e0e4ea] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-primary focus:ring-primary"
                     />
                   </th>
                 )}
@@ -193,7 +195,7 @@ export function DataTable<T>({
                             checked={isSelected}
                             onChange={() => handleSelectOne(String(key))}
                             onClick={e => e.stopPropagation()}
-                            className="rounded border-[#e0e4ea] bg-white text-primary focus:ring-primary"
+                            className="rounded border-[#e0e4ea] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-primary focus:ring-primary"
                           />
                         </td>
                       )}
@@ -219,7 +221,9 @@ export function DataTable<T>({
           <div className="flex items-center justify-between border-t border-default px-6 py-3 bg-surface">
             <div className="text-sm text-muted">
               Page{' '}
-              <span className="font-medium text-heading">{pagination.page}</span>{' '}
+              <span className="font-medium text-heading">
+                {pagination.page}
+              </span>{' '}
               of{' '}
               <span className="font-medium text-heading">
                 {pagination.totalPages}
@@ -297,7 +301,10 @@ export function DataTable<T>({
                         // First column is typically the main identifier
                         if (idx === 0) {
                           return (
-                            <div key={idx} className={`font-medium ${col.className || 'text-heading'}`}>
+                            <div
+                              key={idx}
+                              className={`font-medium ${col.className || 'text-heading'}`}
+                            >
                               {content}
                             </div>
                           )
@@ -305,13 +312,19 @@ export function DataTable<T>({
                         // Check if it's an actions column (usually last)
                         if (col.header === 'Actions') {
                           return (
-                            <div key={idx} className="flex justify-end pt-2 border-t border-default mt-3">
+                            <div
+                              key={idx}
+                              className="flex justify-end pt-2 border-t border-default mt-3"
+                            >
                               {content}
                             </div>
                           )
                         }
                         return (
-                          <div key={idx} className="flex items-center justify-between text-sm">
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between text-sm"
+                          >
                             <span className="text-muted">
                               {col.mobileLabel || col.header}
                             </span>
@@ -332,9 +345,13 @@ export function DataTable<T>({
         {pagination && data.length > 0 && (
           <div className="flex items-center justify-between card-base px-4 py-3">
             <div className="text-sm text-muted">
-              <span className="font-medium text-heading">{pagination.page}</span>
+              <span className="font-medium text-heading">
+                {pagination.page}
+              </span>
               {' / '}
-              <span className="font-medium text-heading">{pagination.totalPages}</span>
+              <span className="font-medium text-heading">
+                {pagination.totalPages}
+              </span>
             </div>
             <div className="flex gap-2">
               <button
@@ -409,12 +426,18 @@ export function ActionButton({
 }: ActionButtonProps) {
   const baseClass = 'p-2 transition-colors rounded-lg'
   const variantClass =
-    variant === 'danger' ? 'btn-action-danger hover:bg-danger/10' : 'btn-action-default hover:bg-primary/10'
+    variant === 'danger'
+      ? 'btn-action-danger hover:bg-danger/10'
+      : 'btn-action-default hover:bg-primary/10'
 
   if (href) {
     const Link = require('next/link').default
     return (
-      <Link href={href} className={`${baseClass} ${variantClass}`} title={title}>
+      <Link
+        href={href}
+        className={`${baseClass} ${variantClass}`}
+        title={title}
+      >
         {icon}
       </Link>
     )

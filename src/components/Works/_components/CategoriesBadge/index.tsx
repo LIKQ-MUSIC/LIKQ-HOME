@@ -17,7 +17,7 @@ const CategoriesBadge = ({ category, className }: ICategoriesBadgeProps) => {
   return (
     <span
       className={cn([
-        'inline-flex self-start items-center gap-1 rounded-full bg-secondary-light  px-2.5 py-1 text-sm font-medium text-primary',
+        'inline-flex self-start items-center gap-1 rounded-full bg-secondary-light px-2.5 py-1 text-sm font-medium text-primary dark:bg-white/10 dark:text-neutral-50',
         className
       ])}
     >

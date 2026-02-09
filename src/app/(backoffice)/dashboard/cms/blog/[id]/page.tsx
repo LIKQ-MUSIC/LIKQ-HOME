@@ -4,17 +4,17 @@ import React from 'react'
 import { useParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import WorkForm from '../components/WorkForm'
+import BlogForm from '../components/BlogForm'
 import { Loader2 } from 'lucide-react'
 import PermissionGate from '@/components/dashboard/PermissionGate'
 
-export default function EditWorkPage() {
+export default function EditBlogPage() {
   const { id } = useParams()
 
-  const { data: work, isLoading } = useQuery({
-    queryKey: ['work', id],
+  const { data: blog, isLoading } = useQuery({
+    queryKey: ['blog', id],
     queryFn: async () => {
-      const res = await apiClient.get(`/works/${id}`)
+      const res = await apiClient.get(`/blogs/${id}`)
       return res.data.data
     },
     enabled: !!id
@@ -23,16 +23,16 @@ export default function EditWorkPage() {
   if (isLoading) {
     return (
       <div className="flex h-[50vh] w-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-white" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
 
-  if (!work) return <div className="text-white p-6">Work not found</div>
+  if (!blog) return <div className="text-muted p-6">Blog post not found</div>
 
   return (
     <PermissionGate>
-      <WorkForm initialData={work} isEdit={true} />
+      <BlogForm initialData={blog} isEdit={true} />
     </PermissionGate>
   )
 }

@@ -14,6 +14,7 @@ import {
   ActionButton,
   PaginationMeta
 } from '@/components/dashboard/DataTable'
+import PermissionGate from '@/components/dashboard/PermissionGate'
 
 interface Party {
   id: string
@@ -159,22 +160,24 @@ export default function PartiesPage() {
   )
 
   return (
-    <DataTable
-      data={parties}
-      columns={columns}
-      keyExtractor={item => item.id}
-      isLoading={isLoading}
-      error={isError}
-      emptyMessage="No parties found. Create your first party to get started."
-      errorMessage="Failed to load parties. Please try again."
-      title="Parties Management"
-      subtitle="Manage contract parties and legal entities"
-      headerActions={headerActions}
-      searchSlot={searchSlot}
-      pagination={meta}
-      currentPage={page}
-      onNextPage={nextPage}
-      onPrevPage={prevPage}
-    />
+    <PermissionGate>
+      <DataTable
+        data={parties}
+        columns={columns}
+        keyExtractor={item => item.id}
+        isLoading={isLoading}
+        error={isError}
+        emptyMessage="No parties found. Create your first party to get started."
+        errorMessage="Failed to load parties. Please try again."
+        title="Parties Management"
+        subtitle="Manage contract parties and legal entities"
+        headerActions={headerActions}
+        searchSlot={searchSlot}
+        pagination={meta}
+        currentPage={page}
+        onNextPage={nextPage}
+        onPrevPage={prevPage}
+      />
+    </PermissionGate>
   )
 }

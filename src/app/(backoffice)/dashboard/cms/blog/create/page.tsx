@@ -1,13 +1,13 @@
 'use client'
 
 import React from 'react'
-import WorkForm from '../components/WorkForm'
+import BlogForm from '../components/BlogForm'
 import PermissionGate from '@/components/dashboard/PermissionGate'
 
-export default function CreateWorkPage() {
+export default function CreateBlogPage() {
   return (
     <PermissionGate>
-      <WorkForm />
+      <BlogForm />
     </PermissionGate>
   )
 }

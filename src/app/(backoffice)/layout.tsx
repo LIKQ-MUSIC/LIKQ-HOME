@@ -5,6 +5,7 @@ import { logout } from '@/actions/auth'
 import { Suspense } from 'react'
 import DashboardLoading from './loading'
 import Sidebar from '@/components/dashboard/Sidebar'
+import { PermissionProvider } from '@/provider/PermissionProvider'
 
 export const runtime = 'edge'
 
@@ -54,15 +55,18 @@ export default async function BackofficeLayout({
         userEmail={user.email}
         userName={userName}
         role={role}
+        permissions={permissions}
         logoutAction={logout}
       />
 
       {/* Main Content */}
-      <Suspense fallback={<DashboardLoading />}>
-        <main className="flex-1 overflow-y-auto bg-page p-4 lg:p-8">
-          <div className="mx-auto max-w-5xl">{children}</div>
-        </main>
-      </Suspense>
+      <PermissionProvider permissions={permissions}>
+        <Suspense fallback={<DashboardLoading />}>
+          <main className="flex-1 overflow-y-auto bg-page p-4 lg:p-8">
+            <div className="mx-auto max-w-5xl">{children}</div>
+          </main>
+        </Suspense>
+      </PermissionProvider>
     </div>
   )
 }

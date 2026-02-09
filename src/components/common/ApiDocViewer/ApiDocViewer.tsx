@@ -39,17 +39,20 @@ export interface ApiDocViewerProps {
 
 const MethodBadge = ({ method }: { method: string }) => {
   const colors: Record<string, string> = {
-    GET: 'bg-blue-50 text-blue-700 border-blue-200',
-    POST: 'bg-green-50 text-green-700 border-green-200',
-    PUT: 'bg-orange-50 text-orange-700 border-orange-200',
-    DELETE: 'bg-red-50 text-red-700 border-red-200',
-    PATCH: 'bg-amber-50 text-amber-700 border-amber-200'
+    GET: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
+    POST: 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800',
+    PUT: 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800',
+    DELETE:
+      'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800',
+    PATCH:
+      'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800'
   }
 
   return (
     <span
       className={`px-3 py-1 rounded-md text-sm font-bold border ${
-        colors[method] || 'bg-neutral-100 text-neutral-600 border-neutral-200'
+        colors[method] ||
+        'bg-neutral-100 text-neutral-600 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-700'
       }`}
     >
       {method}
@@ -71,7 +74,7 @@ const JsonViewer = ({ data }: { data: any }) => {
       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           onClick={handleCopy}
-          className="p-1 rounded bg-neutral-200 hover:bg-neutral-300 text-neutral-500 hover:text-neutral-700 border border-neutral-300"
+          className="p-1 rounded bg-neutral-200 hover:bg-neutral-300 text-neutral-500 hover:text-neutral-700 border border-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-300 dark:border-neutral-600"
           title="Copy JSON"
         >
           {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -104,18 +107,20 @@ const EndpointItem = ({
   return (
     <div
       className={`border rounded-xl mb-4 overflow-hidden transition-all duration-200 ${
-        isOpen ? 'shadow-md border-neutral-300' : 'shadow-sm border-neutral-200'
-      } bg-white`}
+        isOpen
+          ? 'shadow-md border-neutral-300 dark:border-neutral-600'
+          : 'shadow-sm border-neutral-200 dark:border-neutral-700'
+      } bg-white dark:bg-[#1E293B]`}
     >
       <div
         className={`p-4 cursor-pointer flex items-center justify-between border-l-4 ${
           methodBorderColors[endpoint.method] || 'border-l-neutral-300'
-        } ${isOpen ? 'bg-neutral-50' : 'hover:bg-neutral-50'}`}
+        } ${isOpen ? 'bg-neutral-50 dark:bg-[#0F172A]' : 'hover:bg-neutral-50 dark:hover:bg-white/5'}`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="flex items-center gap-4 flex-1 overflow-hidden">
           <MethodBadge method={endpoint.method} />
-          <code className="text-sm font-semibold text-primary font-mono truncate">
+          <code className="text-sm font-semibold text-primary dark:text-blue-300 font-mono truncate">
             {endpoint.path}
           </code>
           <span className="text-neutral-400 text-sm hidden sm:inline-block truncate">
@@ -128,7 +133,7 @@ const EndpointItem = ({
       </div>
 
       {isOpen && (
-        <div className="p-6 border-t border-neutral-200 bg-neutral-50/50">
+        <div className="p-6 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50/50 dark:bg-[#0F172A]/50">
           <div className="mb-6">
             <h4 className="text-sm font-semibold text-heading mb-2">
               Description
@@ -138,13 +143,13 @@ const EndpointItem = ({
             </p>
             {endpoint.authentication && (
               <div className="mt-2 flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/20 text-secondary-dark border border-secondary/30">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/20 text-secondary-dark border border-secondary/30 dark:text-neutral-300">
                   Authentication Required
                 </span>
                 {endpoint.permissions?.map(perm => (
                   <span
                     key={perm}
-                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-neutral-100 text-neutral-600 border border-neutral-200"
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-neutral-100 text-neutral-600 border border-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-700"
                   >
                     Permission: {perm}
                   </span>
@@ -164,7 +169,7 @@ const EndpointItem = ({
             <div className="space-y-6">
               {(endpoint.pathParams?.length ?? 0) > 0 && (
                 <div>
-                  <h4 className="text-sm font-semibold text-heading mb-3 border-b border-neutral-200 pb-1">
+                  <h4 className="text-sm font-semibold text-heading mb-3 border-b border-neutral-200 dark:border-neutral-700 pb-1">
                     Path Parameters
                   </h4>
                   <div className="space-y-2">
@@ -174,7 +179,7 @@ const EndpointItem = ({
                         className="flex flex-col sm:flex-row sm:items-baseline gap-2 text-sm"
                       >
                         <div className="min-w-[120px]">
-                          <code className="text-warning font-bold">
+                          <code className="text-warning font-bold dark:text-orange-400">
                             {param.name}
                           </code>
                           {param.required && (
@@ -195,7 +200,7 @@ const EndpointItem = ({
 
               {(endpoint.queryParams?.length ?? 0) > 0 && (
                 <div>
-                  <h4 className="text-sm font-semibold text-heading mb-3 border-b border-neutral-200 pb-1">
+                  <h4 className="text-sm font-semibold text-heading mb-3 border-b border-neutral-200 dark:border-neutral-700 pb-1">
                     Query Parameters
                   </h4>
                   <div className="space-y-2">
@@ -205,7 +210,7 @@ const EndpointItem = ({
                         className="flex flex-col sm:flex-row sm:items-baseline gap-2 text-sm"
                       >
                         <div className="min-w-[120px]">
-                          <code className="text-primary font-bold">
+                          <code className="text-primary font-bold dark:text-blue-400">
                             {param.name}
                           </code>
                           {param.required && (
@@ -226,7 +231,7 @@ const EndpointItem = ({
 
               {(endpoint.bodyParams?.length ?? 0) > 0 && (
                 <div>
-                  <h4 className="text-sm font-semibold text-heading mb-3 border-b border-neutral-200 pb-1">
+                  <h4 className="text-sm font-semibold text-heading mb-3 border-b border-neutral-200 dark:border-neutral-700 pb-1">
                     Request Body
                   </h4>
                   <div className="space-y-2">
@@ -236,7 +241,7 @@ const EndpointItem = ({
                         className="flex flex-col sm:flex-row sm:items-baseline gap-2 text-sm"
                       >
                         <div className="min-w-[120px]">
-                          <code className="text-secondary-dark font-bold">
+                          <code className="text-secondary-dark font-bold dark:text-purple-400">
                             {param.name}
                           </code>
                           {param.required && (
@@ -258,7 +263,7 @@ const EndpointItem = ({
 
             {/* Response Section */}
             <div>
-              <h4 className="text-sm font-semibold text-heading mb-3 border-b border-neutral-200 pb-1">
+              <h4 className="text-sm font-semibold text-heading mb-3 border-b border-neutral-200 dark:border-neutral-700 pb-1">
                 Responses
               </h4>
               <div className="space-y-4">

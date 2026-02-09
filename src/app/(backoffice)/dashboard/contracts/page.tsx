@@ -15,6 +15,7 @@ import {
   ActionButton,
   PaginationMeta
 } from '@/components/dashboard/DataTable'
+import PermissionGate from '@/components/dashboard/PermissionGate'
 
 interface Contract {
   id: string
@@ -186,22 +187,24 @@ export default function ContractsPage() {
   )
 
   return (
-    <DataTable
-      data={contracts}
-      columns={columns}
-      keyExtractor={item => item.id}
-      isLoading={isLoading}
-      error={isError}
-      emptyMessage="No contracts found. Create your first contract to get started."
-      errorMessage="Failed to load contracts. Please try again."
-      title="Contract Management"
-      subtitle="Manage and track all contracts"
-      headerActions={headerActions}
-      searchSlot={searchSlot}
-      pagination={meta}
-      currentPage={page}
-      onNextPage={nextPage}
-      onPrevPage={prevPage}
-    />
+    <PermissionGate>
+      <DataTable
+        data={contracts}
+        columns={columns}
+        keyExtractor={item => item.id}
+        isLoading={isLoading}
+        error={isError}
+        emptyMessage="No contracts found. Create your first contract to get started."
+        errorMessage="Failed to load contracts. Please try again."
+        title="Contract Management"
+        subtitle="Manage and track all contracts"
+        headerActions={headerActions}
+        searchSlot={searchSlot}
+        pagination={meta}
+        currentPage={page}
+        onNextPage={nextPage}
+        onPrevPage={prevPage}
+      />
+    </PermissionGate>
   )
 }
