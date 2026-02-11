@@ -16,11 +16,36 @@ import AboutUs from '@/components/AboutUs'
 import BlogSection from '@/components/BlogSection'
 import { getAboutUsImages } from '@/services/about-us'
 
+import type { Metadata } from 'next'
 import { apiClient } from '@/lib/api-client'
 import { IWorkItem } from '@/components/Works/types'
 import dayjs from '@/utils/dayjs'
 
 export const revalidate = 3600 // Verify static rebuild every hour if revalidated
+
+export async function generateMetadata(): Promise<Metadata> {
+  const images = await getAboutUsImages()
+  const firstImage = images?.[0]?.image_url
+
+  if (!firstImage) return {}
+
+  return {
+    openGraph: {
+      images: [
+        {
+          url: firstImage,
+          width: 1200,
+          height: 630,
+          alt: 'LiKQ MUSIC'
+        }
+      ]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      images: [firstImage]
+    }
+  }
+}
 
 async function getWorks(): Promise<IWorkItem[]> {
   try {
