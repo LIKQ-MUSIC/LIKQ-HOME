@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import Button from '@/ui/Button'
+import { Input } from '@/ui/Input'
 import { Plus, Shield } from 'lucide-react'
 import { User, CreateUserDTO } from '@/services/user-service'
 import { createUserAction, assignRolesAction } from '@/actions/users'
@@ -25,12 +26,17 @@ export default function UserList() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false)
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
+
+  // Create User State
   const [formData, setFormData] = useState<CreateUserDTO>({
     email: '',
     name: '',
     password: '',
     roleId: 2
   })
+  const [isPasswordLess, setIsPasswordLess] = useState(false)
+
+  // Assign Role State
   const [selectedRole, setSelectedRole] = useState(2)
 
   const {
@@ -67,7 +73,13 @@ export default function UserList() {
 
   const createUserMutation = useMutation({
     mutationFn: async (data: CreateUserDTO) => {
-      const result = await createUserAction(data)
+      // Remove password if isPasswordLess is checked
+      const payload = {
+        ...data,
+        password: isPasswordLess ? undefined : data.password
+      }
+
+      const result = await createUserAction(payload)
       if (!result.success) throw new Error(result.error)
       return result
     },
@@ -80,6 +92,7 @@ export default function UserList() {
         password: '',
         roleId: 2
       })
+      setIsPasswordLess(false)
     },
     onError: (error: Error) => {
       alert('Failed to create user: ' + error.message)
@@ -187,54 +200,76 @@ export default function UserList() {
 
       {/* Create User Modal */}
       {isCreateModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content max-w-md">
-            <h2 className="text-xl font-bold text-heading">Create User</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 space-y-6">
+            <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
+              Create User
+            </h2>
             <form onSubmit={handleCreateUser} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-muted mb-1">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   Name
                 </label>
-                <input
+                <Input
                   type="text"
                   required
                   value={formData.name}
                   onChange={e =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className="input-base"
+                  placeholder="John Doe"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-muted mb-1">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   Email
                 </label>
-                <input
+                <Input
                   type="email"
                   required
                   value={formData.email}
                   onChange={e =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="input-base"
+                  placeholder="john@example.com"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-muted mb-1">
-                  Password
-                </label>
+
+              <div className="flex items-center space-x-3 py-2">
                 <input
-                  type="password"
-                  required
-                  value={formData.password}
-                  onChange={e =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  className="input-base"
+                  type="checkbox"
+                  id="no-password"
+                  checked={isPasswordLess}
+                  onChange={e => setIsPasswordLess(e.target.checked)}
+                  className="h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
                 />
+                <label
+                  htmlFor="no-password"
+                  className="text-sm font-medium text-zinc-700 dark:text-zinc-300 cursor-pointer select-none"
+                >
+                  Create without password (User will set it later)
+                </label>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-muted mb-1">
+
+              {!isPasswordLess && (
+                <div className="space-y-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Password
+                  </label>
+                  <Input
+                    type="password"
+                    required={!isPasswordLess}
+                    value={formData.password}
+                    onChange={e =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    placeholder="••••••••"
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   Role
                 </label>
                 <select
@@ -245,7 +280,7 @@ export default function UserList() {
                       roleId: Number(e.target.value)
                     })
                   }
-                  className="input-base"
+                  className="w-full rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-950 dark:ring-offset-zinc-950 dark:placeholder:text-zinc-400 dark:focus-visible:ring-indigo-500"
                 >
                   {roles.map(role => (
                     <option key={role.id} value={role.id}>
@@ -254,21 +289,17 @@ export default function UserList() {
                   ))}
                 </select>
               </div>
-              <div className="flex justify-end gap-2 pt-2">
+
+              <div className="flex justify-end gap-3 pt-4">
                 <Button
                   variant="ghost"
-                  size="md"
+                  type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="!rounded-lg"
                 >
                   Cancel
                 </Button>
-                <Button
-                  disabled={createUserMutation.isPending}
-                  size="md"
-                  className="!rounded-lg"
-                >
-                  {createUserMutation.isPending ? 'Creating...' : 'Create'}
+                <Button type="submit" disabled={createUserMutation.isPending}>
+                  {createUserMutation.isPending ? 'Creating...' : 'Create User'}
                 </Button>
               </div>
             </form>
@@ -278,42 +309,42 @@ export default function UserList() {
 
       {/* Assign Role Modal */}
       {isRoleModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content max-w-sm">
-            <h2 className="text-xl font-bold text-heading">Assign Role</h2>
-            <div>
-              <label className="block text-sm font-medium text-muted mb-1">
-                Select Role
-              </label>
-              <select
-                value={selectedRole}
-                onChange={e => setSelectedRole(Number(e.target.value))}
-                className="input-base"
-              >
-                {roles.map(role => (
-                  <option key={role.id} value={role.id}>
-                    {role.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button
-                variant="ghost"
-                size="md"
-                onClick={() => setIsRoleModalOpen(false)}
-                className="!rounded-lg"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleAssignRole}
-                disabled={assignRoleMutation.isPending}
-                size="md"
-                className="!rounded-lg"
-              >
-                {assignRoleMutation.isPending ? 'Assigning...' : 'Assign'}
-              </Button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="w-full max-w-sm bg-white dark:bg-zinc-900 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 space-y-6">
+            <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
+              Assign Role
+            </h2>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Select Role
+                </label>
+                <select
+                  value={selectedRole}
+                  onChange={e => setSelectedRole(Number(e.target.value))}
+                  className="w-full rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-950 dark:ring-offset-zinc-950 dark:placeholder:text-zinc-400 dark:focus-visible:ring-indigo-500"
+                >
+                  {roles.map(role => (
+                    <option key={role.id} value={role.id}>
+                      {role.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex justify-end gap-3 pt-2">
+                <Button
+                  variant="ghost"
+                  onClick={() => setIsRoleModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleAssignRole}
+                  disabled={assignRoleMutation.isPending}
+                >
+                  {assignRoleMutation.isPending ? 'Assigning...' : 'Assign'}
+                </Button>
+              </div>
             </div>
           </div>
         </div>

@@ -8,12 +8,12 @@ import { buttonSizesClass, variantClasses } from './constants'
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
-      children,
       variant = 'primary',
       size = 'lg',
       className,
-      onClick,
-      disabled
+      children,
+      disabled,
+      ...props
     },
     ref
   ) => {
@@ -23,7 +23,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        onClick={onClick}
         disabled={disabled}
         className={cn([
           `relative overflow-hidden font-medium
@@ -34,6 +33,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           disabled &&
             'bg-disabled text-disabled-text cursor-not-allowed hover:bg-disabled'
         ])}
+        {...props}
       >
         {children}
         <ClientRipple />

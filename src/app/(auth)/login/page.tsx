@@ -4,7 +4,12 @@ import React, { useTransition, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { login } from '@/actions/auth'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Loader2 } from 'lucide-react'
+import { Input } from '@/ui/Input'
+import Button from '@/ui/Button'
+import { Label } from '@/ui/Label'
+import GoogleButton from '@/components/auth/GoogleButton'
 
 export default function LoginPage() {
   const [isPending, startTransition] = useTransition()
@@ -24,80 +29,109 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-4 py-12 dark:bg-zinc-950">
-      <div className="w-full max-w-sm space-y-8 rounded-xl bg-zinc-900 p-8 shadow-2xl border border-zinc-800">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[#153051] to-[#0f2340] px-4 py-12">
+      <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
-          {/* You can add Logo here */}
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-white">
+          <Image
+            src="/logo-default.svg"
+            alt="LIKQ"
+            width={120}
+            height={40}
+            className="mx-auto"
+            priority
+          />
+          <h2 className="mt-8 text-2xl font-bold tracking-tight text-white">
             Welcome back
           </h2>
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="mt-2 text-sm text-white/60">
             Sign in to access your dashboard
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="rounded-md bg-red-500/10 p-3 text-sm text-red-500 border border-red-500/20">
-              {error}
-            </div>
-          )}
-          <div className="space-y-4 rounded-md shadow-sm">
-            <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="relative block w-full rounded-md border-zinc-700 bg-zinc-800 text-zinc-300 placeholder-zinc-500 focus:z-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-3"
-                placeholder="Email address"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="relative block w-full rounded-md border-zinc-700 bg-zinc-800 text-zinc-300 placeholder-zinc-500 focus:z-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-3"
-                placeholder="Password"
-              />
-            </div>
-          </div>
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 shadow-2xl">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {error && (
+              <div className="rounded-lg bg-red-500/10 p-3 text-sm text-red-200 border border-red-500/20 text-center">
+                {error}
+              </div>
+            )}
 
-          <div>
-            <button
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-white/80">Email address</Label>
+                <Input
+                  id="email-address"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  placeholder="Enter your email"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-white/20 focus:ring-white/20"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-white/80">Password</Label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs text-white/60 hover:text-white transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  placeholder="••••••••"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-white/20 focus:ring-white/20"
+                />
+              </div>
+            </div>
+
+            <Button
               type="submit"
               disabled={isPending}
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+              className="w-full bg-indigo-500 hover:bg-indigo-600 text-white border-0"
             >
               {isPending ? (
                 <Loader2 className="animate-spin h-5 w-5" />
               ) : (
                 'Sign in'
               )}
-            </button>
+            </Button>
+          </form>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-white/10" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-[#122946] px-2 text-white/40 text-xs uppercase">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <GoogleButton />
+            </div>
           </div>
-        </form>
-        <div className="text-center">
-          <p className="text-sm text-zinc-400">
-            Don't have an account?{' '}
-            <Link
-              href="/register"
-              className="font-medium text-indigo-400 hover:text-indigo-300"
-            >
-              Sign up
-            </Link>
-          </p>
         </div>
+
+        <p className="text-center text-sm text-white/40">
+          Don't have an account?{' '}
+          <Link
+            href="/register"
+            className="font-medium text-white hover:text-indigo-300 transition-colors"
+          >
+            Sign up
+          </Link>
+        </p>
       </div>
     </div>
   )

@@ -11,11 +11,8 @@ export type ButtonVariant =
 
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
-export interface ButtonProps {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
   size?: ButtonSize
-  className?: string
-  children: React.ReactNode
-  onClick?: () => void
-  disabled?: boolean
+  // className, onClick, disabled, children are inherited from React.ButtonHTMLAttributes
 }
