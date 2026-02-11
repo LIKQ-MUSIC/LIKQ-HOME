@@ -5,7 +5,16 @@ import { useRouter, useParams } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import Link from 'next/link'
-import { ArrowLeft, Save, Plus, Minus, X, Loader2, GripVertical, Copy } from 'lucide-react'
+import {
+  ArrowLeft,
+  Save,
+  Plus,
+  Minus,
+  X,
+  Loader2,
+  GripVertical,
+  Copy
+} from 'lucide-react'
 import PDFExportButton from '@/components/contracts/PDFExport'
 import QuotationPreview from '@/components/quotations/QuotationPreview'
 import ApproveQuotationButton from '@/components/quotations/ApproveQuotationButton'
@@ -43,11 +52,11 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '@/components/ui/select'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
+} from '@/ui/Select'
+import Button from '@/ui/Button'
+import { Input } from '@/ui/Input'
+import { Textarea } from '@/ui/Textarea'
+import { Label } from '@/ui/Label'
 
 const STATUS_OPTIONS = [
   'Draft',
@@ -120,7 +129,9 @@ function SortableItem({
     ? Number(item.quantity)
     : 1
   const normalizedQuantity = Math.max(1, Math.round(quantityValue || 1))
-  const priceValue = Number.isFinite(Number(item.price)) ? Number(item.price) : 0
+  const priceValue = Number.isFinite(Number(item.price))
+    ? Number(item.price)
+    : 0
   const safePrice = Number.isFinite(priceValue) ? priceValue : 0
   const lineTotal = normalizedQuantity * priceValue
   const safeCurrency = currency && currency.trim() ? currency : 'THB'
@@ -145,9 +156,7 @@ function SortableItem({
           isViewMode ? 'col-span-12 md:col-span-5' : 'col-span-11 md:col-span-4'
         }
       >
-        <Label>
-          Description
-        </Label>
+        <Label>Description</Label>
         <Input
           ref={descriptionInputRef}
           type="text"
@@ -182,14 +191,10 @@ function SortableItem({
         )}
       </div>
       <div className="col-span-12 md:col-span-3">
-        <Label>
-          Quantity
-        </Label>
+        <Label>Quantity</Label>
         <div className="flex items-center gap-1">
           <Button
             variant="outline"
-            size="icon"
-            type="button"
             onClick={() =>
               updateItem(index, 'quantity', Math.max(1, normalizedQuantity - 1))
             }
@@ -235,9 +240,9 @@ function SortableItem({
           />
           <Button
             variant="outline"
-            size="icon"
-            type="button"
-            onClick={() => updateItem(index, 'quantity', normalizedQuantity + 1)}
+            onClick={() =>
+              updateItem(index, 'quantity', normalizedQuantity + 1)
+            }
             className="h-9 w-9 shrink-0 text-neutral-600 hover:text-neutral-900 border-[#e0e4ea] bg-white"
             disabled={isViewMode}
             aria-label="Increase quantity"
@@ -252,14 +257,10 @@ function SortableItem({
         )}
       </div>
       <div className="col-span-12 md:col-span-3">
-        <Label>
-          Price
-        </Label>
+        <Label>Price</Label>
         <div className="flex items-center gap-1">
           <Button
             variant="outline"
-            size="icon"
-            type="button"
             onClick={() =>
               updateItem(index, 'price', Math.max(0, safePrice - 1))
             }
@@ -293,8 +294,6 @@ function SortableItem({
           />
           <Button
             variant="outline"
-            size="icon"
-            type="button"
             onClick={() => updateItem(index, 'price', safePrice + 1)}
             className="h-9 w-9 shrink-0 text-neutral-600 hover:text-neutral-900 border-[#e0e4ea] bg-white"
             disabled={isViewMode}
@@ -682,7 +681,10 @@ export default function QuotationFormPage() {
 
   const addItem = () => {
     setFormData(prev => {
-      const newItems = [...prev.items, { description: '', quantity: 1, price: 0 }]
+      const newItems = [
+        ...prev.items,
+        { description: '', quantity: 1, price: 0 }
+      ]
       // Schedule focus after render
       setTimeout(() => {
         const newIndex = newItems.length - 1
@@ -781,6 +783,7 @@ export default function QuotationFormPage() {
           )}
 
           <button
+            type="button"
             onClick={() => setShowPreview(!showPreview)}
             className={`px-4 py-2 text-sm transition-colors rounded-lg flex items-center gap-2 ${showPreview ? 'bg-indigo-600 text-white' : 'text-neutral-500 hover:text-neutral-900 hover:bg-[#f0f2f6] border border-[#e0e4ea]'}`}
           >
@@ -792,6 +795,7 @@ export default function QuotationFormPage() {
             !showPreview &&
             formData.status !== 'Approved' && (
               <button
+                type="button"
                 onClick={() => setIsViewMode(true)}
                 className="px-4 py-2 text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
               >
@@ -800,6 +804,7 @@ export default function QuotationFormPage() {
             )}
           {isViewMode && !showPreview && formData.status !== 'Approved' && (
             <button
+              type="button"
               onClick={() => setIsViewMode(false)}
               className="px-4 py-2 text-sm text-indigo-600 hover:text-indigo-300 transition-colors"
             >
@@ -907,9 +912,7 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <Label>
-                  Status
-                </Label>
+                <Label>Status</Label>
                 <Select
                   value={formData.status}
                   onValueChange={value => {
@@ -953,9 +956,7 @@ export default function QuotationFormPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label>
-                  Currency
-                </Label>
+                <Label>Currency</Label>
                 <Input
                   type="text"
                   value={formData.currency}
@@ -981,9 +982,7 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <Label>
-                  VAT Rate (%)
-                </Label>
+                <Label>VAT Rate (%)</Label>
                 <Input
                   type="number"
                   min="0"
@@ -1005,9 +1004,7 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <Label>
-                  Payment Method
-                </Label>
+                <Label>Payment Method</Label>
                 <Textarea
                   rows={3}
                   value={formData.payment_method || ''}
@@ -1034,9 +1031,7 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <Label>
-                  Signature Date
-                </Label>
+                <Label>Signature Date</Label>
                 <Input
                   type="date"
                   value={
@@ -1082,9 +1077,7 @@ export default function QuotationFormPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label>
-                  Contact Person
-                </Label>
+                <Label>Contact Person</Label>
                 <Select
                   value={
                     formData.contact_person_id
@@ -1128,9 +1121,7 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <Label>
-                  Bill To Party
-                </Label>
+                <Label>Bill To Party</Label>
                 <Select
                   value={
                     formData.bill_to_party_id
@@ -1174,9 +1165,7 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <Label>
-                  Approver
-                </Label>
+                <Label>Approver</Label>
                 <Select
                   value={formData.approver_id ? formData.approver_id : 'none'}
                   onValueChange={value => {
@@ -1235,9 +1224,7 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <Label>
-                  Customer Signatory
-                </Label>
+                <Label>Customer Signatory</Label>
                 <Select
                   value={
                     formData.customer_signatory_id
@@ -1293,9 +1280,7 @@ export default function QuotationFormPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label>
-                  Issued Date
-                </Label>
+                <Label>Issued Date</Label>
                 <Input
                   type="date"
                   value={
@@ -1332,9 +1317,7 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <Label>
-                  Valid Until Date
-                </Label>
+                <Label>Valid Until Date</Label>
                 <Input
                   type="date"
                   value={
@@ -1371,9 +1354,7 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <Label>
-                  Approved Date
-                </Label>
+                <Label>Approved Date</Label>
                 <Input
                   type="date"
                   value={
@@ -1410,9 +1391,7 @@ export default function QuotationFormPage() {
               </div>
 
               <div>
-                <Label>
-                  Accepted Date
-                </Label>
+                <Label>Accepted Date</Label>
                 <Input
                   type="date"
                   value={
@@ -1458,7 +1437,9 @@ export default function QuotationFormPage() {
                   4
                 </div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-semibold text-neutral-900">Line Items</h2>
+                  <h2 className="text-xl font-semibold text-neutral-900">
+                    Line Items
+                  </h2>
                   <span className="px-2 py-0.5 bg-[#f3f5f8] text-neutral-500 text-xs rounded-full font-medium">
                     {formData.items.length}
                   </span>
@@ -1466,8 +1447,8 @@ export default function QuotationFormPage() {
               </div>
               {!isViewMode && (
                 <button
-                  id="add-item-btn"
                   type="button"
+                  id="add-item-btn"
                   onClick={addItem}
                   className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors text-sm shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30"
                 >
@@ -1508,40 +1489,40 @@ export default function QuotationFormPage() {
               </div>
             )}
 
-          {formData.items.length > 0 && (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-              <SortableContext
-                items={formData.items.map((_, index) => index)}
-                strategy={verticalListSortingStrategy}
+            {formData.items.length > 0 && (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
               >
-                <div className="space-y-4">
-                  {formData.items.map((item, index) => (
-                    <SortableItem
-                      key={index}
-                      id={index}
-                      item={item}
-                      index={index}
-                      isViewMode={isViewMode}
-                      fieldErrors={fieldErrors}
-                      updateItem={updateItem}
-                      removeItem={removeItem}
-                      duplicateItem={duplicateItem}
-                      setFieldErrors={setFieldErrors}
-                      itemsLength={formData.items.length}
-                      currency={formData.currency || 'THB'}
-                      descriptionInputRef={(el: HTMLInputElement | null) => {
-                        descriptionInputRefs.current[index] = el
-                      }}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-          )}
+                <SortableContext
+                  items={formData.items.map((_, index) => index)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-4">
+                    {formData.items.map((item, index) => (
+                      <SortableItem
+                        key={index}
+                        id={index}
+                        item={item}
+                        index={index}
+                        isViewMode={isViewMode}
+                        fieldErrors={fieldErrors}
+                        updateItem={updateItem}
+                        removeItem={removeItem}
+                        duplicateItem={duplicateItem}
+                        setFieldErrors={setFieldErrors}
+                        itemsLength={formData.items.length}
+                        currency={formData.currency || 'THB'}
+                        descriptionInputRef={(el: HTMLInputElement | null) => {
+                          descriptionInputRefs.current[index] = el
+                        }}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            )}
 
             {/* Summary Section -- always show, even with 0 items */}
             {(() => {
@@ -1549,7 +1530,8 @@ export default function QuotationFormPage() {
                 formData.currency && formData.currency.trim()
                   ? formData.currency
                   : 'THB'
-              const vatAmount = (formData.total_amount * formData.vat_rate) / 100
+              const vatAmount =
+                (formData.total_amount * formData.vat_rate) / 100
               const grandTotal = formData.total_amount + vatAmount
               return (
                 <div className="mt-6 pt-6 border-t border-[#e5e8ed]">
@@ -1583,13 +1565,17 @@ export default function QuotationFormPage() {
                     {/* Total Row - Aligned Layout */}
                     <div className="grid grid-cols-2 gap-4 items-end">
                       <div className="flex flex-col">
-                        <span className="text-sm text-neutral-400 mb-1">Currency</span>
+                        <span className="text-sm text-neutral-400 mb-1">
+                          Currency
+                        </span>
                         <span className="text-lg font-semibold text-neutral-900">
                           {summaryCurrency}
                         </span>
                       </div>
                       <div className="flex flex-col items-end">
-                        <span className="text-sm text-neutral-400 mb-1">Total Amount</span>
+                        <span className="text-sm text-neutral-400 mb-1">
+                          Total Amount
+                        </span>
                         <span className="text-2xl font-bold text-neutral-900 tabular-nums">
                           {new Intl.NumberFormat('en-US', {
                             style: 'currency',
