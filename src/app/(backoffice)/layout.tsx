@@ -1,3 +1,4 @@
+import './dashboard.css'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { getUserRole } from '@/services/auth-service'
