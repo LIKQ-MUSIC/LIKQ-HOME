@@ -102,9 +102,6 @@ export default async function Home() {
         }))
       : []
 
-  // Preload the first hero image so the browser starts fetching before JS hydrates
-  const heroImageUrl = aboutUsImages[0]?.src
-
   const services = [
     {
       title: 'Writing and Composing',
@@ -138,10 +135,6 @@ export default async function Home() {
     }
   ]
   return (
-    <>
-      {heroImageUrl && (
-        <link rel="preload" as="image" href={heroImageUrl} fetchPriority="high" />
-      )}
       <main className="min-h-screen bg-[#f8f9fb] text-neutral-900 font-sans overflow-x-hidden">
         <Navbar />
         <HeroCarousel images={aboutUsImages} />
@@ -168,6 +161,5 @@ export default async function Home() {
 
       <Footer />
     </main>
-    </>
   )
 }

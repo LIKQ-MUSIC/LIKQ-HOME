@@ -2,17 +2,12 @@
 
 import React from 'react'
 import Image from 'next/image'
-{
-  /* Hero Content Overlay */
-}
 import Autoplay from 'embla-carousel-autoplay'
 
 import {
   Carousel,
   CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious
+  CarouselItem
 } from '@/ui/Carousel'
 
 interface HeroCarouselProps {
@@ -39,26 +34,15 @@ const HeroCarousel = ({ images }: HeroCarouselProps) => {
           {images.map((image, index) => (
             <CarouselItem key={index} className="basis-full pl-0 h-full">
               <div className="relative w-full h-full">
-                {index === 0 ? (
-                  // LCP image: load directly from CDN, skip /_next/image proxy
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    fetchPriority="high"
-                    decoding="async"
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                ) : (
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    sizes="100vw"
-                    loading="lazy"
-                    className="object-cover"
-                  />
-                )}
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  priority={index === 0}
+                  sizes="100vw"
+                  quality={75}
+                  className="object-cover"
+                />
                 {/* Overlay gradient for text readability */}
                 <div className="absolute inset-0 bg-black/40 pointer-events-none" />
               </div>
