@@ -17,9 +17,7 @@ import BlogSection from '@/components/BlogSection'
 import { getAboutUsImages } from '@/services/about-us'
 
 import type { Metadata } from 'next'
-import { apiClient } from '@/lib/api-client'
 import { IWorkItem } from '@/components/Works/types'
-import dayjs from '@/utils/dayjs'
 
 export const revalidate = 3600 // Verify static rebuild every hour if revalidated
 
@@ -48,20 +46,19 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 async function getWorks(): Promise<IWorkItem[]> {
+  const url = process.env.NEXT_PUBLIC_GATEWAY_API_URL || 'http://localhost:3002'
   try {
-    const response = await apiClient.get('/works')
+    const res = await fetch(`${url}/works`, {
+      next: { tags: ['works'] }
+    })
+    if (!res.ok) return []
+    const json = await res.json()
 
-    // Transform API response to IWorkItem matches
-    return response.data.data.map((item: any) => ({
+    return (json.data || []).map((item: any) => ({
       title: item.title,
       category: item.category,
       description: item.description,
-      // Map media_ids or image_url from API to 'image' field if available.
-      // API might return standard fields, adjusting mapping as needed.
-      // For now, assume API returns close match or we map basically.
-      // If we don't have full media resolution in GET /works yet, we might miss images unless /works joins them.
-      // Let's assume basic mapping for now.
-      image: item.image_url || '', // Fallback or if API still returns it
+      image: item.image_url || '',
       youtubeId: item.youtube_id,
       url: item.external_url,
       start: item.start_date || undefined,
@@ -90,9 +87,11 @@ async function getLatestBlogs() {
 }
 
 export default async function Home() {
-  const worksData = await getWorks()
-  const aboutUsData = await getAboutUsImages()
-  const latestPosts = await getLatestBlogs()
+  const [worksData, aboutUsData, latestPosts] = await Promise.all([
+    getWorks(),
+    getAboutUsImages(),
+    getLatestBlogs()
+  ])
 
   // Map to component format or use default if empty/failed
   const aboutUsImages =

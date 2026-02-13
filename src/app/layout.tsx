@@ -94,6 +94,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://cdn.likqmusic.com" />
+        <link rel="dns-prefetch" href="https://cdn.likqmusic.com" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${notoSans.variable} ${prompt.variable} antialiased bg-page text-body`}
       >

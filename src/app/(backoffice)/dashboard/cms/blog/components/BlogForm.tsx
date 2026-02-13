@@ -13,7 +13,11 @@ import { ArrowLeft, Upload, Eye, Pencil } from 'lucide-react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import type { OutputData } from '@editorjs/editorjs'
-import BlogContentRenderer from '@/components/blog/BlogContentRenderer'
+
+const BlogContentRenderer = dynamic(
+  () => import('@/components/blog/BlogContentRenderer'),
+  { ssr: false }
+)
 
 const EditorJSComponent = dynamic(
   () => import('@/components/dashboard/EditorJS'),
