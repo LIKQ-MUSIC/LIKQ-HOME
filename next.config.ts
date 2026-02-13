@@ -5,8 +5,6 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react']
   },
   images: {
-    formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 31536000,
     remotePatterns: [
       {
         protocol: 'https',
