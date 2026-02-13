@@ -2,12 +2,8 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { getUserRole } from '@/services/auth-service'
 import { logout } from '@/actions/auth'
-import { Suspense } from 'react'
-import DashboardLoading from './loading'
 import Sidebar from '@/components/dashboard/Sidebar'
 import { PermissionProvider } from '@/provider/PermissionProvider'
-
-export const runtime = 'edge'
 
 export default async function BackofficeLayout({
   children
@@ -61,11 +57,9 @@ export default async function BackofficeLayout({
 
       {/* Main Content */}
       <PermissionProvider permissions={permissions}>
-        <Suspense fallback={<DashboardLoading />}>
-          <main className="flex-1 overflow-y-auto bg-page p-4 lg:p-8">
-            <div className="mx-auto max-w-5xl">{children}</div>
-          </main>
-        </Suspense>
+        <main className="flex-1 overflow-y-auto bg-page p-4 lg:p-8">
+          <div className="mx-auto max-w-5xl">{children}</div>
+        </main>
       </PermissionProvider>
     </div>
   )

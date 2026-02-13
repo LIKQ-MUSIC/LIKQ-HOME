@@ -1,12 +1,11 @@
 import { Loader2 } from 'lucide-react'
 
-export default function DashboardLoading() {
+export default function BackofficeLoading() {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="flex flex-col items-center gap-4 rounded-lg bg-surface p-8 shadow-xl border border-default">
+    <main className="flex-1 overflow-y-auto bg-page p-4 lg:p-8">
+      <div className="mx-auto max-w-5xl flex h-[50vh] items-center justify-center">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-sm font-medium text-muted">Loading...</p>
       </div>
-    </div>
+    </main>
   )
 }
