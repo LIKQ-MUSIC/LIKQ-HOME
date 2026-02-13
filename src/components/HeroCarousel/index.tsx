@@ -39,7 +39,7 @@ const HeroCarousel = ({ images }: HeroCarouselProps) => {
                   alt={image.alt}
                   fill
                   priority={index === 0}
-                  sizes="(max-width: 640px) 640px, 100vw"
+                  sizes="100vw"
                   quality={75}
                   className="object-cover"
                 />
