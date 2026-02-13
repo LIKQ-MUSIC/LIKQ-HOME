@@ -14,7 +14,7 @@ export const notoSans = Noto_Sans_Thai({
 })
 
 export const prompt = Prompt({
-  weight: ['400', '500', '700', '900'],
+  weight: ['400', '700'],
   subsets: ['thai', 'latin'],
   variable: '--font-prompt',
   display: 'swap'

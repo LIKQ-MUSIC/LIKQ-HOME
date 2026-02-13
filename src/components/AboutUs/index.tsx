@@ -1,4 +1,3 @@
-'use client'
 import Section from '@/components/Section'
 
 const AboutUs = () => {

@@ -32,23 +32,24 @@ const Navbar = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Handle scroll for sticky navbar
+  // Handle scroll for sticky navbar (throttled to avoid main-thread blocking)
   useEffect(() => {
+    let ticking = false
     const handleScroll = () => {
-      // Find the About Us or Services section to determine when to switch
-      // We want to switch AFTER About Us. About Us is followed by Services.
-      // So let's target the Services section.
-      const servicesSection = document.getElementById('services')
-      if (servicesSection && window.scrollY > servicesSection.offsetTop - 100) {
-        setIsScrolled(true)
-      } else {
-        // Fallback or explicit reset
-        setIsScrolled(false)
-      }
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        const servicesSection = document.getElementById('services')
+        if (servicesSection && window.scrollY > servicesSection.offsetTop - 100) {
+          setIsScrolled(true)
+        } else {
+          setIsScrolled(false)
+        }
+        ticking = false
+      })
     }
 
-    window.addEventListener('scroll', handleScroll)
-    // Initial check
+    window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
