@@ -1,19 +1,8 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { inter, notoSans, prompt } from '@/utils/font'
 import ReactQueryProvider from '@/provider/ReactQueryProvider'
 import { ThemeProvider } from '@/provider/ThemeProvider'
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin']
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin']
-})
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.likqmusic.com'),
@@ -99,7 +88,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://cdn.likqmusic.com" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${notoSans.variable} ${prompt.variable} antialiased bg-page text-body`}
+        className={`${inter.variable} ${notoSans.variable} ${prompt.variable} antialiased bg-page text-body`}
       >
         <ReactQueryProvider>
           <ThemeProvider>{children}</ThemeProvider>
